@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TFG.CapaEntidad
+namespace Vetcare.Entidades
 {
     /// <summary>
     /// Clase que representa un cliente registrado en el sistema.

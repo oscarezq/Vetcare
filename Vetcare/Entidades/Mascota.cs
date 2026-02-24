@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TFG.CapaEntidad
+namespace Vetcare.Entidades
 {
     /// <summary>
     /// Clase que representa una mascota registrada en el sistema.
@@ -68,13 +68,13 @@ namespace TFG.CapaEntidad
         public string NumeroIdentificacionDueno { get; set; }
 
         /// <summary>
-        /// Nombre + Apellidos + (DNI) del dueño.
+        /// Nombre + Apellidos + (Identificador) del dueño.
         /// </summary>
         public string Dueno
         {
             get
             {
-                return $"{this.NombreDueno} {this.ApellidosDueno} ({this.DniDueno})";
+                return $"{this.NombreDueno} {this.ApellidosDueno} ({this.NumeroIdentificacionDueno})";
             }
         }
     }

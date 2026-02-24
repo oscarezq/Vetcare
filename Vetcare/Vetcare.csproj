@@ -9,8 +9,11 @@
 
   <ItemGroup>
     <Folder Include="Negocio\" />
-    <Folder Include="Datos\" />
     <Folder Include="Presentacion\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="9.6.0" />
   </ItemGroup>
 
 </Project>

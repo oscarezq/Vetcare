@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TFG.CapaEntidad
+namespace Vetcare.Entidades
 {
     /// <summary>
     /// Clase que representa una cita veterinaria.
