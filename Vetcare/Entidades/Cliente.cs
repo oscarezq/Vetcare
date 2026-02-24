@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TFG.CapaEntidad
+{
+    /// <summary>
+    /// Clase que representa un cliente registrado en el sistema.
+    /// </summary>
+    public class Cliente
+    {
+        /// <summary>
+        /// Identificador del cliente.
+        /// </summary>
+        public int IdCliente { get; set; }
+
+        /// <summary>
+        /// Número de identificación del cliente (DNI, NIE, NIF...).
+        /// </summary>
+        public string num_documento { get; set; }
+
+        /// <summary>
+        /// Nombre del cliente.
+        /// </summary>
+        public string Nombre { get; set; }
+
+        /// <summary>
+        /// Apellidos del cliente.
+        /// </summary>
+        public string Apellidos { get; set; }
+
+        /// <summary>
+        /// Teléfono del cliente.
+        /// </summary>
+        public string Telefono { get; set; }
+
+        /// <summary>
+        /// Email del cliente.
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Dirección del cliente.
+        /// </summary>
+        public string Direccion { get; set; }
+
+        /// <summary>
+        /// Fecha de alta del cliente.
+        /// </summary>
+        public DateTime FechaAlta { get; set; }
+    }
+
+}

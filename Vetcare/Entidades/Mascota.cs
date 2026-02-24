@@ -1,0 +1,81 @@
+﻿using System;
+
+namespace TFG.CapaEntidad
+{
+    /// <summary>
+    /// Clase que representa una mascota registrada en el sistema.
+    /// </summary>
+    public class Mascota
+    {
+        /// <summary>
+        /// Identificador de la mascota.
+        /// </summary>
+        public int IdMascota { get; set; }
+
+        /// <summary>
+        /// Identificador del cliente (dueño de la mascota).
+        /// </summary>
+        public int IdCliente { get; set; }
+
+        /// <summary>
+        /// Número de chip de la mascota.
+        /// </summary>
+        public string NumeroChip { get; set; }
+
+        /// <summary>
+        /// Nombre de la mascota.
+        /// </summary>
+        public string Nombre { get; set; }
+
+        /// <summary>
+        /// Especie a la que pertenece la mascota.
+        /// </summary>
+        public string Especie { get; set; }
+
+        /// <summary>
+        /// Raza a la que pertenece la mascota.
+        /// </summary>
+        public string Raza { get; set; }
+
+        /// <summary>
+        /// Sexo de la mascota (macho, hembra).
+        /// </summary>
+        public string Sexo { get; set; }
+
+        /// <summary>
+        /// Peso de la mascota en kilogramos.
+        /// </summary>
+        public decimal Peso { get; set; }
+
+        /// <summary>
+        /// Fecha de nacimiento de la mascota.
+        /// </summary>
+        public DateTime? FechaNacimiento { get; set; }
+
+        /// <summary>
+        /// Nombre del dueño de la mascota.
+        /// </summary>
+        public string NombreDueno { get; set; }
+
+        /// <summary>
+        /// Apellidos del dueño de la mascota.
+        /// </summary>
+        public string ApellidosDueno { get; set; }
+
+        /// <summary>
+        /// Número de identificación del dueño de la mascota.
+        /// </summary>
+        public string NumeroIdentificacionDueno { get; set; }
+
+        /// <summary>
+        /// Nombre + Apellidos + (DNI) del dueño.
+        /// </summary>
+        public string Dueno
+        {
+            get
+            {
+                return $"{this.NombreDueno} {this.ApellidosDueno} ({this.DniDueno})";
+            }
+        }
+    }
+}
