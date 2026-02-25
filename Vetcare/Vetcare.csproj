@@ -8,12 +8,45 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Negocio\" />
-    <Folder Include="Presentacion\" />
+    <None Remove="Presentacion\pata.png" />
+    <None Remove="Presentacion\usuarios.png" />
+    <None Remove="Resources\calendario.png" />
+    <None Remove="Resources\clientes.png" />
+    <None Remove="Resources\doctor.png" />
+    <None Remove="Resources\historial.png" />
+    <None Remove="Resources\home.png" />
+    <None Remove="Resources\icono.ico" />
+    <None Remove="Resources\icono.png" />
+    <None Remove="Resources\logo1-transparente.png" />
+    <None Remove="Resources\logo1.png" />
+    <None Remove="Resources\logo2-transparente.png" />
+    <None Remove="Resources\logo2.png" />
+    <None Remove="Resources\logo3-transparente.png" />
+    <None Remove="Resources\pata.png" />
+    <None Remove="Resources\usuarios.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Presentacion\pata.png" />
+    <Resource Include="Presentacion\usuarios.png" />
+    <Resource Include="Resources\calendario.png" />
+    <Resource Include="Resources\clientes.png" />
+    <Resource Include="Resources\doctor.png" />
+    <Resource Include="Resources\historial.png" />
+    <Resource Include="Resources\home.png" />
+    <Resource Include="Resources\icono.ico" />
+    <Resource Include="Resources\icono.png" />
+    <Resource Include="Resources\logo1-transparente.png" />
+    <Resource Include="Resources\logo1.png" />
+    <Resource Include="Resources\logo2-transparente.png" />
+    <Resource Include="Resources\logo2.png" />
+    <Resource Include="Resources\logo3-transparente.png" />
+    <Resource Include="Resources\pata.png" />
+    <Resource Include="Resources\usuarios.png" />
   </ItemGroup>
 
 </Project>
