@@ -65,7 +65,7 @@
 
                     <Button x:Name="btnMascotas" Style="{StaticResource MenuButtonStyle}" Click="btnMascotas_Click">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/Presentacion/pata.png" Width="18" Margin="0,0,10,0"/>
+                            <Image Source="/Resources/clientes.png" Width="18" Margin="0,0,10,0"/>
                             <TextBlock Text="MASCOTAS"/>
                         </StackPanel>
                     </Button>
@@ -93,7 +93,7 @@
 
                     <Button x:Name="btnUsuarios" Style="{StaticResource MenuButtonStyle}" Click="btnUsuarios_Click">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/Presentacion/usuarios.png" Width="18" Margin="0,0,10,0"/>
+                            <Image Source="/Resources/usuarios.png" Width="18" Margin="0,0,10,0"/>
                             <TextBlock Text="USUARIOS"/>
                         </StackPanel>
                     </Button>

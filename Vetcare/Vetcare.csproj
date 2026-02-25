@@ -8,8 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Presentacion\pata.png" />
-    <None Remove="Presentacion\usuarios.png" />
     <None Remove="Resources\calendario.png" />
     <None Remove="Resources\clientes.png" />
     <None Remove="Resources\doctor.png" />
@@ -31,8 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Presentacion\pata.png" />
-    <Resource Include="Presentacion\usuarios.png" />
     <Resource Include="Resources\calendario.png" />
     <Resource Include="Resources\clientes.png" />
     <Resource Include="Resources\doctor.png" />

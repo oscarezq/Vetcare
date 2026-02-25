@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Clientes;
 
 namespace Vetcare.Presentacion
 {
@@ -32,12 +33,12 @@ namespace Vetcare.Presentacion
 
         private void btnMascotas_Click(object sender, RoutedEventArgs e)
         {
-            //FramePrincipal.Content = new PageMascotas();
+            FramePrincipal.Content = new PageMascotas();
         }
 
         private void btnClientes_Click(object sender, RoutedEventArgs e)
         {
-            //FramePrincipal.Content = new PageClientes();
+            FramePrincipal.Content = new PageClientes();
         }
 
         private void btnCitas_Click(object sender, RoutedEventArgs e)

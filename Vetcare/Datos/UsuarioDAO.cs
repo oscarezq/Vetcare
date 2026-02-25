@@ -7,7 +7,8 @@ using Vetcare.Utilidades;
 namespace Vetcare.Datos
 {
     /// <summary>
-    /// Clase que gestiona el acceso a los datos de la tabla Usuarios en MySQL.
+    /// Clase encargada de realizar las operaciones de acceso a datos relacionadas con 
+    /// la entidad Usuario en la base de datos vetcare.
     /// </summary>
     public class UsuarioDAO
     {

@@ -1,0 +1,205 @@
+﻿<Page x:Class="Vetcare.Presentacion.Clientes.PageClientes"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="650" d:DesignWidth="1100"
+      Title="PageClientes">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
+
+                <UniformGrid Columns="4" Margin="0,0,0,15">
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Número de documento" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaNumDocumento" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                    </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Cliente" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaCliente" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                    </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Teléfono" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaTelefono" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                    </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Email" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaEmail" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                    </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Dirección" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaDireccion" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                    </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Fecha Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dtpBuscaFechaDesde" Height="25" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
+                    </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Fecha Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dtpBuscaFechaHasta" Height="25" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
+                    </StackPanel>
+                </UniformGrid>
+
+                <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="25" SelectionChanged="cbOrdenarPor_SelectionChanged">
+                        <ComboBoxItem Content="Nombre" IsSelected="True"/>
+                        <ComboBoxItem Content="Apellidos"/>
+                        <ComboBoxItem Content="Teléfono"/>
+                        <ComboBoxItem Content="Email"/>
+                        <ComboBoxItem Content="Dirección"/>
+                        <ComboBoxItem Content="Fecha de Alta"/>
+                    </ComboBox>
+
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
+                        <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="OrdenDirection_Checked"/>
+                        <RadioButton x:Name="rbDesc" Content="Descendente" Checked="OrdenDirection_Checked"/>
+                    </StackPanel>
+
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="25" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
+                    <TextBlock Text="Listado de clientes" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+
+                    <Button DockPanel.Dock="Right" x:Name="btnNuevoCliente" Content="+ Nuevo Cliente" Click="btnNuevoCliente_Click"
+                            Background="#E67E22" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button DockPanel.Dock="Right" x:Name="btnEliminarVarios" Content="Eliminar Seleccionados" Click="btnEliminarVarios_Click" Visibility="Collapsed"
+                            Background="#FDEDEC" Foreground="#CB4335" FontWeight="Bold" Padding="15,0" Height="38" Cursor="Hand" BorderBrush="#FADBD8" BorderThickness="1">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
+
+                <DataGrid x:Name="dgClientes" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"  SelectionChanged="dgClientes_SelectionChanged"
+                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgClientes_MouseDoubleClick"
+                          Background="White" FontSize="14" RowHeight="45" ColumnHeaderHeight="40" SelectionMode="Extended" SelectionUnit="FullRow">
+
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
+
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="20,0,10,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#F8F9F9"/>
+                            <Setter Property="Foreground" Value="#566573"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="Padding" Value="20,0,10,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                            <Setter Property="BorderBrush" Value="#E67E22"/>
+                        </Style>
+                    </DataGrid.Resources>
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="#EBEDEF"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#F4F6F7"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#EBF5FB"/>
+                                    <Setter Property="Foreground" Value="#2E86C1"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="CLIENTE" Width="240">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Hyperlink Click="btnVerFichaCliente_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
+                                            <Run Text="{Binding Nombre}" FontWeight="SemiBold"/><Run Text=" "/><Run Text="{Binding Apellidos}" FontWeight="SemiBold"/>
+                                            <Hyperlink.Style>
+                                                <Style TargetType="Hyperlink">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Foreground" Value="#E67E22"/>
+                                                            <Setter Property="TextDecorations" Value="Underline"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Hyperlink.Style>
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="150"/>
+                        <DataGridTextColumn Header="TELÉFONO" Binding="{Binding Telefono}" Width="110"/>
+                        <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="250"/>
+                        <DataGridTextColumn Header="DIRECCIÓN" Binding="{Binding Direccion}" Width="*"/>
+                        <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="110"/>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="✎" ToolTip="Editar" Click="btnEditar_Click" Margin="5,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" FontWeight="Bold" BorderBrush="#AED6F1" Cursor="Hand"/>
+                                        <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminar_Click" Margin="5,0" 
+                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" FontWeight="Bold" BorderBrush="#FADBD8" Cursor="Hand"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

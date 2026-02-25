@@ -50,7 +50,7 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Fecha de nacimiento de la mascota.
         /// </summary>
-        public DateTime? FechaNacimiento { get; set; }
+        public DateTime FechaNacimiento { get; set; }
 
         /// <summary>
         /// Nombre del dueño de la mascota.
@@ -70,12 +70,6 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Nombre + Apellidos + (Identificador) del dueño.
         /// </summary>
-        public string Dueno
-        {
-            get
-            {
-                return $"{this.NombreDueno} {this.ApellidosDueno} ({this.NumeroIdentificacionDueno})";
-            }
-        }
+        public string Dueno => $"{this.NombreDueno} {this.ApellidosDueno} ({this.NumeroIdentificacionDueno})";
     }
 }

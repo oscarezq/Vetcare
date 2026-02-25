@@ -15,7 +15,7 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Número de identificación del cliente (DNI, NIE, NIF...).
         /// </summary>
-        public string num_documento { get; set; }
+        public string NumDocumento { get; set; }
 
         /// <summary>
         /// Nombre del cliente.
@@ -46,6 +46,16 @@ namespace Vetcare.Entidades
         /// Fecha de alta del cliente.
         /// </summary>
         public DateTime FechaAlta { get; set; }
+
+        /// <summary>
+        /// Nombre + Apellidos del cliente.
+        /// </summary>
+        public string NombreCompleto => $"{Nombre} {Apellidos}";
+
+        /// <summary>
+        /// Nombre + Apellidos + Número de identificación del cliente.
+        /// </summary>
+        public string ClienteCompleto => $"{Nombre} {Apellidos} ({NumDocumento})";
     }
 
 }
