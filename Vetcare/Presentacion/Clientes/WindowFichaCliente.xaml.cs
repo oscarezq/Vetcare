@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
@@ -66,6 +68,18 @@ namespace Vetcare.Presentacion.Clientes
         {
             List<Mascota> mascotas = mascotaService.ObtenerPorCliente(clienteActual.IdCliente);
             dgMascotas.ItemsSource = mascotas;
+
+            // Lógica de visibilidad
+            if (mascotas == null || mascotas.Count == 0)
+            {
+                dgMascotas.Visibility = Visibility.Collapsed;
+                panelSinMascotas.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                dgMascotas.Visibility = Visibility.Visible;
+                panelSinMascotas.Visibility = Visibility.Collapsed;
+            }
         }
 
         /// <summary>
@@ -98,74 +112,29 @@ namespace Vetcare.Presentacion.Clientes
             CargarCliente(clienteActual.IdCliente);
         }
 
-        // ================= ACCIONES DE LA TABLA =================
-
-        /// <summary>
-        /// Botón "Ver ficha" de la mascota.
-        /// Abre la ventana de ficha de la mascota seleccionada.
-        /// </summary>
-        private void VerFichaMascota_Click(object sender, RoutedEventArgs e)
+        private void HyperlinkMascota_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button boton && boton.DataContext is Mascota mascota)
+            try
             {
-                WindowFichaMascota ficha = new WindowFichaMascota(mascota.IdMascota);
-                ficha.Owner = this;
-                ficha.ShowDialog();
-
-                // Recargar lista en caso de cambios
-                CargarMascotas();
-            }
-        }
-
-        /// <summary>
-        /// Botón "Editar" de la mascota.
-        /// Abre la ventana de edición de la mascota bloqueando el dueño.
-        /// </summary>
-        private void EditarMascotaFila_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button boton && boton.DataContext is Mascota mascota)
-            {
-                // Abrimos la ventana de edición pasando la mascota
-                WindowMascota ventanaEditar = new WindowMascota(mascota);
-                ventanaEditar.Owner = this;
-
-                // Bloquear el dueño: no dejar cambiarlo
-                ventanaEditar.txtNombreDueño.Text = clienteActual.ClienteCompleto;
-                ventanaEditar.txtNombreDueño.IsEnabled = false;
-                ventanaEditar.btnSeleccionarDueño.IsEnabled = false;
-
-                ventanaEditar.ShowDialog();
-
-                // Recargar la lista de mascotas
-                CargarMascotas();
-            }
-        }
-
-        /// <summary>
-        /// Botón "Eliminar" de la mascota.
-        /// Confirma y elimina la mascota seleccionada.
-        /// </summary>
-        private void EliminarMascotaFila_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button boton && boton.DataContext is Mascota mascota)
-            {
-                var resultado = MessageBox.Show(
-                    $"¿Seguro que quieres eliminar a {mascota.Nombre}?",
-                    "Confirmar eliminación",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
-
-                if (resultado == MessageBoxResult.Yes)
+                if (sender is Hyperlink hyperlink &&
+                    hyperlink.DataContext is Mascota mascota)
                 {
-                    if (mascotaService.Eliminar(mascota.IdMascota))
-                    {
-                        MessageBox.Show("Mascota eliminada correctamente.",
-                                        "Información",
-                                        MessageBoxButton.OK,
-                                        MessageBoxImage.Information);
-                        CargarMascotas();
-                    }
+                    WindowFichaMascota ficha =
+                        new WindowFichaMascota(mascota.IdMascota);
+
+                    ficha.Owner = this;
+                    ficha.ShowDialog();
+
+                    // Recargar por si hubo cambios
+                    CargarMascotas();
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir la ficha de la mascota: " + ex.Message,
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
             }
         }
 
