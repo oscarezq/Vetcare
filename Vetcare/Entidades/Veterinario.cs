@@ -28,6 +28,11 @@ namespace Vetcare.Entidades
         public string Especialidad { get; set; }
 
         /// <summary>
+        /// Username del usuario asignado al veterinario.
+        /// </summary>
+        public string Username { get; set; }
+
+        /// <summary>
         /// Nombre del usuario asignado al veterinario.
         /// </summary>
         public string Nombre { get; set; }

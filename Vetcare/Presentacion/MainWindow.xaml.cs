@@ -1,7 +1,10 @@
 ﻿using System.Windows;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Citas;
 using Vetcare.Presentacion.Clientes;
+using Vetcare.Presentacion.Usuarios;
+using Vetcare.Presentacion.Veterinarios;
 
 namespace Vetcare.Presentacion
 {
@@ -43,7 +46,7 @@ namespace Vetcare.Presentacion
 
         private void btnCitas_Click(object sender, RoutedEventArgs e)
         {
-            //FramePrincipal.Content = new PageCitas();
+            FramePrincipal.Content = new PageCitas();
         }
 
         private void btnHistorial_Click(object sender, RoutedEventArgs e)
@@ -53,12 +56,12 @@ namespace Vetcare.Presentacion
 
         private void btnUsuarios_Click(object sender, RoutedEventArgs e)
         {
-            //FramePrincipal.Content = new PageUsuarios();
+            FramePrincipal.Content = new PageUsuarios();
         }
 
         private void btnVeterinarios_Click(object sender, RoutedEventArgs e)
         {
-            //FramePrincipal.Content = new PageVeterinarios();
+            FramePrincipal.Content = new PageVeterinarios();
         }
 
         private void btnSalir_Click(object sender, RoutedEventArgs e)

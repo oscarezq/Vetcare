@@ -1,0 +1,153 @@
+﻿<Window x:Class="Vetcare.Presentacion.WindowVeterinario"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Ficha de Veterinario"
+        Height="420"
+        Width="520"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F8F9F9"
+        Icon="/Resources/icono.png">
+
+    <Border Padding="25">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- FORMULARIO -->
+            <StackPanel Grid.Row="0">
+
+                <!-- TÍTULO -->
+                <StackPanel Margin="0,0,0,25">
+                    <TextBlock x:Name="lblTitulo"
+                               Text="NUEVO VETERINARIO"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="#1B2631"/>
+                    <Rectangle Height="2"
+                               Fill="#E67E22"
+                               HorizontalAlignment="Left"
+                               Width="50"
+                               Margin="2,5,0,0"/>
+                </StackPanel>
+
+                <!-- Fila 1 -->
+                <UniformGrid Columns="2" Margin="0,0,0,15">
+
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Nombre"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#566573"
+                                   Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtNombre"
+                                 Height="30"
+                                 VerticalContentAlignment="Center"
+                                 Padding="5,0"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Apellidos"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#566573"
+                                   Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtApellidos"
+                                 Height="30"
+                                 VerticalContentAlignment="Center"
+                                 Padding="5,0"/>
+                    </StackPanel>
+
+                </UniformGrid>
+
+                <!-- Fila 2 -->
+                <UniformGrid Columns="2" Margin="0,0,0,15">
+
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Especialidad"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#566573"
+                                   Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtEspecialidad"
+                                 Height="30"
+                                 VerticalContentAlignment="Center"
+                                 Padding="5,0"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Nº Colegiado"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#566573"
+                                   Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtNumeroColegiado"
+                                 Height="30"
+                                 VerticalContentAlignment="Center"
+                                 Padding="5,0"/>
+                    </StackPanel>
+
+                </UniformGrid>
+
+                <!-- Fila 3 -->
+                <UniformGrid Columns="1" Margin="0,0,0,10">
+
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Teléfono"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#566573"
+                                   Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtTelefono"
+                                 Height="30"
+                                 VerticalContentAlignment="Center"
+                                 Padding="5,0"/>
+                    </StackPanel>
+
+                </UniformGrid>
+
+            </StackPanel>
+
+            <!-- BOTONES -->
+            <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,20,0,0">
+
+                <Button x:Name="btnCancelar"
+                        Content="Cancelar"
+                        Width="90"
+                        Height="32"
+                        Margin="10,0"
+                        Click="btnCancelar_Click"
+                        Cursor="Hand"
+                        Background="#FBFCFC"
+                        BorderBrush="#D5DBDB"/>
+
+                <Button x:Name="btnGuardar"
+                        Content="Guardar Veterinario"
+                        Width="150"
+                        Height="32"
+                        Background="#E67E22"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Click="btnGuardar_Click"
+                        Cursor="Hand"
+                        BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</Window>

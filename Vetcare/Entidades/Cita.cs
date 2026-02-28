@@ -56,5 +56,13 @@ namespace Vetcare.Entidades
         /// Nombre del veterinario.
         /// </summary>
         public string NombreVeterinario { get; set; }
+
+        /// <summary>
+        /// Número de colegiado del veterinario.
+        /// </summary>
+        public string NumeroColegiado { get; set; }
+
+        // PROPIEDAD PARA LA INTERFAZ
+        public string InfoVeterinario => $"{NombreVeterinario} ({NumeroColegiado})";
     }
 }

@@ -23,9 +23,14 @@ namespace Vetcare.Entidades
         public string Username { get; set; }
 
         /// <summary>
-        /// Contraseña del usuario (encriptada).
+        /// Hash de la contraseña del usuario.
         /// </summary>
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
+
+        /// <summary>
+        /// Salt de la contraseña del usuario.
+        /// </summary>
+        public string Salt { get; set; }
 
         /// <summary>
         /// Nombre del usuario.
@@ -56,6 +61,11 @@ namespace Vetcare.Entidades
         /// Fecha de alta del usuario.
         /// </summary>
         public DateTime FechaAlta { get; set; }
+
+        /// <summary>
+        /// Booleano que indica si el usuario debe cambiar la contraseña o no.
+        /// </summary>
+        public Boolean DebeCambiarContrasena { get; set; }
 
         /// <summary>
         /// Nombre del rol del usuario.

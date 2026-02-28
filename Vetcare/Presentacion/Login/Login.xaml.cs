@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using Vetcare.Datos;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Usuarios;
 using Vetcare.Utilidades;
 
 namespace Vetcare.Presentacion
@@ -44,10 +45,17 @@ namespace Vetcare.Presentacion
             // Evaluamos la respuesta
             if (string.IsNullOrEmpty(mensajeError))
             {
-                // Si no ha habido respuesta: Éxito. Entramos a la app
-                MainWindow main = new MainWindow(usuarioLogueado);
-                main.Show();
-                this.Close();
+                if(usuarioLogueado.DebeCambiarContrasena)
+                {
+                    WindowCambiarPassword winCambio = new WindowCambiarPassword(usuarioLogueado);
+                } 
+                else
+                {
+                    MainWindow main = new MainWindow(usuarioLogueado);
+                    main.Show();
+                    this.Close();
+                }
+
             }
             else
             {
@@ -57,7 +65,6 @@ namespace Vetcare.Presentacion
                 MessageBox.Show(mensajeError, "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
-
 
         private void CrearUsuariosSiNoExisten()
         {
@@ -86,16 +93,15 @@ namespace Vetcare.Presentacion
             }
         }
 
-
         private void InsertarUsuario(MySqlConnection con, int idRol, string username, string password, string nombre, string apellidos, string email, string telefono)
         {
             string salt = Seguridad.GenerarSalt();
             string hash = Seguridad.Encriptar(password, salt);
 
             string insertQuery = @"INSERT INTO usuarios 
-                           (id_rol, username, password_hash, salt, nombre, apellidos, email, telefono, activo) 
+                           (id_rol, username, password_hash, salt, nombre, apellidos, email, telefono, activo, debe_cambiar_password) 
                            VALUES 
-                           (@rol, @user, @hash, @salt, @nombre, @apellidos, @email, @telefono, 1);";
+                           (@rol, @user, @hash, @salt, @nombre, @apellidos, @email, @telefono, 1, 0);";
 
             MySqlCommand cmd = new MySqlCommand(insertQuery, con);
 

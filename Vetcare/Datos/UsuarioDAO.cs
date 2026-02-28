@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using MySql.Data.MySqlClient;
 using Vetcare.Entidades;
@@ -8,7 +9,7 @@ namespace Vetcare.Datos
 {
     /// <summary>
     /// Clase encargada de realizar las operaciones de acceso a datos relacionadas con 
-    /// la entidad Usuario en la base de datos vetcare.
+    /// la entidad Usuario en la base de datos vetcare usando MySQL.
     /// </summary>
     public class UsuarioDAO
     {
@@ -17,69 +18,252 @@ namespace Vetcare.Datos
         /// <summary>
         /// Valida las credenciales de un usuario para el inicio de sesión.
         /// </summary>
-        /// <param name="user">Nombre de usuario proporcionado.</param>
-        /// <param name="pass">Contraseña en texto plano proporcionada.</param>
-        /// <returns>Un objeto Usuario si las credenciales son correctas; de lo contrario, null.</returns>
         public Usuario Login(string user, string pass)
         {
-            // Objeto que representa el usuario con el que hacemos login
             Usuario objetoUsuario = null;
 
-            // Obtenemos la conexión
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 try
                 {
-                    // Abrimos la conexión
                     con.Open();
-
-                    // Consulta
                     string query = @"
                         SELECT u.id_usuario, u.username, u.password_hash, u.salt, u.nombre, 
-                               u.apellidos, u.email, u.telefono, u.id_rol, r.nombre as nombre_rol
+                               u.apellidos, u.email, u.telefono, u.id_rol, u.activo, u.debe_cambiar_password, r.nombre as nombre_rol
                         FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id_rol
                         WHERE u.username = @user AND u.activo = 1";
 
                     MySqlCommand cmd = new MySqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@user", user);
-                    cmd.CommandType = CommandType.Text;
 
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         if (dr.Read())
                         {
-                            // Extraemos los datos de seguridad de la BD
                             string hashGuardado = dr["password_hash"].ToString();
                             string salt = dr["salt"].ToString();
-
-                            // Encriptamos la clave que acaba de escribir el usuario con el salt de la BD
                             string hashIntroducido = Seguridad.Encriptar(pass, salt);
 
-                            // Si coinciden, el login es exitoso y rellenamos el objeto
                             if (hashGuardado == hashIntroducido)
                             {
-                                objetoUsuario = new Usuario
-                                {
-                                    IdUsuario = Convert.ToInt32(dr["id_usuario"]),
-                                    Username = dr["username"].ToString(),
-                                    IdRol = Convert.ToInt32(dr["id_rol"]),
-                                    NombreRol = dr["nombre_rol"].ToString(),
-                                    Nombre = dr["nombre"].ToString(),
-                                    Apellidos = dr["apellidos"].ToString(),
-                                    Email = dr["email"] != DBNull.Value ? dr["email"].ToString() : "",
-                                    Telefono = dr["telefono"] != DBNull.Value ? dr["telefono"].ToString() : ""
-                                };
+                                objetoUsuario = MapearUsuarioCompleto(dr);
                             }
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception("Error en la autenticación: " + ex.Message);
+                catch (Exception ex) { 
+                    throw new Exception("Error en la autenticación: " + ex.Message); 
                 }
             }
-
             return objetoUsuario;
+        }
+
+        // --- CONSULTAS ---
+
+        public List<Usuario> ObtenerTodos()
+        {
+            List<Usuario> lista = new List<Usuario>();
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = @"SELECT u.*, r.nombre as nombre_rol 
+                               FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id_rol 
+                               WHERE u.activo = 1";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                try
+                {
+                    con.Open();
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read()) lista.Add(MapearUsuarioCompleto(dr));
+                    }
+                }
+                catch (Exception ex) { throw new Exception("Error al obtener usuarios: " + ex.Message); }
+            }
+            return lista;
+        }
+
+        public Usuario ObtenerPorId(int id)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = "SELECT u.*, r.nombre as nombre_rol FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id_rol WHERE u.id_usuario = @id";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", id);
+                try
+                {
+                    con.Open();
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read()) return MapearUsuarioCompleto(dr);
+                    }
+                }
+                catch (Exception ex) { throw new Exception("Error al obtener usuario: " + ex.Message); }
+            }
+            return null;
+        }
+
+        // --- INSERCIONES ---
+
+        public int Insertar(Usuario u)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = @"INSERT INTO usuarios 
+                       (username, password_hash, salt, nombre, apellidos, email, telefono, id_rol, activo) 
+                       VALUES (@user, @hash, @salt, @nom, @ape, @mail, @tel, @rol, 1)";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                CargarParametros(cmd, u);
+
+                try
+                {
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    return (int)cmd.LastInsertedId;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al insertar usuario: " + ex.Message);
+                }
+            }
+        }
+
+        public bool InsertarVarios(List<Usuario> usuarios)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                using (MySqlTransaction tra = con.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var u in usuarios)
+                        {
+                            string sql = @"INSERT INTO usuarios (username, password_hash, salt, nombre, apellidos, email, telefono, id_rol, activo, debe_cambiar_password) 
+                                           VALUES (@user, @hash, @salt, @nom, @ape, @mail, @tel, @rol, 1, 1)";
+                            MySqlCommand cmd = new MySqlCommand(sql, con, tra);
+                            CargarParametros(cmd, u);
+                            cmd.ExecuteNonQuery();
+                        }
+                        tra.Commit(); return true;
+                    }
+                    catch (Exception ex) { tra.Rollback(); throw new Exception("Error en inserción masiva: " + ex.Message); }
+                }
+            }
+        }
+
+        public bool Actualizar(Usuario u)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = @"UPDATE usuarios SET username=@user, nombre=@nom, apellidos=@ape, email=@mail, telefono=@tel, id_rol=@rol 
+                               WHERE id_usuario=@id";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                CargarParametros(cmd, u);
+                cmd.Parameters.AddWithValue("@id", u.IdUsuario);
+                try { con.Open(); return cmd.ExecuteNonQuery() > 0; }
+                catch (Exception ex) { throw new Exception("Error al actualizar usuario: " + ex.Message); }
+            }
+        }
+
+        /// <summary>
+        /// Actualiza la contraseña de un usuario y marca que ya no debe cambiarla.
+        /// </summary>
+        public bool ActualizarPassword(Usuario u)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                // Actualizamos Hash, Salt y reseteamos el flag de cambio obligatorio
+                string sql = @"UPDATE usuarios 
+                       SET password_hash = @hash, 
+                           salt = @salt, 
+                           debe_cambiar_password = 0 
+                       WHERE id_usuario = @id";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@hash", u.PasswordHash);
+                cmd.Parameters.AddWithValue("@salt", u.Salt);
+                cmd.Parameters.AddWithValue("@id", u.IdUsuario);
+
+                try
+                {
+                    con.Open();
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al actualizar la contraseña en la base de datos: " + ex.Message);
+                }
+            }
+        }
+
+        // --- BORRADOS (LÓGICOS) ---
+
+        public bool BorradoLogico(int id)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = "UPDATE usuarios SET activo = 0 WHERE id_usuario = @id";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", id);
+                try { con.Open(); return cmd.ExecuteNonQuery() > 0; }
+                catch (Exception ex) { throw new Exception("Error en borrado lógico: " + ex.Message); }
+            }
+        }
+
+        public bool BorradoLogicoVarios(List<int> ids)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                using (MySqlTransaction tra = con.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (int id in ids)
+                        {
+                            string sql = "UPDATE usuarios SET activo = 0 WHERE id_usuario = @id";
+                            MySqlCommand cmd = new MySqlCommand(sql, con, tra);
+                            cmd.Parameters.AddWithValue("@id", id);
+                            cmd.ExecuteNonQuery();
+                        }
+                        tra.Commit(); return true;
+                    }
+                    catch (Exception ex) { tra.Rollback(); throw new Exception("Error en borrado masivo: " + ex.Message); }
+                }
+            }
+        }
+
+        // --- MÉTODOS AUXILIARES ---
+
+        private void CargarParametros(MySqlCommand cmd, Usuario u)
+        {
+            cmd.Parameters.AddWithValue("@user", u.Username);
+            cmd.Parameters.AddWithValue("@hash", u.PasswordHash);
+            cmd.Parameters.AddWithValue("@salt", u.Salt);
+            cmd.Parameters.AddWithValue("@nom", u.Nombre);
+            cmd.Parameters.AddWithValue("@ape", u.Apellidos);
+            cmd.Parameters.AddWithValue("@mail", u.Email ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@tel", u.Telefono ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@rol", u.IdRol);
+        }
+
+        private Usuario MapearUsuarioCompleto(MySqlDataReader dr)
+        {
+            return new Usuario
+            {
+                IdUsuario = Convert.ToInt32(dr["id_usuario"]),
+                Username = dr["username"].ToString(),
+                IdRol = Convert.ToInt32(dr["id_rol"]),
+                NombreRol = dr["nombre_rol"].ToString(),
+                Nombre = dr["nombre"].ToString(),
+                Apellidos = dr["apellidos"].ToString(),
+                Email = dr["email"] != DBNull.Value ? dr["email"].ToString() : "",
+                Telefono = dr["telefono"] != DBNull.Value ? dr["telefono"].ToString() : "",
+                Activo = dr["activo"] != DBNull.Value && Convert.ToBoolean(dr["activo"]),
+                DebeCambiarContrasena = dr["debe_cambiar_password"] != DBNull.Value && Convert.ToBoolean(dr["debe_cambiar_password"])
+            };
         }
     }
 }

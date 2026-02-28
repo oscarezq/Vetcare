@@ -1,7 +1,7 @@
-﻿<Window x:Class="Vetcare.Presentacion.WindowSelectorMascota"
+﻿<Window x:Class="Vetcare.Presentacion.Veterinarios.WindowSelectorVeterinario"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Seleccionar Mascota" Height="500" Width="650"
+        Title="Seleccionar Veterinario" Height="500" Width="750"
         WindowStartupLocation="CenterOwner" Background="#F4F6F7">
 
     <Grid Margin="15">
@@ -12,22 +12,25 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,10">
-            <StackPanel>
-                <TextBlock Text="FILTRAR POR NOMBRE, ESPECIE O DUEÑO" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D"/>
-                <TextBox x:Name="txtBuscaMascota" Height="25" Margin="0,5,0,0" TextChanged="txtBuscaMascota_TextChanged"/>
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Margin="0,0,15,0">
+                    <TextBlock Text="BUSCAR POR NOMBRE, ESPECIALIDAD O COLEGIADO" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D"/>
+                    <TextBox x:Name="txtBuscaVeterinario" Width="400" Height="25" Margin="0,5,0,0" TextChanged="txtBuscaVeterinario_TextChanged"/>
+                </StackPanel>
             </StackPanel>
         </Border>
 
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="5">
-            <DataGrid x:Name="dgMascotas" AutoGenerateColumns="False" IsReadOnly="True" 
+            <DataGrid x:Name="dgVeterinarios" AutoGenerateColumns="False" IsReadOnly="True" 
                       CanUserAddRows="False" GridLinesVisibility="None" HeadersVisibility="Column"
-                      MouseDoubleClick="dgMascotas_MouseDoubleClick" SelectionMode="Single"
+                      MouseDoubleClick="dgVeterinarios_MouseDoubleClick" SelectionMode="Single"
                       Background="White" BorderThickness="0" FontSize="13">
+
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="2*"/>
-                    <DataGridTextColumn Header="ESPECIE" Binding="{Binding Especie}" Width="2*"/>
-                    <DataGridTextColumn Header="RAZA" Binding="{Binding Raza}" Width="2*"/>
-                    <DataGridTextColumn Header="DUEÑO" Binding="{Binding NombreDueno}" Width="3*"/>
+                    <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="2*"/>
+                    <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}" Width="2*"/>
+                    <DataGridTextColumn Header="Nº COLEGIADO" Binding="{Binding NumeroColegiado}" Width="1.5*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
