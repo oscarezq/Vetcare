@@ -106,6 +106,9 @@ namespace Vetcare.Presentacion
             if (string.IsNullOrWhiteSpace(txtEspecialidad.Text))
                 return MostrarError("La especialidad es obligatoria.");
 
+            if (string.IsNullOrWhiteSpace(txtTelefono.Text))
+                return MostrarError("El teléfono es obligatorio.");
+
             return true;
         }
 

@@ -23,7 +23,7 @@ namespace Vetcare.Presentacion
         public Login()
         {
             InitializeComponent();
-            CrearUsuariosSiNoExisten();
+            CrearUsuarioAdminSiNoExiste();
         }
 
         private void btnEntrar_Click(object sender, RoutedEventArgs e)
@@ -48,6 +48,8 @@ namespace Vetcare.Presentacion
                 if(usuarioLogueado.DebeCambiarContrasena)
                 {
                     WindowCambiarPassword winCambio = new WindowCambiarPassword(usuarioLogueado);
+                    winCambio.Show();
+                    this.Close();
                 } 
                 else
                 {
@@ -66,7 +68,7 @@ namespace Vetcare.Presentacion
             }
         }
 
-        private void CrearUsuariosSiNoExisten()
+        private void CrearUsuarioAdminSiNoExiste()
         {
             Conexion conexion = new Conexion();
 
@@ -82,39 +84,38 @@ namespace Vetcare.Presentacion
                 if (count > 0)
                     return; // Si ya hay usuarios, no hacemos nada
 
-                // Crear ADMIN
-                InsertarUsuario(con, 1, "admin", "admin", "Admin", "Sistema", "admin@admin.com", "123456789");
+                // Datos del admin
+                int idRol = 1;
+                string username = "admin";
+                string password = "admin";
+                string nombre = "Admin";
+                string apellidos = "Sistema";
+                string email = "admin@admin.com";
+                string telefono = "123456789";
 
-                // Crear OSCAR
-                InsertarUsuario(con, 2, "oscar", "oscar", "Oscar", "Admin", "oscar@vetcare.com", "638216257");
+                // Generar seguridad
+                string salt = Seguridad.GenerarSalt();
+                string hash = Seguridad.Encriptar(password, salt);
 
-                // Crear VANESA
-                InsertarUsuario(con, 3, "vanesa", "vanesa", "Vanesa", "Gonzales", "van@gonz.com", "687849434");
+                // Insertar usuario
+                string insertQuery = @"INSERT INTO usuarios 
+                (id_rol, username, password_hash, salt, nombre, apellidos, email, telefono, activo, debe_cambiar_password) 
+                VALUES 
+                (@rol, @user, @hash, @salt, @nombre, @apellidos, @email, @telefono, 1, 0);";
+
+                MySqlCommand cmd = new MySqlCommand(insertQuery, con);
+
+                cmd.Parameters.AddWithValue("@rol", idRol);
+                cmd.Parameters.AddWithValue("@user", username);
+                cmd.Parameters.AddWithValue("@hash", hash);
+                cmd.Parameters.AddWithValue("@salt", salt);
+                cmd.Parameters.AddWithValue("@nombre", nombre);
+                cmd.Parameters.AddWithValue("@apellidos", apellidos);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@telefono", telefono);
+
+                cmd.ExecuteNonQuery();
             }
-        }
-
-        private void InsertarUsuario(MySqlConnection con, int idRol, string username, string password, string nombre, string apellidos, string email, string telefono)
-        {
-            string salt = Seguridad.GenerarSalt();
-            string hash = Seguridad.Encriptar(password, salt);
-
-            string insertQuery = @"INSERT INTO usuarios 
-                           (id_rol, username, password_hash, salt, nombre, apellidos, email, telefono, activo, debe_cambiar_password) 
-                           VALUES 
-                           (@rol, @user, @hash, @salt, @nombre, @apellidos, @email, @telefono, 1, 0);";
-
-            MySqlCommand cmd = new MySqlCommand(insertQuery, con);
-
-            cmd.Parameters.AddWithValue("@rol", idRol);
-            cmd.Parameters.AddWithValue("@user", username);
-            cmd.Parameters.AddWithValue("@hash", hash);
-            cmd.Parameters.AddWithValue("@salt", salt);
-            cmd.Parameters.AddWithValue("@nombre", nombre);
-            cmd.Parameters.AddWithValue("@apellidos", apellidos);
-            cmd.Parameters.AddWithValue("@email", email);
-            cmd.Parameters.AddWithValue("@telefono", telefono);
-
-            cmd.ExecuteNonQuery();
         }
     }
 }

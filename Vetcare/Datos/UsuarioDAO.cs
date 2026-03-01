@@ -157,34 +157,27 @@ namespace Vetcare.Datos
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
-                string sql = @"UPDATE usuarios SET username=@user, nombre=@nom, apellidos=@ape, email=@mail, telefono=@tel, id_rol=@rol 
-                               WHERE id_usuario=@id";
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                CargarParametros(cmd, u);
-                cmd.Parameters.AddWithValue("@id", u.IdUsuario);
-                try { con.Open(); return cmd.ExecuteNonQuery() > 0; }
-                catch (Exception ex) { throw new Exception("Error al actualizar usuario: " + ex.Message); }
-            }
-        }
-
-        /// <summary>
-        /// Actualiza la contraseña de un usuario y marca que ya no debe cambiarla.
-        /// </summary>
-        public bool ActualizarPassword(Usuario u)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                // Actualizamos Hash, Salt y reseteamos el flag de cambio obligatorio
-                string sql = @"UPDATE usuarios 
-                       SET password_hash = @hash, 
-                           salt = @salt, 
-                           debe_cambiar_password = 0 
+                // Añadimos password_hash, salt y debe_cambiar_password a la consulta
+                string sql = @"UPDATE usuarios SET 
+                        username = @user, 
+                        password_hash = @hash, 
+                        salt = @salt, 
+                        nombre = @nom, 
+                        apellidos = @ape, 
+                        email = @mail, 
+                        telefono = @tel, 
+                        id_rol = @rol,
+                        debe_cambiar_password = @debeCambiar
                        WHERE id_usuario = @id";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@hash", u.PasswordHash);
-                cmd.Parameters.AddWithValue("@salt", u.Salt);
+
+                // Cargamos los parámetros básicos usando tu método auxiliar
+                CargarParametros(cmd, u);
+
+                // Añadimos los parámetros específicos que faltaban o son para el WHERE
                 cmd.Parameters.AddWithValue("@id", u.IdUsuario);
+                cmd.Parameters.AddWithValue("@debeCambiar", u.DebeCambiarContrasena ? 1 : 0);
 
                 try
                 {
@@ -193,7 +186,7 @@ namespace Vetcare.Datos
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("Error al actualizar la contraseña en la base de datos: " + ex.Message);
+                    throw new Exception("Error al actualizar usuario: " + ex.Message);
                 }
             }
         }
@@ -235,10 +228,29 @@ namespace Vetcare.Datos
             }
         }
 
+        public bool ExisteUsername(string username)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                // Usamos COUNT para que sea una consulta ligera
+                string sql = "SELECT COUNT(*) FROM usuarios WHERE username = @user";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@user", username);
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
         // --- MÉTODOS AUXILIARES ---
 
         private void CargarParametros(MySqlCommand cmd, Usuario u)
         {
+            // Es buena práctica limpiar para evitar errores de parámetros duplicados
+            cmd.Parameters.Clear();
+
             cmd.Parameters.AddWithValue("@user", u.Username);
             cmd.Parameters.AddWithValue("@hash", u.PasswordHash);
             cmd.Parameters.AddWithValue("@salt", u.Salt);

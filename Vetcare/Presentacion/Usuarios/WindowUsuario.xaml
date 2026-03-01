@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Usuarios.WindowUsuario"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Ficha de Usuario" Height="600" Width="700"
+        Title="Ficha de Usuario" Height="560" Width="700"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         Background="#F8F9F9" Icon="/Resources/icono.png">
 
@@ -79,14 +79,14 @@
                 </Border>
 
                 <StackPanel Margin="5">
-                    <TextBlock x:Name="lblPassword" Text="Contraseña temporal" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <PasswordBox x:Name="txtPassword" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
-                    <TextBlock x:Name="lblInfoPassword" Text="* Dejar en blanco para no cambiar" FontSize="10" Foreground="#27AE60" Visibility="Collapsed" Margin="0,2,0,0"/>
-
-                    <Border Background="#EBF5FB" CornerRadius="4" Margin="0,8,0,0" Padding="10,8">
-                        <TextBlock Text="El usuario deberá crear una contraseña nueva en su primer acceso." 
+                    <StackPanel x:Name="panelPassword" Margin="5">
+                        <TextBlock x:Name="lblPassword" Text="Contraseña inicial" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
+                        <PasswordBox x:Name="txtPassword" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <Border Background="#EBF5FB" CornerRadius="4" Margin="0,8,0,0" Padding="10,8">
+                            <TextBlock Text="El usuario deberá crear una contraseña nueva en su primer acceso." 
                                    FontSize="10.5" Foreground="#566573" TextWrapping="Wrap"/>
-                    </Border>
+                        </Border>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

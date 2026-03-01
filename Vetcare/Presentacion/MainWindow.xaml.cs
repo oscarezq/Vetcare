@@ -20,12 +20,25 @@ namespace Vetcare.Presentacion
             InitializeComponent();
             UsuarioService usuarioService = new UsuarioService();
             var user = usuarioService.ValidarLogin("admin", "admin", out usuarioActual);
+
+            CargarDatosUsuario();
         }
 
         public MainWindow(Usuario user)
         {
             InitializeComponent();
             usuarioActual = user;
+
+            CargarDatosUsuario();
+        }
+
+        private void CargarDatosUsuario()
+        {
+            if (usuarioActual != null)
+            {
+                // Mostramos Nombre y Apellidos. Si prefieres el username, usa usuarioActual.Username
+                lblNombreUsuario.Text = $"{usuarioActual.Nombre} {usuarioActual.Apellidos}";
+            }
         }
 
         // --- EVENTOS DE NAVEGACIÓN ---

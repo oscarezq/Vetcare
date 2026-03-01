@@ -2,6 +2,7 @@
 using System.Windows;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Utilidades;
 
 namespace Vetcare.Presentacion.Usuarios
 {
@@ -36,17 +37,25 @@ namespace Vetcare.Presentacion.Usuarios
 
             try
             {
-                // 2. Actualizamos el objeto usuario
-                _usuario.PasswordHash = pass;
+                // Generamos un nuevo Salt aleatorio para esta nueva contraseña
+                string nuevoSalt = Guid.NewGuid().ToString();
+
+                // Encriptamos la contraseña usando tu clase de utilidad
+                string hashEncriptado = Seguridad.Encriptar(pass, nuevoSalt);
+
+                // Actualizamos el objeto con los datos encriptados
+                _usuario.PasswordHash = hashEncriptado;
+                _usuario.Salt = nuevoSalt;
                 _usuario.DebeCambiarContrasena = false;
 
                 // 3. Llamada a la capa de negocio
-                bool exito = _usuarioService.ActualizarPassword(_usuario);
+                bool exito = _usuarioService.Actualizar(_usuario);
 
                 if (exito)
                 {
                     MessageBox.Show("Contraseña actualizada con éxito. ¡Bienvenido!", "Vetcare", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.DialogResult = true; // Indica que el proceso fue correcto
+                    MainWindow main = new MainWindow(_usuario);
+                    main.Show();
                     this.Close();
                 }
                 else

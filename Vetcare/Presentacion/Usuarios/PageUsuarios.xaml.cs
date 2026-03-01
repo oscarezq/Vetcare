@@ -131,9 +131,21 @@ namespace Vetcare.Presentacion.Usuarios
 
         private void btnEditarUsuario_Click(object sender, RoutedEventArgs e)
         {
+            // 1. Obtenemos el usuario seleccionado a través del DataContext del botón
             if (sender is Button btn && btn.DataContext is Usuario u)
             {
-                // Lógica para abrir edición
+                // 2. Opcional pero recomendado: Crear una copia para evitar cambios en UI si se cancela
+                // Si no tienes un método Clone, simplemente asegúrate de llamar a CargarDatos() después.
+
+                // 3. Instanciamos la ventana pasando el usuario seleccionado
+                WindowUsuario win = new WindowUsuario(u);
+
+                // 4. Mostramos como diálogo
+                if (win.ShowDialog() == true)
+                {
+                    // 5. Si la ventana devolvió DialogResult = true, refrescamos la lista
+                    CargarDatos();
+                }
             }
         }
     }

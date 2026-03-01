@@ -127,16 +127,6 @@ namespace Vetcare.Negocio
         /// </summary>
         /// <param name="u">Objeto Usuario.</param>
         /// <returns>True si se actualizó la contraseña con éxito.</returns>
-        public bool ActualizarPassword(Usuario u)
-        {
-            return _usuarioDAO.ActualizarPassword(u);
-        }
-
-        /// <summary>
-        /// Actualiza la contraseña de un usuario existente.
-        /// </summary>
-        /// <param name="u">Objeto Usuario.</param>
-        /// <returns>True si se actualizó la contraseña con éxito.</returns>
         public bool Actualizar(Usuario u)
         {
             return _usuarioDAO.Actualizar(u);
@@ -164,6 +154,11 @@ namespace Vetcare.Negocio
         {
             if (ids == null || ids.Count == 0) return false;
             return _usuarioDAO.BorradoLogicoVarios(ids);
+        }
+
+        public bool ExisteUsername(string username)
+        {
+            return _usuarioDAO.ExisteUsername(username);
         }
     }
 }

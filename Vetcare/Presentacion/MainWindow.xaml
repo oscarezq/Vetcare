@@ -121,11 +121,12 @@
                    Margin="0,0,8,0" VerticalAlignment="Center"
                    RenderOptions.BitmapScalingMode="HighQuality"/>
 
-                    <TextBlock Text="Admin" 
-                       VerticalAlignment="Center" 
-                       FontSize="12"
-                       FontWeight="SemiBold" 
-                       Foreground="#1B2631"/>
+                    <TextBlock x:Name="lblNombreUsuario" 
+                               Text="Usuario" 
+                               VerticalAlignment="Center" 
+                               FontSize="12"
+                               FontWeight="SemiBold" 
+                               Foreground="#1B2631"/>
 
                     <Rectangle Width="1" Height="20" Fill="#D5DBDB" Margin="15,0"/>
 

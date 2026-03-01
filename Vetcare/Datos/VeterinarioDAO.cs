@@ -112,6 +112,54 @@ namespace Vetcare.Datos
         }
 
         /// <summary>
+        /// Obtiene los datos profesionales de un veterinario usando el ID de su cuenta de usuario.
+        /// </summary>
+        public Veterinario ObtenerPorIdUsuario(int idUsuario)
+        {
+            Veterinario veterinario = null;
+
+            // Cambiamos el WHERE para buscar por v.id_usuario en lugar de v.id_veterinario
+            string sql = @"SELECT v.id_veterinario, v.id_usuario, v.especialidad, v.numero_colegiado,
+                           u.nombre, u.apellidos
+                    FROM veterinarios v
+                    INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
+                    WHERE v.id_usuario = @idUsuario
+                    AND u.activo = TRUE";
+
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                {
+                    con.Open();
+                    MySqlCommand cmd = new MySqlCommand(sql, con);
+                    cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
+
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            veterinario = new Veterinario
+                            {
+                                IdVeterinario = Convert.ToInt32(dr["id_veterinario"]),
+                                IdUsuario = Convert.ToInt32(dr["id_usuario"]),
+                                Especialidad = dr["especialidad"].ToString(),
+                                NumeroColegiado = dr["numero_colegiado"].ToString(),
+                                Nombre = dr["nombre"].ToString(),
+                                Apellidos = dr["apellidos"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error en VeterinarioDAO.ObtenerPorIdUsuario: " + ex.Message);
+            }
+
+            return veterinario;
+        }
+
+        /// <summary>
         /// Inserta un nuevo veterinario en la base de datos.
         /// </summary>
         /// <param name="v">Objeto Veterinario a insertar.</param>

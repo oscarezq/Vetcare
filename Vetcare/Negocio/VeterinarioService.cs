@@ -35,6 +35,15 @@ namespace Vetcare.Negocio
         }
 
         /// <summary>
+        /// Obtiene la lista completa de veterinarios activos.
+        /// </summary>
+        /// <returns>Lista de objetos Veterinario.</returns>
+        public Veterinario ObtenerPorIdUsuario(int idVet)
+        {
+            return veteDAO.ObtenerPorIdUsuario(idVet);
+        }
+
+        /// <summary>
         /// Inserta un nuevo veterinario en el sistema.
         /// </summary>
         /// <param name="v">Objeto Veterinario a insertar.</param>
