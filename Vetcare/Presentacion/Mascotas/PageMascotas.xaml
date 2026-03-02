@@ -97,7 +97,7 @@
                     <TextBlock Text="Listado de mascotas" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
                     <Button DockPanel.Dock="Right" x:Name="btnNuevaMascota" Content="+ Nueva Mascota" Click="btnNuevaMascota_Click"
-                            Background="#E67E22" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+                            Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -172,46 +172,48 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="NOMBRE" Width="120">
+                        <DataGridTemplateColumn Header="NOMBRE" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock VerticalAlignment="Center">
-                                        <Hyperlink Click="btnVerFichaMascota_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
-                                            <Run Text="{Binding Nombre}" FontWeight="SemiBold"/>
-                                            <Hyperlink.Style>
-                                                <Style TargetType="Hyperlink">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Foreground" Value="#E67E22"/>
-                                                            <Setter Property="TextDecorations" Value="Underline"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Hyperlink.Style>
-                                        </Hyperlink>
+                                    <TextBlock VerticalAlignment="Center" FontSize="14">
+                    <Hyperlink Click="btnVerFichaMascota_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
+                        <Run Text="{Binding Nombre}" FontWeight="SemiBold"/>
+                        <Hyperlink.Style>
+                            <Style TargetType="Hyperlink">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="#E67E22"/>
+                                        <Setter Property="TextDecorations" Value="Underline"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Hyperlink.Style>
+                    </Hyperlink>
                                     </TextBlock>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="NÚMERO CHIP" Binding="{Binding NumeroChip}" Width="170"/>
-                        <DataGridTextColumn Header="DUEÑO" Binding="{Binding Dueno}" Width="260"/>
-                        <DataGridTextColumn Header="ESPECIE" Binding="{Binding Especie}" Width="110"/>
-                        <DataGridTextColumn Header="RAZA" Binding="{Binding Raza}" Width="150"/>
-                        <DataGridTextColumn Header="SEXO" Binding="{Binding Sexo}" Width="100"/>
-                        <DataGridTextColumn Header="PESO (KG)" Binding="{Binding Peso}" Width="100"/>
-                        <DataGridTextColumn Header="NACIMIENTO" Binding="{Binding FechaNacimiento, StringFormat=\{0:dd/MM/yyyy\}}" Width="120"/>
+                        <DataGridTextColumn Header="NÚMERO CHIP" Binding="{Binding NumeroChip}" Width="1.5*" FontSize="14"/>
 
-                        <DataGridTextColumn Header="" Binding="{x:Null}" Width="*"/>
+                        <DataGridTextColumn Header="DUEÑO" Binding="{Binding Dueno}" Width="2.5*" FontSize="14"/>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                        <DataGridTextColumn Header="ESPECIE" Binding="{Binding Especie}" Width="1.2*" FontSize="14"/>
+                        <DataGridTextColumn Header="RAZA" Binding="{Binding Raza}" Width="1.5*" FontSize="14"/>
+
+                        <DataGridTextColumn Header="SEXO" Binding="{Binding Sexo}" Width="0.8*" FontSize="14"/>
+                        <DataGridTextColumn Header="PESO (KG)" Binding="{Binding Peso}" Width="0.8*" FontSize="14"/>
+
+                        <DataGridTextColumn Header="NACIMIENTO" Binding="{Binding FechaNacimiento, StringFormat=\{0:dd/MM/yyyy\}}" Width="1.2*" FontSize="14"/>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="✎" ToolTip="Editar" Click="btnEditar_Click" Margin="5,0" 
-                            Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" FontWeight="Bold" BorderBrush="#AED6F1"/>
-                                        <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminar_Click" Margin="5,0" 
-                            Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" FontWeight="Bold" BorderBrush="#FADBD8"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <Button Content="✎" ToolTip="Editar" Click="btnEditar_Click" Margin="0,0,5,0" 
+                            Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" FontWeight="Bold" BorderBrush="#AED6F1" Cursor="Hand"/>
+                                        <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminar_Click" 
+                            Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" FontWeight="Bold" BorderBrush="#FADBD8" Cursor="Hand"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

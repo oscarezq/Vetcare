@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
@@ -34,81 +35,91 @@ namespace Vetcare.Presentacion.Usuarios
 
         private void ActualizarTabla()
         {
-            try
+            if (cbBuscaEstado == null || dpBuscaFechaDesde == null || dpBuscaFechaHasta == null || rbAsc == null || dgUsuarios == null)
+                return;
+
+            // CORRECCIÓN: Usar 'listaCompleta' que es la que declaraste arriba
+            if (listaCompleta == null) return;
+
+            // Empezamos con la colección cargada desde la DB
+            var filtrados = listaCompleta.AsEnumerable();
+
+            // --- FILTROS DE TEXTO ---
+            if (!string.IsNullOrWhiteSpace(txtBuscaUsername.Text))
+                filtrados = filtrados.Where(u => u.Username?.ToLower().Contains(txtBuscaUsername.Text.ToLower()) ?? false);
+
+            if (!string.IsNullOrWhiteSpace(txtBuscaNombre.Text))
+                filtrados = filtrados.Where(u => u.Nombre?.ToLower().Contains(txtBuscaNombre.Text.ToLower()) ?? false);
+
+            if (!string.IsNullOrWhiteSpace(txtBuscaApellidos.Text))
+                filtrados = filtrados.Where(u => u.Apellidos?.ToLower().Contains(txtBuscaApellidos.Text.ToLower()) ?? false);
+
+            if (!string.IsNullOrWhiteSpace(txtBuscaEmail.Text))
+                filtrados = filtrados.Where(u => u.Email?.ToLower().Contains(txtBuscaEmail.Text.ToLower()) ?? false);
+
+            if (!string.IsNullOrWhiteSpace(txtBuscaTelefono.Text))
+                filtrados = filtrados.Where(u => u.Telefono?.Contains(txtBuscaTelefono.Text) ?? false);
+
+            // --- FILTRO POR ROL ---
+            if (cbBuscaRol.SelectedItem is ComboBoxItem itemRol && !string.IsNullOrEmpty(itemRol.Content.ToString()))
             {
-                if (listaCompleta == null || rbAsc == null || dgUsuarios == null) return;
-
-                // FILTRADO
-                List<Usuario> listaFiltrada = new List<Usuario>();
-
-                foreach (Usuario u in listaCompleta)
-                {
-                    string busquedaUser = txtBuscaUsername.Text.ToLower();
-                    string busquedaNombre = txtBuscaNombre.Text.ToLower();
-
-                    // Filtro Username
-                    if (!string.IsNullOrEmpty(busquedaUser) && !u.Username.ToLower().Contains(busquedaUser)) continue;
-
-                    // Filtro Nombre/Apellidos
-                    string nombreCompleto = (u.Nombre + " " + u.Apellidos).ToLower();
-                    if (!string.IsNullOrEmpty(busquedaNombre) && !nombreCompleto.Contains(busquedaNombre)) continue;
-
-                    // Filtro Rol
-                    if (cbBuscaRol.SelectedItem is ComboBoxItem itemRol && itemRol.Content.ToString() != "Todos")
-                    {
-                        if (u.NombreRol != itemRol.Content.ToString()) continue;
-                    }
-
-                    // Filtro Estado
-                    if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado && itemEstado.Content.ToString() != "Todos")
-                    {
-                        bool buscarActivo = itemEstado.Content.ToString() == "Activo";
-                        if (u.Activo != buscarActivo) continue;
-                    }
-
-                    listaFiltrada.Add(u);
-                }
-
-                // ORDENACIÓN
-                if (cbOrdenarPor.SelectedItem is ComboBoxItem itemOrden)
-                {
-                    string criterio = itemOrden.Content.ToString();
-                    bool esAscendente = (bool)rbAsc.IsChecked;
-
-                    switch (criterio)
-                    {
-                        case "Username":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Username.CompareTo(y.Username) : y.Username.CompareTo(x.Username));
-                            break;
-                        case "Nombre":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Nombre.CompareTo(y.Nombre) : y.Nombre.CompareTo(x.Nombre));
-                            break;
-                        case "Rol":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.NombreRol.CompareTo(y.NombreRol) : y.NombreRol.CompareTo(x.NombreRol));
-                            break;
-                    }
-                }
-
-                dgUsuarios.ItemsSource = listaFiltrada;
+                string rolBusqueda = itemRol.Content.ToString();
+                filtrados = filtrados.Where(u => u.NombreRol == rolBusqueda);
             }
-            catch (Exception ex)
+
+            // --- FILTRO POR ESTADO (Corregido para comparar con el texto del ComboBox) ---
+            if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado)
             {
-                MessageBox.Show($"Error al filtrar: {ex.Message}");
+                string estadoSeleccionado = itemEstado.Content.ToString();
+                if (estadoSeleccionado == "Activo")
+                    filtrados = filtrados.Where(u => u.Activo == true);
+                else if (estadoSeleccionado == "Inactivo")
+                    filtrados = filtrados.Where(u => u.Activo == false);
             }
+
+            // --- FILTRO POR FECHAS ---
+            if (dpBuscaFechaDesde.SelectedDate.HasValue)
+                filtrados = filtrados.Where(u => u.FechaAlta.Date >= dpBuscaFechaDesde.SelectedDate.Value.Date);
+
+            if (dpBuscaFechaHasta.SelectedDate.HasValue)
+                filtrados = filtrados.Where(u => u.FechaAlta.Date <= dpBuscaFechaHasta.SelectedDate.Value.Date);
+
+            // --- ORDENACIÓN ---
+            if (cbOrdenarPor.SelectedItem is ComboBoxItem itemOrden)
+            {
+                string campo = itemOrden.Content.ToString();
+                bool esAsc = rbAsc.IsChecked == true;
+                switch (campo)
+                {
+                    case "Username": filtrados = esAsc ? filtrados.OrderBy(u => u.Username) : filtrados.OrderByDescending(u => u.Username); break;
+                    case "Nombre": filtrados = esAsc ? filtrados.OrderBy(u => u.Nombre) : filtrados.OrderByDescending(u => u.Nombre); break;
+                    case "Rol": filtrados = esAsc ? filtrados.OrderBy(u => u.NombreRol) : filtrados.OrderByDescending(u => u.NombreRol); break;
+                    case "Fecha Alta": filtrados = esAsc ? filtrados.OrderBy(u => u.FechaAlta) : filtrados.OrderByDescending(u => u.FechaAlta); break;
+                }
+            }
+
+            // 3. Asignar al DataGrid
+            dgUsuarios.ItemsSource = filtrados.ToList();
         }
 
-        private void FiltroUsuario_Changed(object sender, EventArgs e) => ActualizarTabla();
-
+        // Actualiza el botón limpiar para resetear los nuevos campos
         private void btnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtBuscaUsername.Clear();
             txtBuscaNombre.Clear();
+            txtBuscaApellidos.Clear();
+            txtBuscaEmail.Clear();
+            txtBuscaTelefono.Clear();
+            dpBuscaFechaDesde.SelectedDate = null;
+            dpBuscaFechaHasta.SelectedDate = null;
             cbBuscaRol.SelectedIndex = 0;
             cbBuscaEstado.SelectedIndex = 0;
             cbOrdenarPor.SelectedIndex = 0;
             rbAsc.IsChecked = true;
             ActualizarTabla();
         }
+
+        private void FiltroUsuario_Changed(object sender, EventArgs e) => ActualizarTabla();
 
         private void btnNuevoUsuario_Click(object sender, RoutedEventArgs e)
         {
@@ -145,6 +156,45 @@ namespace Vetcare.Presentacion.Usuarios
                 {
                     // 5. Si la ventana devolvió DialogResult = true, refrescamos la lista
                     CargarDatos();
+                }
+            }
+        }
+
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // Obtenemos la fila seleccionada
+            var grid = sender as DataGrid;
+            if (grid != null && grid.SelectedItem != null)
+            {
+                // Casteamos al objeto Usuario (ajusta el nombre de tu clase si es distinto)
+                var usuarioSeleccionado = grid.SelectedItem as Usuario;
+
+                if (usuarioSeleccionado != null)
+                {
+                    AbrirFichaUsuario(usuarioSeleccionado.IdUsuario);
+                }
+            }
+        }
+
+        // Método auxiliar para no repetir código
+        private void AbrirFichaUsuario(int idUsuario)
+        {
+            WindowFichaUsuario ficha = new WindowFichaUsuario(idUsuario);
+            ficha.Owner = Window.GetWindow(this);
+            ficha.ShowDialog();
+            CargarDatos();
+        }
+
+        private void HyperlinkUsuario_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. El remitente (sender) es el Hyperlink que recibió el clic
+            if (sender is System.Windows.Documents.Hyperlink hl)
+            {
+                // 2. El DataContext del Hyperlink en un DataGrid es el objeto de la fila (Usuario)
+                if (hl.DataContext is Usuario u)
+                {
+                    // 3. Reutilizamos tu método para abrir la ficha
+                    AbrirFichaUsuario(u.IdUsuario);
                 }
             }
         }

@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="1100"
-      Title="Gestión de Usuarios">
+      Title="PageUsuarios">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -13,93 +13,183 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
+        <!-- =========================
+             FILTROS
+        ========================== -->
+        <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15"
+                BorderBrush="#D5DBDB" BorderThickness="1">
+
             <StackPanel>
-                <TextBlock Text="FILTROS DE USUARIO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
+                <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold"
+                           Foreground="#E67E22" Margin="5,0,0,10"/>
 
-                <Grid>
-                    <UniformGrid Columns="4">
-                        <StackPanel Margin="5">
-                            <TextBlock Text="Username" FontSize="10" Foreground="#7F8C8D"/>
-                            <TextBox x:Name="txtBuscaUsername" Height="25" TextChanged="FiltroUsuario_Changed"/>
-                        </StackPanel>
+                <UniformGrid Columns="5" Margin="0,0,0,15">
 
-                        <StackPanel Margin="5">
-                            <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D"/>
-                            <TextBox x:Name="txtBuscaNombre" Height="25" TextChanged="FiltroUsuario_Changed"/>
-                        </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Username" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaUsername" Height="25"
+                                 TextChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
 
-                        <StackPanel Margin="5">
-                            <TextBlock Text="Rol" FontSize="10" Foreground="#7F8C8D"/>
-                            <ComboBox x:Name="cbBuscaRol" Height="25" SelectionChanged="FiltroUsuario_Changed">
-                                <ComboBoxItem Content="Todos" IsSelected="True"/>
-                                <ComboBoxItem Content="Administrador"/>
-                                <ComboBoxItem Content="Veterinario"/>
-                                <ComboBoxItem Content="Recepcionista"/>
-                            </ComboBox>
-                        </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Nombre" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaNombre" Height="25"
+                                 TextChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
 
-                        <StackPanel Margin="5">
-                            <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
-                            <ComboBox x:Name="cbBuscaEstado" Height="25" SelectionChanged="FiltroUsuario_Changed">
-                                <ComboBoxItem Content="Todos" IsSelected="True"/>
-                                <ComboBoxItem Content="Activo"/>
-                                <ComboBoxItem Content="Inactivo"/>
-                            </ComboBox>
-                        </StackPanel>
-                    </UniformGrid>
-                </Grid>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Apellidos" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaApellidos" Height="25"
+                                 TextChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
 
-                <Separator Background="#EBEDEF" Margin="5,15,5,10"/>
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Email" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaEmail" Height="25"
+                                 TextChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Teléfono" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaTelefono" Height="25"
+                                 TextChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Rol" FontSize="10" Foreground="#7F8C8D"/>
+                        <ComboBox x:Name="cbBuscaRol" Height="25"
+                                  SelectionChanged="FiltroUsuario_Changed">
+                            <ComboBoxItem Content="" IsSelected="True"/>
+                            <ComboBoxItem Content="Administrador"/>
+                            <ComboBoxItem Content="Veterinario"/>
+                            <ComboBoxItem Content="Recepcionista"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
+                        <ComboBox x:Name="cbBuscaEstado" Height="25"
+                                  SelectionChanged="FiltroUsuario_Changed">
+                            <ComboBoxItem Content="" IsSelected="True"/>
+                            <ComboBoxItem Content="Activo"/>
+                            <ComboBoxItem Content="Inactivo"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dpBuscaFechaDesde" Height="25"
+                                    SelectedDateChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dpBuscaFechaHasta" Height="25"
+                                    SelectedDateChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
+
+                </UniformGrid>
+
+                <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
-                    <ComboBox x:Name="cbOrdenarPor" Width="120" Height="25" SelectionChanged="FiltroUsuario_Changed">
+                    <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold"
+                               Foreground="#2E86C1" VerticalAlignment="Center"
+                               Margin="5,0,15,0"/>
+
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="25"
+                              SelectionChanged="FiltroUsuario_Changed">
                         <ComboBoxItem Content="Username" IsSelected="True"/>
                         <ComboBoxItem Content="Nombre"/>
                         <ComboBoxItem Content="Rol"/>
+                        <ComboBoxItem Content="Fecha Alta"/>
                     </ComboBox>
 
-                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
-                        <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroUsuario_Changed"/>
-                        <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroUsuario_Changed"/>
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0"
+                                VerticalAlignment="Center">
+                        <RadioButton x:Name="rbAsc" Content="Ascendente"
+                                     IsChecked="True" Margin="0,0,15,0"
+                                     Checked="FiltroUsuario_Changed"/>
+                        <RadioButton x:Name="rbDesc" Content="Descendente"
+                                     Checked="FiltroUsuario_Changed"/>
                     </StackPanel>
 
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="25" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros"
+                            Margin="30,0,0,0"
+                            Padding="15,0"
+                            Click="btnLimpiar_Click"
+                            Height="25"
+                            Cursor="Hand"
+                            Background="#F4F6F7"
+                            BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
+        <!-- =========================
+             LISTADO
+        ========================== -->
+        <Border Grid.Row="1" Background="White" CornerRadius="10"
+                Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
-                    <TextBlock Text="Listado de Usuarios" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+                <DockPanel Grid.Row="0" LastChildFill="False"
+                           Margin="0,0,0,15">
 
-                    <Button DockPanel.Dock="Right" x:Name="btnNuevoUsuario" Content="+ Nuevo Usuario" Click="btnNuevoUsuario_Click"
-                            Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+                    <TextBlock Text="Listado de usuarios"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="#2C3E50"
+                               VerticalAlignment="Center"/>
+
+                    <Button DockPanel.Dock="Right"
+                            x:Name="btnNuevoUsuario"
+                            Content="+ Nuevo Usuario"
+                            Click="btnNuevoUsuario_Click"
+                            Background="#27AE60"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            Padding="20,0"
+                            Height="38"
+                            Cursor="Hand"
+                            BorderThickness="0"
+                            Margin="10,0,0,0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
                             </Style>
                         </Button.Resources>
                     </Button>
+
                 </DockPanel>
 
-                <DataGrid x:Name="dgUsuarios" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column"
-          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
-          SelectionMode="Extended" SelectionUnit="FullRow">
+                <DataGrid x:Name="dgUsuarios"
+                          Grid.Row="1"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          MouseDoubleClick="DataGridRow_MouseDoubleClick"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          FontSize="14"
+                          RowHeight="45"
+                          ColumnHeaderHeight="40"
+                          SelectionMode="Extended"
+                          SelectionUnit="FullRow">
 
+                    <!-- ========= ESTILOS IGUALES A MASCOTAS ========= -->
                     <DataGrid.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#2C3E50" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#2C3E50" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
 
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="20,0,10,0"/>
@@ -108,17 +198,15 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
-                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                        <Border Background="Transparent"
+                                                BorderThickness="0"
+                                                Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter VerticalAlignment="Center"
+                                                              HorizontalAlignment="Stretch"/>
                                         </Border>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
-                        </Style>
-
-                        <Style x:Key="LeftTextStyle" TargetType="TextBlock">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="HorizontalAlignment" Value="Left"/>
                         </Style>
 
                         <Style TargetType="DataGridColumnHeader">
@@ -127,9 +215,10 @@
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="FontSize" Value="12"/>
                             <Setter Property="Padding" Value="20,0,10,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
                             <Setter Property="BorderThickness" Value="0,0,0,2"/>
                             <Setter Property="BorderBrush" Value="#E67E22"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
                         </Style>
                     </DataGrid.Resources>
 
@@ -151,61 +240,114 @@
                         </Style>
                     </DataGrid.RowStyle>
 
+                    <!-- ========= COLUMNAS ========= -->
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="USERNAME" Binding="{Binding Username}" Width="250" ElementStyle="{StaticResource LeftTextStyle}"/>
 
-                        <DataGridTemplateColumn Header="NOMBRE COMPLETO" Width="250">
+                        <DataGridTemplateColumn Header="USERNAME" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                        <TextBlock Text="{Binding Nombre}" Foreground="#2C3E50"/>
-                                        <TextBlock Text=" "/>
-                                        <TextBlock Text="{Binding Apellidos}" Foreground="#2C3E50"/>
-                                    </StackPanel>
+                                    <TextBlock VerticalAlignment="Center" FontSize="14">
+                                        <Hyperlink Click="HyperlinkUsuario_Click"
+                                                   Foreground="#2E86C1"
+                                                   TextDecorations="{x:Null}">
+                                            <Run Text="{Binding Username}"
+                                                 FontWeight="SemiBold"/>
+                                        </Hyperlink>
+                                    </TextBlock>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="250" ElementStyle="{StaticResource LeftTextStyle}"/>
+                        <DataGridTextColumn Header="NOMBRE"
+                                            Binding="{Binding Nombre}"
+                                            Width="1.5*"/>
 
-                        <DataGridTextColumn Header="TELÉFONO" Binding="{Binding Telefono}" Width="120" ElementStyle="{StaticResource LeftTextStyle}"/>
+                        <DataGridTextColumn Header="APELLIDOS"
+                                            Binding="{Binding Apellidos}"
+                                            Width="1.8*"/>
 
-                        <DataGridTextColumn Header="ROL" Binding="{Binding NombreRol}" Width="*" ElementStyle="{StaticResource LeftTextStyle}"/>
+                        <DataGridTextColumn Header="EMAIL"
+                                            Binding="{Binding Email}"
+                                            Width="2.5*"/>
+
+                        <DataGridTextColumn Header="TELÉFONO"
+                                            Binding="{Binding Telefono}"
+                                            Width="1.2*"/>
+
+                        <DataGridTextColumn Header="ROL"
+                                            Binding="{Binding NombreRol}"
+                                            Width="1.3*"/>
+
+                        <DataGridTextColumn Header="FECHA ALTA"
+                                            Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}"
+                                            Width="1.2*"/>
 
                         <DataGridTemplateColumn Header="ESTADO" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border x:Name="EstadoBorder" CornerRadius="10" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <TextBlock x:Name="EstadoText" FontSize="11" Foreground="White" FontWeight="Bold"/>
+                                    <Border x:Name="EstadoBorder" 
+                                            CornerRadius="10" 
+                                            Padding="10,2" 
+                                            HorizontalAlignment="Center" 
+                                            Background="#EBEDEF">
+                                        <TextBlock x:Name="EstadoTexto" 
+                                           Text="Inactivo" 
+                                           FontSize="12" 
+                                           FontWeight="Bold" 
+                                           Foreground="#7F8C8D"/>
                                     </Border>
+
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Activo}" Value="True">
-                                            <Setter TargetName="EstadoBorder" Property="Background" Value="#27AE60"/>
-                                            <Setter TargetName="EstadoText" Property="Text" Value="ACTIVO"/>
+                                            <Setter TargetName="EstadoBorder" Property="Background" Value="#D4EFDF"/>
+                                            <Setter TargetName="EstadoTexto" Property="Text" Value="Activo"/>
+                                            <Setter TargetName="EstadoTexto" Property="Foreground" Value="#1E8449"/>
                                         </DataTrigger>
+
                                         <DataTrigger Binding="{Binding Activo}" Value="False">
-                                            <Setter TargetName="EstadoBorder" Property="Background" Value="#95A5A6"/>
-                                            <Setter TargetName="EstadoText" Property="Text" Value="INACTIVO"/>
+                                            <Setter TargetName="EstadoBorder" Property="Background" Value="#FADBD8"/>
+                                            <Setter TargetName="EstadoTexto" Property="Text" Value="Inactivo"/>
+                                            <Setter TargetName="EstadoTexto" Property="Foreground" Value="#943126"/>
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Header="ACCIONES" Width="100">
+                        
+                        <DataGridTemplateColumn Header="ACCIONES" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button Content="✎" Click="btnEditarUsuario_Click" Margin="0,0,5,0" 
-                                Background="#EBF5FB" Foreground="#2E86C1" Width="32" Height="28" BorderBrush="#AED6F1"/>
-                                        <Button Content="🗑" Click="btnEliminarUsuario_Click" 
-                                Background="#FDEDEC" Foreground="#CB4335" Width="32" Height="28" BorderBrush="#FADBD8"/>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center">
+                                        <Button Content="✎"
+                                                Click="btnEditarUsuario_Click"
+                                                Margin="0,0,5,0"
+                                                Background="#EBF5FB"
+                                                Foreground="#2E86C1"
+                                                Width="35"
+                                                Height="30"
+                                                FontWeight="Bold"
+                                                BorderBrush="#AED6F1"
+                                                Cursor="Hand"/>
+
+                                        <Button Content="🗑"
+                                                Click="btnEliminarUsuario_Click"
+                                                Background="#FDEDEC"
+                                                Foreground="#CB4335"
+                                                Width="35"
+                                                Height="30"
+                                                FontWeight="Bold"
+                                                BorderBrush="#FADBD8"
+                                                Cursor="Hand"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+
                     </DataGrid.Columns>
                 </DataGrid>
+
             </Grid>
         </Border>
     </Grid>

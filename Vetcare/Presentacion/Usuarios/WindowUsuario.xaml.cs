@@ -260,10 +260,10 @@ namespace Vetcare.Presentacion.Usuarios
         // Verifica si el username ya existe en la base de datos
         private bool VerificarUsernameRepetido(string username)
         {
-            // Asumiendo que tienes un UsuarioService
-            UsuarioService usuService = new UsuarioService();
+            if (_esEdicion && username == _usuario.Username) 
+                return false;
 
-            return usuService.ExisteUsername(username);
+            return _usuarioService.ExisteUsername(username);
         }
 
         private bool EsEmailValido(string email)

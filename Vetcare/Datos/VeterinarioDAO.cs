@@ -48,7 +48,8 @@ namespace Vetcare.Datos
                                 Especialidad = dr["especialidad"].ToString(),
                                 NumeroColegiado = dr["numero_colegiado"].ToString(),
                                 Nombre = dr["nombre"].ToString(),
-                                Apellidos = dr["apellidos"].ToString()
+                                Apellidos = dr["apellidos"].ToString(),
+                                Username = dr["username"].ToString()
                             });
                         }
                     }

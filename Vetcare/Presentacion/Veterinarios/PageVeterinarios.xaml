@@ -81,10 +81,27 @@
 
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Listado de veterinarios"
-                               FontSize="20"
-                               FontWeight="Bold"
-                               Foreground="#2C3E50"
-                               VerticalAlignment="Center"/>
+               FontSize="20" FontWeight="Bold" Foreground="#2C3E50"
+               VerticalAlignment="Center"/>
+
+                    <Button DockPanel.Dock="Right"
+                            x:Name="btnNuevoVeterinario"
+                            Content="+ Nuevo Veterinario"
+                            Click="btnNuevoVeterinario_Click"
+                            Background="#27AE60"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            Padding="20,0"
+                            Height="38"
+                            Cursor="Hand"
+                            BorderThickness="0"
+                            Margin="10,0,0,0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                 </DockPanel>
 
                 <DataGrid x:Name="dgVeterinarios"
@@ -157,7 +174,20 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-
+                        <DataGridTemplateColumn Header="USUARIO" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Hyperlink Click="hlUsuario_Click" 
+                                                   Foreground="#2E86C1" 
+                                                   FontWeight="SemiBold"
+                                                   TextDecorations="None">
+                                            <Run Text="{Binding Username}"/> 
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="200"/>
                         <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="250"/>
                         <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}" Width="200"/>

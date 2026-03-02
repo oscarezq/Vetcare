@@ -66,8 +66,7 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 string sql = @"SELECT u.*, r.nombre as nombre_rol 
-                               FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id_rol 
-                               WHERE u.activo = 1";
+                               FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id_rol";
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 try
                 {
@@ -274,6 +273,7 @@ namespace Vetcare.Datos
                 Email = dr["email"] != DBNull.Value ? dr["email"].ToString() : "",
                 Telefono = dr["telefono"] != DBNull.Value ? dr["telefono"].ToString() : "",
                 Activo = dr["activo"] != DBNull.Value && Convert.ToBoolean(dr["activo"]),
+                FechaAlta = dr["fecha_alta"] != DBNull.Value ? Convert.ToDateTime(dr["fecha_alta"]) : DateTime.MinValue,
                 DebeCambiarContrasena = dr["debe_cambiar_password"] != DBNull.Value && Convert.ToBoolean(dr["debe_cambiar_password"])
             };
         }

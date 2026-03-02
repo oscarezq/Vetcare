@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Usuarios;
 
 namespace Vetcare.Presentacion.Veterinarios
 {
@@ -18,6 +20,8 @@ namespace Vetcare.Presentacion.Veterinarios
 
         // Servicio de negocio para operaciones de veterinarios
         private VeterinarioService vs = new VeterinarioService();
+
+        private UsuarioService _usuarioService = new UsuarioService();
 
         /// <summary>
         /// Inicializa una nueva instancia de la clase <see cref="PageVeterinarios"/>.
@@ -125,15 +129,30 @@ namespace Vetcare.Presentacion.Veterinarios
 
         private void btnNuevoVeterinario_Click(object sender, RoutedEventArgs e)
         {
-            try
+            // 1. Instanciamos la ventana normal (el constructor sin nada)
+            WindowUsuario win = new WindowUsuario();
+
+            // 2. Buscamos el objeto "Veterinario" dentro del ComboBox de la ventana
+            // Buscamos en la lista de roles que ya cargó la ventana
+            foreach (Rol item in win.cbRol.Items)
             {
-                WindowVeterinario ventana = new WindowVeterinario();
-                ventana.ShowDialog();
-                CargarDatos();
+                if (item.NombreRol == "Veterinario")
+                {
+                    win.cbRol.SelectedItem = item; // Lo seleccionamos
+                    break;
+                }
             }
-            catch (Exception ex)
+
+            // 3. Bloqueamos el ComboBox para que no lo cambien
+            win.cbRol.IsEnabled = false;
+
+            // 4. Cambiamos el título para que quede más pro
+            win.lblTitulo.Text = "NUEVO VETERINARIO";
+
+            // 5. La mostramos
+            if (win.ShowDialog() == true)
             {
-                MessageBox.Show($"Error al añadir veterinario: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                CargarDatos(); // Refrescas tu lista de veterinarios
             }
         }
 
@@ -141,19 +160,43 @@ namespace Vetcare.Presentacion.Veterinarios
         {
             try
             {
+                // 1. Obtenemos el veterinario seleccionado del botón
                 Button boton = sender as Button;
                 Veterinario v = boton.DataContext as Veterinario;
 
                 if (v != null)
                 {
-                    WindowVeterinario ventana = new WindowVeterinario(v);
-                    ventana.ShowDialog();
-                    CargarDatos();
+                    // 2. Necesitamos el objeto "Usuario" completo para la ventana.
+                    // Lo obtenemos a través de su ID de usuario.
+                    Usuario usu = _usuarioService.ObtenerPorId(v.IdUsuario);
+
+                    if (usu != null)
+                    {
+                        // 3. Instanciamos la ventana pasándole el usuario (modo edición)
+                        WindowUsuario win = new WindowUsuario(usu);
+
+                        // 4. Bloqueamos los campos que no deben cambiarse en edición de veterinarios
+                        win.cbRol.IsEnabled = false;    // El rol no se cambia desde aquí
+                        win.txtUsername.IsEnabled = false; // El username suele ser fijo
+
+                        // 5. Cambiamos el título
+                        win.lblTitulo.Text = "EDITAR VETERINARIO";
+
+                        // 6. Mostramos la ventana
+                        if (win.ShowDialog() == true)
+                        {
+                            CargarDatos(); // Refrescamos el DataGrid
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontró el usuario vinculado a este veterinario.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al editar veterinario: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al abrir la edición: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -218,6 +261,38 @@ namespace Vetcare.Presentacion.Veterinarios
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al eliminar veterinarios: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void hlUsuario_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // 1. Obtener el veterinario desde el link
+                Hyperlink hl = sender as Hyperlink;
+                Veterinario v = hl.DataContext as Veterinario;
+
+                if (v != null)
+                {
+                    // 2. Buscamos el usuario completo
+                    Usuario usu = _usuarioService.ObtenerPorId(v.IdUsuario);
+
+                    if (usu != null)
+                    {
+                        // 3. Abrimos WindowUsuario (Sin bloquear rol, para que sea la gestión de usuario)
+                        WindowUsuario win = new WindowUsuario(usu);
+                        win.lblTitulo.Text = "GESTIÓN DE CREDENCIALES";
+
+                        if (win.ShowDialog() == true)
+                        {
+                            CargarDatos(); // Refrescar por si cambió el nombre/username
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al acceder al usuario: {ex.Message}");
             }
         }
     }
