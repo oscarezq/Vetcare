@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
@@ -200,12 +201,25 @@ namespace Vetcare.Presentacion.Citas
         /// </summary>
         private void btnEditarCita_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is Cita cita)
+            if (sender is Button btn && btn.DataContext is Cita citaSeleccionada)
             {
-                // Lógica de edición
-                // WindowCita win = new WindowCita(cita);
-                // win.ShowDialog();
-                // CargarDatos();
+                WindowCita win = new WindowCita(citaSeleccionada);
+                win.Owner = Window.GetWindow(this);
+
+                if (win.ShowDialog() == true)
+                {
+                    CargarDatos(); 
+                }
+            }
+        }
+
+        private void dgCitas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgCitas.SelectedItem is Cita citaSeleccionada)
+            {
+                WindowFichaCita ficha = new WindowFichaCita(citaSeleccionada.IdCita);
+                ficha.Owner = Window.GetWindow(this);
+                ficha.ShowDialog();
             }
         }
     }

@@ -30,7 +30,7 @@ namespace Vetcare.Presentacion
             string busq = txtBuscaMascota.Text.ToLower().Trim();
             dgMascotas.ItemsSource = listaMascotas.Where(m =>
                 m.Nombre.ToLower().Contains(busq) ||
-                m.Especie.ToLower().Contains(busq) ||
+                m.NombreEspecie.ToLower().Contains(busq) ||
                 (m.NombreDueno != null && m.NombreDueno.ToLower().Contains(busq))
             ).ToList();
         }

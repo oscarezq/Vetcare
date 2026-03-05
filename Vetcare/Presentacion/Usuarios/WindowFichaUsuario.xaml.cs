@@ -19,31 +19,42 @@ namespace Vetcare.Presentacion.Usuarios
 
         private void CargarDatos(int idUsuario)
         {
-            try
-            {
-                // 1. Obtener los datos base del usuario
-                _usuarioActual = _usuarioService.ObtenerPorId(idUsuario);
+            _usuarioActual = _usuarioService.ObtenerPorId(idUsuario);
+            if (_usuarioActual == null) { MessageBox.Show("Usuario no encontrado."); this.Close(); return; }
+            this.DataContext = _usuarioActual;
 
-                if (_usuarioActual == null)
+            // Mostrar botón de Datos Profesionales solo si es veterinario
+            if (_usuarioActual.NombreRol == "Veterinario")
+            {
+                btnProfesional.Visibility = Visibility.Visible;
+
+                var vet = _veteService.ObtenerPorIdUsuario(_usuarioActual.IdUsuario);
+                if (vet != null)
                 {
-                    MessageBox.Show("No se encontró el usuario en la base de datos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    this.Close();
-                    return;
+                    txtNumeroColegiado.Text = vet.NumeroColegiado;
+                    txtEspecialidad.Text = vet.Especialidad;
                 }
-
-                // 2. Vincular a la interfaz
-                this.DataContext = _usuarioActual;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"Error al cargar la ficha: {ex.Message}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnProfesional.Visibility = Visibility.Collapsed;
             }
+
+            // Mostrar panel de datos generales por defecto
+            panelDatosGenerales.Visibility = Visibility.Visible;
+            panelDatosProfesional.Visibility = Visibility.Collapsed;
         }
 
         private void btnDatos_Click(object sender, RoutedEventArgs e)
         {
-            // En este caso solo tenemos un panel, pero lo dejamos listo para futuros paneles (ej. Horarios)
-            panelDatos.Visibility = Visibility.Visible;
+            panelDatosGenerales.Visibility = Visibility.Visible;
+            panelDatosProfesional.Visibility = Visibility.Collapsed;
+        }
+
+        private void btnProfesional_Click(object sender, RoutedEventArgs e)
+        {
+            panelDatosGenerales.Visibility = Visibility.Collapsed;
+            panelDatosProfesional.Visibility = Visibility.Visible;
         }
 
         private void btnEditarUsuario_Click(object sender, RoutedEventArgs e)

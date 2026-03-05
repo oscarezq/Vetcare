@@ -157,10 +157,10 @@
                         <TextBlock Text="{Binding NumeroChip}" Style="{StaticResource ValueStyle}"/>
 
                         <TextBlock Text="Especie" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Especie}" Style="{StaticResource ValueStyle}"/>
+                        <TextBlock Text="{Binding NombreEspecie}" Style="{StaticResource ValueStyle}"/>
 
                         <TextBlock Text="Raza" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Raza}" Style="{StaticResource ValueStyle}"/>
+                        <TextBlock Text="{Binding NombreRaza}" Style="{StaticResource ValueStyle}"/>
                     </StackPanel>
 
                     <!-- ===== COLUMNA DERECHA ===== -->

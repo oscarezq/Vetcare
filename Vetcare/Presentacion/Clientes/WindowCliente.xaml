@@ -16,10 +16,20 @@
             </StackPanel>
 
             <UniformGrid Columns="2" Margin="0,0,0,15">
-                <StackPanel Margin="5">
-                    <TextBlock Text="Número de documentación" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtNumDocumento" Height="28" VerticalContentAlignment="Center" Padding="5,0"/>
-                </StackPanel>
+                <UniformGrid Columns="2" Margin="0,0,0,15">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Tipo de Documento" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="cmbTipoDocumento" Height="28">
+                            <ComboBoxItem Content="DNI"/>
+                            <ComboBoxItem Content="NIE"/>
+                            <ComboBoxItem Content="Pasaporte"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Número de documento" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtNumDocumento" Height="28" VerticalContentAlignment="Center" Padding="5,0"/>
+                    </StackPanel>
+                </UniformGrid>
                 <StackPanel Margin="5">
                     <TextBlock Text="Nombre" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtNombre" Height="28" VerticalContentAlignment="Center" Padding="5,0"/>

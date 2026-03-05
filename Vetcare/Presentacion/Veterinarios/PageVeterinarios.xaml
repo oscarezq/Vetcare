@@ -117,7 +117,8 @@
                           RowHeight="45"
                           ColumnHeaderHeight="40"
                           SelectionMode="Single"
-                          SelectionUnit="FullRow">
+                          SelectionUnit="FullRow"
+                           MouseDoubleClick="dgVeterinarios_MouseDoubleClick">
 
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
@@ -174,7 +175,7 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="USUARIO" Width="150">
+                        <DataGridTemplateColumn Header="USUARIO" Width="2*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock VerticalAlignment="Center">
@@ -188,10 +189,10 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="200"/>
-                        <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="250"/>
-                        <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}" Width="200"/>
-                        <DataGridTextColumn Header="Nº COLEGIADO" Binding="{Binding NumeroColegiado}" Width="180"/>
+                        <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="2*"/>
+                        <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="3*"/>
+                        <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}" Width="2*"/>
+                        <DataGridTextColumn Header="Nº COLEGIADO" Binding="{Binding NumeroColegiado}" Width="2*"/>
 
                         <DataGridTextColumn Header="" Binding="{x:Null}" Width="*"/>
 

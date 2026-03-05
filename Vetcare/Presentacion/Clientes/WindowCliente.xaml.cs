@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
@@ -37,6 +38,7 @@ namespace Vetcare.Presentacion.Clientes
             lblTitulo.Text = "Nuevo cliente";
             this.Title = "Nuevo cliente";
             txtFechaAlta.Text = DateTime.Now.ToString("dd/MM/yyyy");
+            cmbTipoDocumento.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -70,6 +72,19 @@ namespace Vetcare.Presentacion.Clientes
             txtEmail.Text = cliente.Email;
             txtDireccion.Text = cliente.Direccion;
             txtFechaAlta.Text = cliente.FechaAlta.ToString("dd/MM/yyyy");
+
+            // Seleccionar tipo de documento en el ComboBox
+            if (!string.IsNullOrEmpty(cliente.TipoDocumento))
+            {
+                foreach (ComboBoxItem item in cmbTipoDocumento.Items)
+                {
+                    if (item.Content.ToString().Equals(cliente.TipoDocumento, StringComparison.OrdinalIgnoreCase))
+                    {
+                        cmbTipoDocumento.SelectedItem = item;
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -83,6 +98,7 @@ namespace Vetcare.Presentacion.Clientes
                 return;
 
             // Si se cumple las validaciones, asignamos los datos al cliente
+            cliente.TipoDocumento = ((ComboBoxItem)cmbTipoDocumento.SelectedItem).Content.ToString();
             cliente.NumDocumento = txtNumDocumento.Text.Trim().ToUpper();
             cliente.Nombre = txtNombre.Text.Trim();
             cliente.Apellidos = txtApellidos.Text.Trim();
@@ -137,33 +153,42 @@ namespace Vetcare.Presentacion.Clientes
         /// <returns>True si todos los datos son correctos.</returns>
         private bool ValidarCampos()
         {
-            // Validación DNI
-            if (string.IsNullOrWhiteSpace(txtNumDocumento.Text))
-                return MostrarError("El DNI del cliente es obligatorio.");
+            string tipoDoc = ((ComboBoxItem)cmbTipoDocumento.SelectedItem).Content.ToString();
+            string numeroDoc = txtNumDocumento.Text.Trim();
 
-            // Validación nombre
+            // Validación del tipo de documento
+            if (string.IsNullOrWhiteSpace(numeroDoc))
+                return MostrarError("El número de documento es obligatorio.");
+
+            switch (tipoDoc)
+            {
+                case "DNI":
+                    if (!Regex.IsMatch(numeroDoc, @"^\d{8}[A-Z]$"))
+                        return MostrarError("El DNI debe tener 8 números y 1 letra. Ej: 12345678A");
+                    break;
+                case "NIE":
+                    if (!Regex.IsMatch(numeroDoc, @"^[XYZ]\d{7}[A-Z]$"))
+                        return MostrarError("El NIE debe comenzar con X, Y o Z seguido de 7 dígitos y una letra. Ej: X1234567A");
+                    break;
+                case "Pasaporte":
+                    if (!Regex.IsMatch(numeroDoc, @"^[A-Z0-9]{5,9}$"))
+                        return MostrarError("El pasaporte debe contener entre 5 y 9 caracteres alfanuméricos.");
+                    break;
+            }
+
+            // Validaciones restantes
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
                 return MostrarError("El nombre del cliente es obligatorio.");
-
-            // Validación apellidos
             if (string.IsNullOrWhiteSpace(txtApellidos.Text))
                 return MostrarError("Los apellidos del cliente son obligatorios.");
-
-            // Validación teléfono obligatorio y formato
             if (string.IsNullOrWhiteSpace(txtTelefono.Text))
                 return MostrarError("El teléfono del cliente es obligatorio.");
-
             if (!Regex.IsMatch(txtTelefono.Text.Trim(), @"^\d{9}$"))
-                return MostrarError("El teléfono del cliente debe contener exactamente 9 dígitos. Ej: 600123456");
-
-            // Validación email obligatorio y formato
+                return MostrarError("El teléfono debe contener exactamente 9 dígitos. Ej: 600123456");
             if (string.IsNullOrWhiteSpace(txtEmail.Text))
                 return MostrarError("El email del cliente es obligatorio.");
-
             if (!Regex.IsMatch(txtEmail.Text.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                 return MostrarError("El formato del email no es válido. Ej: ejemplo@dominio.com");
-
-            // Validación dirección
             if (string.IsNullOrWhiteSpace(txtDireccion.Text))
                 return MostrarError("La dirección del cliente es obligatoria.");
 

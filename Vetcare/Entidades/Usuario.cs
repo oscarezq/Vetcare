@@ -71,5 +71,9 @@ namespace Vetcare.Entidades
         /// Nombre del rol del usuario.
         /// </summary>
         public string NombreRol { get; set; }
+
+        public string Especialidad { get; set; }
+
+        public string NumeroColegiado { get; set; }
     }
 }

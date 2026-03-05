@@ -124,10 +124,15 @@
                 </DockPanel>
 
                 <DataGrid x:Name="dgCitas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column"
+                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgCitas_MouseDoubleClick"
                           Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40">
 
                     <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
+
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
@@ -175,7 +180,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="FECHA / HORA" 
                         Binding="{Binding FechaHora, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" 
-                        Width="150"/>
+                        Width="1.5*"/>
 
                         <DataGridTemplateColumn Header="MASCOTA" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -189,7 +194,7 @@
 
                         <DataGridTextColumn Header="VETERINARIO" Binding="{Binding InfoVeterinario}" Width="2*"/>
 
-                        <DataGridTemplateColumn Header="ESTADO" Width="Auto">
+                        <DataGridTemplateColumn Header="ESTADO" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border CornerRadius="10" Padding="8,3" HorizontalAlignment="Left" Background="#F4F6F7" Margin="5,0">
@@ -199,7 +204,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="110">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

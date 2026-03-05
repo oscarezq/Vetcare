@@ -62,17 +62,35 @@
 
                     <StackPanel Margin="5">
                         <TextBlock Text="Especie" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtEspecie" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <Button x:Name="btnSeleccionarEspecie" Click="btnBuscarEspecie_Click" Height="30" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch" Cursor="Hand">
+                            <Grid Margin="5,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="txtNombreEspecie" Text="Seleccionar especie..." VerticalAlignment="Center" Foreground="#7F8C8D" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
+                            </Grid>
+                        </Button>
+                        <TextBox x:Name="txtIdEspecie" Visibility="Collapsed"/>
                     </StackPanel>
                 </UniformGrid>
 
-                <!-- Fila 3: Raza / Sexo -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
                         <TextBlock Text="Raza" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtRaza" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <Button x:Name="btnSeleccionarRaza" Click="btnBuscarRaza_Click" Height="30" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch" Cursor="Hand">
+                            <Grid Margin="5,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="txtNombreRaza" Text="Seleccionar raza..." VerticalAlignment="Center" Foreground="#7F8C8D" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
+                            </Grid>
+                        </Button>
+                        <TextBox x:Name="txtIdRaza" Visibility="Collapsed"/>
                     </StackPanel>
-
                     <StackPanel Margin="5">
                         <TextBlock Text="Sexo" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
                         <ComboBox x:Name="cbSexo" Height="30">

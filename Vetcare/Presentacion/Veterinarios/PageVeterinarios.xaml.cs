@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Usuarios;
@@ -266,33 +267,27 @@ namespace Vetcare.Presentacion.Veterinarios
 
         private void hlUsuario_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (sender is Hyperlink hl && hl.DataContext is Veterinario v)
             {
-                // 1. Obtener el veterinario desde el link
-                Hyperlink hl = sender as Hyperlink;
-                Veterinario v = hl.DataContext as Veterinario;
+                // Abrir la ficha pasando el IdUsuario
+                WindowFichaUsuario ficha = new WindowFichaUsuario(v.IdUsuario);
+                ficha.Owner = Window.GetWindow(this); // Establece ventana padre
+                ficha.ShowDialog();
 
-                if (v != null)
-                {
-                    // 2. Buscamos el usuario completo
-                    Usuario usu = _usuarioService.ObtenerPorId(v.IdUsuario);
-
-                    if (usu != null)
-                    {
-                        // 3. Abrimos WindowUsuario (Sin bloquear rol, para que sea la gestión de usuario)
-                        WindowUsuario win = new WindowUsuario(usu);
-                        win.lblTitulo.Text = "GESTIÓN DE CREDENCIALES";
-
-                        if (win.ShowDialog() == true)
-                        {
-                            CargarDatos(); // Refrescar por si cambió el nombre/username
-                        }
-                    }
-                }
+                // Aquí podrías recargar la lista si cambió algo
+                CargarDatos();
             }
-            catch (Exception ex)
+        }
+
+        private void dgVeterinarios_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgVeterinarios.SelectedItem is Veterinario v)
             {
-                MessageBox.Show($"Error al acceder al usuario: {ex.Message}");
+                WindowFichaUsuario ficha = new WindowFichaUsuario(v.IdUsuario);
+                ficha.Owner = Window.GetWindow(this);
+                ficha.ShowDialog();
+
+                CargarDatos(); // refrescar lista si hubo cambios
             }
         }
     }

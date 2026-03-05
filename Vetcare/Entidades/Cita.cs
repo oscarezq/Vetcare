@@ -23,6 +23,16 @@ namespace Vetcare.Entidades
         public int IdVeterinario { get; set; }
 
         /// <summary>
+        /// Identificador del usuario asociado al veterinario que va a atender a la mascota.
+        /// </summary>
+        public int IdUsuarioVeterinario { get; set; }
+
+        /// <summary>
+        /// Identificador del usuario asociado al dueño de la mascota.
+        /// </summary>
+        public int IdUsuarioDueno { get; set; }
+
+        /// <summary>
         /// Fecha y hora de la cita.
         /// </summary>
         public DateTime FechaHora { get; set; }

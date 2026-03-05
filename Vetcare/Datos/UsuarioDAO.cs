@@ -28,7 +28,7 @@ namespace Vetcare.Datos
                 {
                     con.Open();
                     string query = @"
-                        SELECT u.id_usuario, u.username, u.password_hash, u.salt, u.nombre, 
+                        SELECT u.id_usuario, u.username, u.password_hash, u.salt, u.nombre, u.fecha_alta,
                                u.apellidos, u.email, u.telefono, u.id_rol, u.activo, u.debe_cambiar_password, r.nombre as nombre_rol
                         FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id_rol
                         WHERE u.username = @user AND u.activo = 1";

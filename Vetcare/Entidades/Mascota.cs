@@ -27,15 +27,11 @@ namespace Vetcare.Entidades
         /// </summary>
         public string Nombre { get; set; }
 
-        /// <summary>
-        /// Especie a la que pertenece la mascota.
-        /// </summary>
-        public string Especie { get; set; }
+        public int IdEspecie { get; set; }
+        public int IdRaza { get; set; }
 
-        /// <summary>
-        /// Raza a la que pertenece la mascota.
-        /// </summary>
-        public string Raza { get; set; }
+        public string NombreEspecie { get; set; }
+        public string NombreRaza { get; set; }
 
         /// <summary>
         /// Sexo de la mascota (macho, hembra).

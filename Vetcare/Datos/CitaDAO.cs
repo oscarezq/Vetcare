@@ -1,7 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls.Primitives;
 using Vetcare.Entidades;
 
 namespace Vetcare.Datos
@@ -17,17 +16,26 @@ namespace Vetcare.Datos
             {
                 con.Open();
 
-                string sql = @"SELECT c.id_cita, c.id_mascota, c.id_veterinario, c.fecha, 
-                       c.motivo, c.estado, c.observaciones,
-                       m.nombre AS nombre_mascota,
-                       CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno,
-                       CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario,
-                       v.numero_colegiado
-                FROM citas c
-                INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
-                INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente
-                INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
-                INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario";
+                string sql = @"
+                    SELECT 
+                        c.id_cita, 
+                        c.id_mascota, 
+                        c.id_veterinario, 
+                        c.fecha, 
+                        c.motivo, 
+                        c.estado, 
+                        c.observaciones,
+                        m.nombre AS nombre_mascota,
+                        CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno,
+                        cli.id_cliente AS id_cliente_dueno,
+                        CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario,
+                        v.numero_colegiado,
+                        v.id_usuario AS id_usuario_veterinario
+                    FROM citas c
+                    INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
+                    INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente
+                    INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
+                    INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 using (MySqlDataReader rdr = cmd.ExecuteReader())
@@ -47,23 +55,34 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT c.id_cita, c.id_mascota, c.id_veterinario, c.fecha, 
-                       c.motivo, c.estado, c.observaciones,
-                       m.nombre AS nombre_mascota,
-                       CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno,
-                       CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario,
-                       v.numero_colegiado
-                FROM citas c
-                INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
-                INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente
-                INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
-                INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario";
+                string sql = @"
+                    SELECT 
+                        c.id_cita, 
+                        c.id_mascota, 
+                        c.id_veterinario, 
+                        c.fecha, 
+                        c.motivo, 
+                        c.estado, 
+                        c.observaciones,
+                        m.nombre AS nombre_mascota,
+                        CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno,
+                        cli.id_cliente AS id_cliente_dueno,
+                        CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario,
+                        v.numero_colegiado,
+                        v.id_usuario AS id_usuario_veterinario
+                    FROM citas c
+                    INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
+                    INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente
+                    INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
+                    INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario
+                    WHERE c.id_cita = @id";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@id", idCita);
                 using (MySqlDataReader rdr = cmd.ExecuteReader())
                 {
-                    if (rdr.Read()) cita = MappingCita(rdr);
+                    if (rdr.Read())
+                        cita = MappingCita(rdr);
                 }
             }
             return cita;
@@ -74,9 +93,11 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                // CORREGIDO: fecha_hora -> fecha
-                string sql = @"INSERT INTO citas (id_mascota, id_veterinario, fecha, motivo, estado, observaciones)
-                               VALUES (@idMascota, @idVeterinario, @fecha, @motivo, @estado, @observaciones)";
+                string sql = @"
+                    INSERT INTO citas 
+                        (id_mascota, id_veterinario, fecha, motivo, estado, observaciones)
+                    VALUES 
+                        (@idMascota, @idVeterinario, @fecha, @motivo, @estado, @observaciones)";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 CargarParametros(cmd, cita);
@@ -93,8 +114,11 @@ namespace Vetcare.Datos
                 {
                     try
                     {
-                        string sql = @"INSERT INTO citas (id_mascota, id_veterinario, fecha, motivo, estado, observaciones)
-                                       VALUES (@idMascota, @idVeterinario, @fecha, @motivo, @estado, @observaciones)";
+                        string sql = @"
+                            INSERT INTO citas 
+                                (id_mascota, id_veterinario, fecha, motivo, estado, observaciones)
+                            VALUES 
+                                (@idMascota, @idVeterinario, @fecha, @motivo, @estado, @observaciones)";
 
                         foreach (Cita cita in citas)
                         {
@@ -102,6 +126,7 @@ namespace Vetcare.Datos
                             CargarParametros(cmd, cita);
                             cmd.ExecuteNonQuery();
                         }
+
                         transaccion.Commit();
                         return true;
                     }
@@ -119,11 +144,15 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-
-                string sql = @"UPDATE citas SET id_mascota = @idMascota, id_veterinario = @idVeterinario,
-                                                fecha = @fecha, motivo = @motivo, estado = @estado, 
-                                                observaciones = @observaciones
-                               WHERE id_cita = @id";
+                string sql = @"
+                    UPDATE citas SET 
+                        id_mascota = @idMascota, 
+                        id_veterinario = @idVeterinario,
+                        fecha = @fecha, 
+                        motivo = @motivo, 
+                        estado = @estado, 
+                        observaciones = @observaciones
+                    WHERE id_cita = @id";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 CargarParametros(cmd, cita);
@@ -141,10 +170,15 @@ namespace Vetcare.Datos
                 {
                     try
                     {
-                        string sql = @"UPDATE citas SET id_mascota = @idMascota, id_veterinario = @idVeterinario,
-                                                        fecha = @fecha, motivo = @motivo, estado = @estado, 
-                                                        observaciones = @observaciones
-                                       WHERE id_cita = @id";
+                        string sql = @"
+                            UPDATE citas SET 
+                                id_mascota = @idMascota, 
+                                id_veterinario = @idVeterinario,
+                                fecha = @fecha, 
+                                motivo = @motivo, 
+                                estado = @estado, 
+                                observaciones = @observaciones
+                            WHERE id_cita = @id";
 
                         foreach (Cita cita in citas)
                         {
@@ -153,6 +187,7 @@ namespace Vetcare.Datos
                             cmd.Parameters.AddWithValue("@id", cita.IdCita);
                             cmd.ExecuteNonQuery();
                         }
+
                         transaccion.Commit();
                         return true;
                     }
@@ -184,31 +219,25 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-               
                 using (MySqlTransaction transaccion = con.BeginTransaction())
                 {
                     try
                     {
                         string sql = "DELETE FROM citas WHERE id_cita = @id";
-
-                        // Creamos el comando una sola vez fuera del bucle por rendimiento
                         MySqlCommand cmd = new MySqlCommand(sql, con, transaccion);
                         cmd.Parameters.Add("@id", MySqlDbType.Int32);
 
                         foreach (int id in idsCitas)
                         {
-                            // Asignamos el valor al parámetro existente
                             cmd.Parameters["@id"].Value = id;
                             cmd.ExecuteNonQuery();
                         }
 
-                        // Si todo fue bien, confirmamos los cambios
                         transaccion.Commit();
                         return true;
                     }
-                    catch (Exception)
+                    catch
                     {
-                        // Si hubo un error (ej. cita inexistente o bloqueada), deshacemos todo
                         transaccion.Rollback();
                         return false;
                     }
@@ -216,7 +245,7 @@ namespace Vetcare.Datos
             }
         }
 
-        // METODOS AUXILIARES PARA EVITAR REPETIR CÓDIGO
+        // --- MÉTODOS AUXILIARES ---
         private void CargarParametros(MySqlCommand cmd, Cita cita)
         {
             cmd.Parameters.Clear();
@@ -235,6 +264,8 @@ namespace Vetcare.Datos
                 IdCita = Convert.ToInt32(rdr["id_cita"]),
                 IdMascota = Convert.ToInt32(rdr["id_mascota"]),
                 IdVeterinario = Convert.ToInt32(rdr["id_veterinario"]),
+                IdUsuarioVeterinario = Convert.ToInt32(rdr["id_usuario_veterinario"]),
+                IdUsuarioDueno = Convert.ToInt32(rdr["id_cliente_dueno"]),
                 FechaHora = Convert.ToDateTime(rdr["fecha"]),
                 Motivo = rdr["motivo"].ToString(),
                 Estado = rdr["estado"].ToString(),

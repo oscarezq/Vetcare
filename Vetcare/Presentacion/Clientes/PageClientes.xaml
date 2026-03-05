@@ -157,7 +157,7 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="CLIENTE" Width="240">
+                        <DataGridTemplateColumn Header="CLIENTE" Width="2.4*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock VerticalAlignment="Center">
@@ -179,13 +179,13 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="150"/>
-                        <DataGridTextColumn Header="TELÉFONO" Binding="{Binding Telefono}" Width="110"/>
-                        <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="250"/>
+                        <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="1.5*"/>
+                        <DataGridTextColumn Header="TELÉFONO" Binding="{Binding Telefono}" Width="1.1*"/>
+                        <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="2.5*"/>
                         <DataGridTextColumn Header="DIRECCIÓN" Binding="{Binding Direccion}" Width="*"/>
-                        <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="110"/>
+                        <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="1.1*"/>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

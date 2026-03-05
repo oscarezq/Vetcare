@@ -88,8 +88,8 @@ namespace Vetcare.Presentacion
                     // Comprobamos cada filtro de texto
                     if (!string.IsNullOrEmpty(nombreBusca) && !m.Nombre.ToLower().Contains(nombreBusca)) continue;
                     if (!string.IsNullOrEmpty(numeroChipBusca) && !m.NumeroChip.ToLower().Contains(numeroChipBusca)) continue;
-                    if (!string.IsNullOrEmpty(especieBusca) && !m.Especie.ToLower().Contains(especieBusca)) continue;
-                    if (!string.IsNullOrEmpty(razaBusca) && !m.Raza.ToLower().Contains(razaBusca)) continue;
+                    if (!string.IsNullOrEmpty(especieBusca) && !m.NombreEspecie.ToLower().Contains(especieBusca)) continue;
+                    if (!string.IsNullOrEmpty(razaBusca) && !m.NombreRaza.ToLower().Contains(razaBusca)) continue;
                     if (!string.IsNullOrEmpty(duenoBusca) && !m.Dueno.ToLower().Contains(duenoBusca)) continue;
                     if (sexoBusca != "" && sexoBusca != "todos")
                     {
@@ -122,10 +122,10 @@ namespace Vetcare.Presentacion
                             listaFiltrada.Sort((x, y) => esAscendente ? x.Nombre.CompareTo(y.Nombre) : y.Nombre.CompareTo(x.Nombre));
                             break;
                         case "Especie":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Especie.CompareTo(y.Especie) : y.Especie.CompareTo(x.Especie));
+                            listaFiltrada.Sort((x, y) => esAscendente ? x.NombreEspecie.CompareTo(y.NombreEspecie) : y.NombreEspecie.CompareTo(x.NombreEspecie));
                             break;
                         case "Raza":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Raza.CompareTo(y.Raza) : y.Raza.CompareTo(x.Raza));
+                            listaFiltrada.Sort((x, y) => esAscendente ? x.NombreRaza.CompareTo(y.NombreRaza) : y.NombreRaza.CompareTo(x.NombreRaza));
                             break;
                         case "Sexo":
                             listaFiltrada.Sort((x, y) => esAscendente ? x.Sexo.CompareTo(y.Sexo) : y.Sexo.CompareTo(x.Sexo));

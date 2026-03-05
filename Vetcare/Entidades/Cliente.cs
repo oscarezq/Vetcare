@@ -12,35 +12,37 @@ namespace Vetcare.Entidades
         /// </summary>
         public int IdCliente { get; set; }
 
+        public string? TipoDocumento { get; set; }
+
         /// <summary>
         /// Número de identificación del cliente (DNI, NIE, NIF...).
         /// </summary>
-        public string NumDocumento { get; set; }
+        public string? NumDocumento { get; set; }
 
         /// <summary>
         /// Nombre del cliente.
         /// </summary>
-        public string Nombre { get; set; }
+        public string? Nombre { get; set; }
 
         /// <summary>
         /// Apellidos del cliente.
         /// </summary>
-        public string Apellidos { get; set; }
+        public string? Apellidos { get; set; }
 
         /// <summary>
         /// Teléfono del cliente.
         /// </summary>
-        public string Telefono { get; set; }
+        public string? Telefono { get; set; }
 
         /// <summary>
         /// Email del cliente.
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// Dirección del cliente.
         /// </summary>
-        public string Direccion { get; set; }
+        public string? Direccion { get; set; }
 
         /// <summary>
         /// Fecha de alta del cliente.

@@ -198,15 +198,15 @@
 
                         <DataGridTextColumn Header="DUEÑO" Binding="{Binding Dueno}" Width="2.5*" FontSize="14"/>
 
-                        <DataGridTextColumn Header="ESPECIE" Binding="{Binding Especie}" Width="1.2*" FontSize="14"/>
-                        <DataGridTextColumn Header="RAZA" Binding="{Binding Raza}" Width="1.5*" FontSize="14"/>
+                        <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="1.2*" FontSize="14"/>
+                        <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="1.5*" FontSize="14"/>
 
                         <DataGridTextColumn Header="SEXO" Binding="{Binding Sexo}" Width="0.8*" FontSize="14"/>
                         <DataGridTextColumn Header="PESO (KG)" Binding="{Binding Peso}" Width="0.8*" FontSize="14"/>
 
                         <DataGridTextColumn Header="NACIMIENTO" Binding="{Binding FechaNacimiento, StringFormat=\{0:dd/MM/yyyy\}}" Width="1.2*" FontSize="14"/>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="110">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">

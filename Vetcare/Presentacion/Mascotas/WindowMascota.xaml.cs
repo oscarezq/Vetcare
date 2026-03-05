@@ -7,6 +7,8 @@ using System.Windows.Media;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Clientes;
+using Vetcare.Presentacion.Mascotas.Especies;
+using Vetcare.Presentacion.Mascotas.Razas;
 
 namespace Vetcare.Presentacion
 {
@@ -81,8 +83,8 @@ namespace Vetcare.Presentacion
         private void CargarDatos()
         {
             txtNombre.Text = mascota.Nombre;
-            txtEspecie.Text = mascota.Especie;
-            txtRaza.Text = mascota.Raza;
+            txtNombreEspecie.Text = mascota.NombreEspecie;
+            txtNombreRaza.Text = mascota.NombreRaza;
             txtPeso.Text = mascota.Peso.ToString();
             dpNacimiento.SelectedDate = mascota.FechaNacimiento;
             txtChip.Text = mascota.NumeroChip;
@@ -114,17 +116,22 @@ namespace Vetcare.Presentacion
 
             try
             {
-                // Mapeo de datos desde los controles al objeto entidad
+                // 1. Mapeo de datos básicos
                 mascota.Nombre = txtNombre.Text.Trim();
-                mascota.Especie = txtEspecie.Text.Trim();
-                mascota.Raza = txtRaza.Text.Trim();
                 mascota.Peso = decimal.Parse(txtPeso.Text.Trim());
                 mascota.NumeroChip = txtChip.Text.Trim();
                 mascota.Sexo = ((ComboBoxItem)cbSexo.SelectedItem).Content.ToString();
-
-                // Obtenemos el ID del cliente desde el TextBox oculto
-                mascota.IdCliente = int.Parse(txtIdDueño.Text);
                 mascota.FechaNacimiento = dpNacimiento.SelectedDate.Value;
+
+                // 2. ASIGNACIÓN DE IDS (Esto es lo que evita el error de Foreign Key)
+                // Usamos los campos txtIdDueño, txtIdEspecie y txtIdRaza que se llenan en los selectores
+                mascota.IdCliente = int.Parse(txtIdDueño.Text);
+                mascota.IdEspecie = int.Parse(txtIdEspecie.Text); // <--- CAMBIO CRÍTICO
+                mascota.IdRaza = int.Parse(txtIdRaza.Text);      // <--- CAMBIO CRÍTICO (El error venía de aquí)
+
+                // 3. Mapeo de nombres (opcional, si tu entidad los usa para mostrar datos)
+                mascota.NombreEspecie = txtNombreEspecie.Text.Trim();
+                mascota.NombreRaza = txtNombreRaza.Text.Trim();
 
                 bool resultado;
                 if (esEdicion)
@@ -139,17 +146,17 @@ namespace Vetcare.Presentacion
                 if (resultado)
                 {
                     MessageBox.Show("Mascota guardada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.DialogResult = true; // Para avisar a la ventana principal que refresque
+                    this.DialogResult = true;
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo guardar la mascota. Revise los datos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("No se pudo guardar la mascota. Revise que los datos existan en la base de datos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ocurrió un error inesperado: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error: Asegúrese de haber seleccionado Especie y Raza correctamente. Detalle: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -164,7 +171,7 @@ namespace Vetcare.Presentacion
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
                 return MostrarError("El nombre de la mascota es obligatorio.");
 
-            if (string.IsNullOrWhiteSpace(txtEspecie.Text))
+            if (string.IsNullOrWhiteSpace(txtNombreEspecie.Text))
                 return MostrarError("La especie es obligatoria.");
 
             if (cbSexo.SelectedItem == null)
@@ -225,6 +232,40 @@ namespace Vetcare.Presentacion
                 txtNombreDueño.FontStyle = FontStyles.Normal;
                 txtNombreDueño.Foreground = new SolidColorBrush(Color.FromRgb(27, 38, 49));
                 txtNombreDueño.FontWeight = FontWeights.SemiBold;
+            }
+        }
+
+        private void btnBuscarEspecie_Click(object sender, RoutedEventArgs e)
+        {
+            WindowSelectorEspecie selector = new WindowSelectorEspecie();
+            selector.Owner = this; // Para que se centre respecto a esta ventana
+            if (selector.ShowDialog() == true)
+            {
+                // Suponiendo que tu entidad se llama Especie y tiene Id y Nombre
+                var especie = selector.EspecieSeleccionada;
+                txtIdEspecie.Text = especie.IdEspecie.ToString();
+                txtNombreEspecie.Text = especie.NombreEspecie;
+                txtNombreEspecie.Foreground = System.Windows.Media.Brushes.Black;
+
+                // Opcional: Limpiar la raza si cambia la especie
+                txtIdRaza.Text = "";
+                txtNombreRaza.Text = "Seleccionar raza...";
+            }
+        }
+
+        private void btnBuscarRaza_Click(object sender, RoutedEventArgs e)
+        {
+            // Opcional: Podrías pasar el Id de la especie para filtrar razas de esa especie
+            int idEspecie = string.IsNullOrEmpty(txtIdEspecie.Text) ? 0 : int.Parse(txtIdEspecie.Text);
+
+            WindowSelectorRaza selector = new WindowSelectorRaza(idEspecie);
+            selector.Owner = this;
+            if (selector.ShowDialog() == true)
+            {
+                var raza = selector.RazaSeleccionada;
+                txtIdRaza.Text = raza.IdRaza.ToString();
+                txtNombreRaza.Text = raza.NombreRaza;
+                txtNombreRaza.Foreground = System.Windows.Media.Brushes.Black;
             }
         }
     }
