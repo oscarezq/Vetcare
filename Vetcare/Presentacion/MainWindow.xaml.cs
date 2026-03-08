@@ -3,6 +3,7 @@ using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Citas;
 using Vetcare.Presentacion.Clientes;
+using Vetcare.Presentacion.Mascotas;
 using Vetcare.Presentacion.Usuarios;
 using Vetcare.Presentacion.Veterinarios;
 
@@ -64,7 +65,7 @@ namespace Vetcare.Presentacion
 
         private void btnHistorial_Click(object sender, RoutedEventArgs e)
         {
-            //FramePrincipal.Content = new PageHistorial(usuarioActual);
+            //FramePrincipal.Content = new PageHistorialClinico();
         }
 
         private void btnUsuarios_Click(object sender, RoutedEventArgs e)

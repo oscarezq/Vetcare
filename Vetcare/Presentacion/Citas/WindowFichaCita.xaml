@@ -11,232 +11,112 @@
     <Grid Margin="40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Cabecera -->
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
-            <!-- Contenido -->
             <RowDefinition Height="Auto"/>
-            <!-- Botones -->
         </Grid.RowDefinitions>
 
-        <!-- CABECERA -->
-        <Border Background="White"
-                CornerRadius="8"
-                Padding="20"
-                BorderBrush="#D5DBDB"
-                BorderThickness="1">
+        <Border Background="White" CornerRadius="10" Padding="25,20" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding FechaHora, StringFormat=dd/MM/yyyy HH:mm:ss}"
-                               FontSize="22"
-                               FontWeight="Bold"
-                               Foreground="#2C3E50"
-                               Margin="0,0,20,0"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Cita Médica:" FontSize="14" Foreground="#7F8C8D" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding FechaHora, StringFormat=dd/MM/yyyy HH:mm:ss}" 
+                           FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
                 </StackPanel>
 
-                <Border Grid.Column="1"
-                        Padding="15,5"
-                        CornerRadius="15"
-                        Background="#3498DB">
-                    <TextBlock Text="{Binding Estado}"
-                               Foreground="White"
-                               FontWeight="SemiBold"/>
+                <Border x:Name="borderEstado" Grid.Column="1" Padding="15,6" CornerRadius="15" Background="#3498DB">
+                    <TextBlock Text="{Binding Estado}" Foreground="White" FontWeight="SemiBold"/>
                 </Border>
             </Grid>
         </Border>
 
-        <!-- CONTENIDO -->
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Cliente y Mascota -->
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="25"/>
                 <RowDefinition Height="Auto"/>
-                <!-- Veterinario -->
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="35"/>
                 <RowDefinition Height="*"/>
-                <!-- Motivo y Observaciones -->
             </Grid.RowDefinitions>
 
-            <!-- CLIENTE Y MASCOTA -->
-            <Grid>
+            <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="25"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Cliente -->
-                <Border Background="White"
-                        Padding="20"
-                        CornerRadius="8"
-                        BorderBrush="#D5DBDB"
-                        BorderThickness="1">
+                <Border Background="White" Padding="18,12" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Cliente"
-                                   FontSize="16"
-                                   FontWeight="Bold"
-                                   Foreground="#2C3E50"
-                                   Margin="0,0,0,15"/>
-
+                        <TextBlock Text="CLIENTE" FontSize="11" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,8"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="{Binding NombreDueno}" FontSize="15" VerticalAlignment="Center"/>
-                            <Button Grid.Column="1"
-                                    Width="30"
-                                    Height="30"
-                                    Background="#3498DB"
-                                    BorderBrush="Transparent"
-                                    Foreground="White"
-                                    FontWeight="Bold"
-                                    Margin="5,0,0,0"
-                                    Content="🔍"
-                                    Click="btnBuscarCliente_Click"/>
+                            <TextBlock Text="{Binding NombreDueno}" FontSize="16" Foreground="#2C3E50" VerticalAlignment="Center" FontWeight="Medium"/>
+                            <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="btnBuscarCliente_Click"/>
                         </Grid>
-
-                        <TextBlock Text="{Binding NumDocumento}" Foreground="Gray"/>
-                        <TextBlock Text="{Binding Telefono}" Foreground="Gray"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Mascota -->
-                <Border Grid.Column="2"
-                        Background="White"
-                        Padding="20"
-                        CornerRadius="8"
-                        BorderBrush="#D5DBDB"
-                        BorderThickness="1">
+                <Border Grid.Column="2" Background="White" Padding="18,12" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Mascota"
-                                   FontSize="16"
-                                   FontWeight="Bold"
-                                   Foreground="#2C3E50"
-                                   Margin="0,0,0,15"/>
-
+                        <TextBlock Text="MASCOTA" FontSize="11" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,8"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="{Binding NombreMascota}" FontSize="15" VerticalAlignment="Center"/>
-                            <Button Grid.Column="1"
-                                    Width="30"
-                                    Height="30"
-                                    Background="#3498DB"
-                                    BorderBrush="Transparent"
-                                    Foreground="White"
-                                    FontWeight="Bold"
-                                    Margin="5,0,0,0"
-                                    Content="🔍"
-                                    Click="btnBuscarMascota_Click"/>
+                            <TextBlock Text="{Binding NombreMascota}" FontSize="16" Foreground="#2C3E50" VerticalAlignment="Center" FontWeight="Medium"/>
+                            <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="btnBuscarMascota_Click"/>
                         </Grid>
-
-                        <TextBlock Text="{Binding Especie}" Foreground="Gray"/>
-                        <TextBlock Text="{Binding Raza}" Foreground="Gray"/>
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <!-- VETERINARIO -->
-            <Border Grid.Row="2"
-                    Background="White"
-                    Padding="20"
-                    CornerRadius="8"
-                    BorderBrush="#D5DBDB"
-                    BorderThickness="1">
+            <Border Grid.Row="2" Background="White" Padding="18,12" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
                 <StackPanel>
-                    <TextBlock Text="Veterinario"
-                               FontSize="16"
-                               FontWeight="Bold"
-                               Foreground="#2C3E50"
-                               Margin="0,0,0,15"/>
-
+                    <TextBlock Text="VETERINARIO ASIGNADO" FontSize="11" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,8"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="{Binding NombreVeterinario}" FontSize="15" VerticalAlignment="Center"/>
-                        <Button Grid.Column="1"
-                                Width="30"
-                                Height="30"
-                                Background="#3498DB"
-                                BorderBrush="Transparent"
-                                Foreground="White"
-                                FontWeight="Bold"
-                                Margin="5,0,0,0"
-                                Content="🔍"
-                                Click="btnBuscarVeterinario_Click"/>
+                        <TextBlock Text="{Binding NombreVeterinario}" FontSize="16" Foreground="#2C3E50" VerticalAlignment="Center" FontWeight="Medium"/>
+                        <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="btnBuscarVeterinario_Click"/>
                     </Grid>
-
-                    <TextBlock Text="{Binding Especialidad}" Foreground="Gray"/>
-                    <TextBlock Text="{Binding NumeroColegiado}" Foreground="Gray"/>
                 </StackPanel>
             </Border>
 
-            <!-- MOTIVO Y OBSERVACIONES -->
-            <Border Grid.Row="4"
-                    Background="White"
-                    Padding="20"
-                    CornerRadius="8"
-                    BorderBrush="#D5DBDB"
-                    BorderThickness="1"
-                    MinHeight="150"
-                    MaxHeight="250">
+            <Border Grid.Row="4" Background="White" Padding="25" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <TextBlock Text="Motivo"
-                                   FontSize="16"
-                                   FontWeight="Bold"
-                                   Foreground="#2C3E50"
-                                   Margin="0,0,0,10"/>
-                        <TextBlock Text="{Binding Motivo}" TextWrapping="Wrap" FontSize="15" Margin="0,0,0,15"/>
+                        <StackPanel Margin="0,0,0,25">
+                            <TextBlock Text="Motivo de la Cita" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                            <Border Height="1" Background="#ECF0F1" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding Motivo}" TextWrapping="Wrap" FontSize="15" LineHeight="22" Foreground="#34495E"/>
+                        </StackPanel>
 
-                        <TextBlock Text="Observaciones"
-                                   FontSize="16"
-                                   FontWeight="Bold"
-                                   Foreground="#2C3E50"
-                                   Margin="0,0,0,10"/>
-                        <TextBlock Text="{Binding Observaciones}" TextWrapping="Wrap" FontSize="15"/>
+                        <StackPanel>
+                            <TextBlock Text="Observaciones Médicas" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                            <Border Height="1" Background="#ECF0F1" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding Observaciones}" TextWrapping="Wrap" FontSize="15" LineHeight="22" Foreground="#34495E"/>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </Border>
         </Grid>
 
-        <!-- BOTONES -->
-        <StackPanel Grid.Row="3"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Margin="0,30,0,0">
-            <Button Content="Editar"
-                    Width="130"
-                    Height="38"
-                    Background="#3498DB"
-                    Foreground="White"
-                    BorderBrush="Transparent"
-                    FontWeight="SemiBold"
-                    Margin="0,0,10,0"
-                    Click="btnEditar_Click"/>
-
-            <Button Content="Cerrar"
-                    Width="130"
-                    Height="38"
-                    Background="#BDC3C7"
-                    Foreground="White"
-                    BorderBrush="Transparent"
-                    Click="btnCerrar_Click"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+            <Button x:Name="btnCancelarCita" Content="Cancelar Cita" Width="140" Height="42" Background="#E74C3C" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Visibility="Collapsed" Click="btnCancelarCita_Click"/>
+            <Button x:Name="btnRegistrarConsulta" Content="Registrar Consulta" Width="180" Height="42" Background="#27AE60" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Click="btnRegistrarConsulta_Click"/>
+            <Button Content="Cerrar" Width="120" Height="42" Background="#BDC3C7" Foreground="White" BorderBrush="Transparent" Click="btnCerrar_Click"/>
         </StackPanel>
-
     </Grid>
 </Window>

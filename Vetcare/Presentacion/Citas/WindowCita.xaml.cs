@@ -24,7 +24,6 @@ namespace Vetcare.Presentacion.Citas
             InitializeComponent();
             cita = new Cita();
             dtpFecha.SelectedDate = DateTime.Now;
-            cbEstado.SelectedIndex = 0;
         }
 
         public WindowCita(Cita citaExistente)
@@ -53,15 +52,6 @@ namespace Vetcare.Presentacion.Citas
             txtHora.Text = cita.FechaHora.ToString("HH:mm");
             txtMotivo.Text = cita.Motivo;
             txtObservaciones.Text = cita.Observaciones;
-
-            foreach (ComboBoxItem item in cbEstado.Items)
-            {
-                if (item.Content.ToString() == cita.Estado)
-                {
-                    cbEstado.SelectedItem = item;
-                    break;
-                }
-            }
         }
 
         private void btnBuscarMascota_Click(object sender, RoutedEventArgs e)
@@ -104,7 +94,7 @@ namespace Vetcare.Presentacion.Citas
             {
                 cita.IdMascota = idMascotaSeleccionada;
                 cita.IdVeterinario = idVeterinarioSeleccionado;
-                cita.Estado = (cbEstado.SelectedItem as ComboBoxItem).Content.ToString();
+                cita.Estado = "Pendiente";
                 cita.Motivo = txtMotivo.Text.Trim();
                 cita.Observaciones = txtObservaciones.Text.Trim();
 

@@ -125,7 +125,7 @@
 
                 <DataGrid x:Name="dgCitas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
                           GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgCitas_MouseDoubleClick"
-                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40">
+                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" Margin="-10,10,10,-10">
 
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
@@ -197,9 +197,28 @@
                         <DataGridTemplateColumn Header="ESTADO" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="10" Padding="8,3" HorizontalAlignment="Left" Background="#F4F6F7" Margin="5,0">
-                                        <TextBlock Text="{Binding Estado}" FontSize="12" HorizontalAlignment="Center"/>
+                                    <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left" Margin="5,0">
+                                        <TextBlock x:Name="txtEstado" Text="{Binding Estado}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center"/>
                                     </Border>
+
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#FEF9E7"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#F1C40F"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Estado}" Value="Completada">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Estado}" Value="Atendida">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#E74C3C"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

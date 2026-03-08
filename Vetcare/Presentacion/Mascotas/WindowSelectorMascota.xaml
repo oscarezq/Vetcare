@@ -25,8 +25,8 @@
                       Background="White" BorderThickness="0" FontSize="13">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="2*"/>
-                    <DataGridTextColumn Header="ESPECIE" Binding="{Binding Especie}" Width="2*"/>
-                    <DataGridTextColumn Header="RAZA" Binding="{Binding Raza}" Width="2*"/>
+                    <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="2*"/>
+                    <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="2*"/>
                     <DataGridTextColumn Header="DUEÑO" Binding="{Binding NombreDueno}" Width="3*"/>
                 </DataGrid.Columns>
             </DataGrid>

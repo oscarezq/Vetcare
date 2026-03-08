@@ -105,40 +105,6 @@ namespace Vetcare.Datos
             }
         }
 
-        public bool InsertarVarias(List<Cita> citas)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                using (MySqlTransaction transaccion = con.BeginTransaction())
-                {
-                    try
-                    {
-                        string sql = @"
-                            INSERT INTO citas 
-                                (id_mascota, id_veterinario, fecha, motivo, estado, observaciones)
-                            VALUES 
-                                (@idMascota, @idVeterinario, @fecha, @motivo, @estado, @observaciones)";
-
-                        foreach (Cita cita in citas)
-                        {
-                            MySqlCommand cmd = new MySqlCommand(sql, con, transaccion);
-                            CargarParametros(cmd, cita);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        transaccion.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        transaccion.Rollback();
-                        return false;
-                    }
-                }
-            }
-        }
-
         public bool Actualizar(Cita cita)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
@@ -161,42 +127,19 @@ namespace Vetcare.Datos
             }
         }
 
-        public bool ActualizarVarias(List<Cita> citas)
+        public bool ActualizarEstado(int idCita, string estado)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                using (MySqlTransaction transaccion = con.BeginTransaction())
-                {
-                    try
-                    {
-                        string sql = @"
-                            UPDATE citas SET 
-                                id_mascota = @idMascota, 
-                                id_veterinario = @idVeterinario,
-                                fecha = @fecha, 
-                                motivo = @motivo, 
-                                estado = @estado, 
-                                observaciones = @observaciones
-                            WHERE id_cita = @id";
+                string sql = @" UPDATE citas 
+                    SET estado = @estado
+                    WHERE id_cita = @id";
 
-                        foreach (Cita cita in citas)
-                        {
-                            MySqlCommand cmd = new MySqlCommand(sql, con, transaccion);
-                            CargarParametros(cmd, cita);
-                            cmd.Parameters.AddWithValue("@id", cita.IdCita);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        transaccion.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        transaccion.Rollback();
-                        return false;
-                    }
-                }
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@estado", estado);
+                cmd.Parameters.AddWithValue("@id", idCita);
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 

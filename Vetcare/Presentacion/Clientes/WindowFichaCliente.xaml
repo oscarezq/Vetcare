@@ -232,12 +232,12 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Especie"
-                    Binding="{Binding Especie}"
+                    Binding="{Binding NombreEspecie}"
                     Width="120"
                     ElementStyle="{StaticResource CenteredTextColumnStyle}" />
 
                         <DataGridTextColumn Header="Raza"
-                    Binding="{Binding Raza}"
+                    Binding="{Binding NombreRaza}"
                     Width="140"
                     ElementStyle="{StaticResource CenteredTextColumnStyle}" />
 

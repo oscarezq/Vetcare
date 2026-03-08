@@ -3,7 +3,9 @@ using System.Windows;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Clientes;
+using Vetcare.Presentacion.HistorialesClinicos;
 using Vetcare.Presentacion.Usuarios;
+using Vetcare.Service;
 
 namespace Vetcare.Presentacion.Citas
 {
@@ -34,22 +36,17 @@ namespace Vetcare.Presentacion.Citas
                 if (citaActual != null)
                 {
                     this.DataContext = citaActual;
+                    ActualizarInterfazSegunEstado();
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo cargar la cita.",
-                                    "Error",
-                                    MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
+                    MessageBox.Show("No se pudo cargar la cita.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     this.Close();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar la cita:\n" + ex.Message,
-                                "Error",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                MessageBox.Show("Error al cargar la cita:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
             }
         }
@@ -75,6 +72,57 @@ namespace Vetcare.Presentacion.Citas
                                 "Error",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
+            }
+        }
+
+        private void btnRegistrarConsulta_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (citaActual == null) return;
+
+                // 1. MODO CREACIÓN: Si la cita está pendiente, registramos una nueva consulta
+                if (citaActual.Estado == "Pendiente")
+                {
+                    WindowConsulta ventana = new WindowConsulta(citaActual);
+                    ventana.Owner = this;
+
+                    if (ventana.ShowDialog() == true)
+                    {
+                        CargarCita(citaActual.IdCita); // Recargar para ver el cambio de estado a "Completada"
+                        this.DialogResult = true;
+                    }
+                }
+                // 2. MODO EDICIÓN/VISTA: Si ya está completada, buscamos el historial para editarlo
+                else if (citaActual.Estado == "Completada" || citaActual.Estado == "Atendida")
+                {
+                    var historialService = new HistorialClinicoService();
+                    // Buscamos el registro clínico asociado a esta cita
+                    HistorialClinico historial = historialService.ObtenerPorIdCita(citaActual.IdCita);
+
+                    if (historial != null)
+                    {
+                        // Usamos el nuevo constructor de edición que creamos antes
+                        WindowConsulta ventana = new WindowConsulta(historial, citaActual);
+                        ventana.Owner = this;
+
+                        if (ventana.ShowDialog() == true)
+                        {
+                            CargarCita(citaActual.IdCita);
+                            this.DialogResult = true;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontró el registro clínico de esta consulta.",
+                                        "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al gestionar la consulta:\n" + ex.Message,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -152,6 +200,73 @@ namespace Vetcare.Presentacion.Citas
                                 "Error",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
+            }
+        }
+
+        private void ActualizarInterfazSegunEstado()
+        {
+            if (citaActual == null) return;
+            var bc = new System.Windows.Media.BrushConverter();
+
+            switch (citaActual.Estado)
+            {
+                case "Pendiente":
+                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#F1C40F"); // Amarillo
+                    btnRegistrarConsulta.Visibility = Visibility.Visible;
+                    btnRegistrarConsulta.Content = "Registrar consulta";
+                    btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#27AE60");
+
+                    // Mostrar botón cancelar solo si está pendiente
+                    btnCancelarCita.Visibility = Visibility.Visible;
+                    break;
+
+                case "Atendida":
+                case "Completada":
+                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#2ecc71"); // Verde
+                    btnRegistrarConsulta.Visibility = Visibility.Visible;
+                    btnRegistrarConsulta.Content = "Ver consulta";
+                    btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#3498DB");
+
+                    btnCancelarCita.Visibility = Visibility.Collapsed;
+                    break;
+
+                case "Cancelada":
+                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#E74C3C"); // Rojo
+                    btnRegistrarConsulta.Visibility = Visibility.Collapsed;
+                    btnCancelarCita.Visibility = Visibility.Collapsed;
+                    break;
+
+                default:
+                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#BDC3C7");
+                    btnCancelarCita.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
+        private void btnCancelarCita_Click(object sender, RoutedEventArgs e)
+        {
+            var resultado = MessageBox.Show("¿Está seguro que desea cancelar esta cita?", "Confirmar",
+                                            MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (resultado == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    // Actualizamos el estado en el objeto y en la base de datos
+                    citaActual.Estado = "Cancelada";
+                    bool actualizado = citaService.Actualizar(citaActual); // Asegúrate que este método exista en tu Service
+
+                    if (actualizado)
+                    {
+                        MessageBox.Show("Cita cancelada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                        CargarCita(citaActual.IdCita); // Recargamos para actualizar colores y botones
+                        this.DialogResult = true; // Avisamos a la ventana padre que hubo cambios
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cancelar: " + ex.Message);
+                }
             }
         }
     }

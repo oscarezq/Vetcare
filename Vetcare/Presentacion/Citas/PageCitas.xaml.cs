@@ -168,10 +168,11 @@ namespace Vetcare.Presentacion.Citas
         {
             // 1. Instanciamos la ventana
             WindowCita ventanaCita = new WindowCita();
+            ventanaCita.Owner = Window.GetWindow(this);
 
             // 2. La abrimos de forma modal (ShowDialog)
             // ShowDialog detiene la ejecución de esta página hasta que se cierra la ventana
-            if (ventanaCita.ShowDialog() == true || true)
+            if (ventanaCita.ShowDialog() == true)
             {
                 // 3. Al regresar, refrescamos el DataGrid para ver la nueva cita
                 CargarDatos();
@@ -220,6 +221,7 @@ namespace Vetcare.Presentacion.Citas
                 WindowFichaCita ficha = new WindowFichaCita(citaSeleccionada.IdCita);
                 ficha.Owner = Window.GetWindow(this);
                 ficha.ShowDialog();
+                CargarDatos();
             }
         }
     }

@@ -23,19 +23,14 @@ namespace Vetcare.Negocio
             return citaDAO.Insertar(cita);
         }
 
-        public bool InsertarVarios(List<Cita> citas)
-        {
-            return citaDAO.InsertarVarias(citas);
-        }
-
         public bool Actualizar(Cita cita)
         {
             return citaDAO.Actualizar(cita);
         }
 
-        public bool ActualizarVarios(List<Cita> citas)
+        public bool ActualizarEstado(int idCita, string estado)
         {
-            return citaDAO.ActualizarVarias(citas);
+            return citaDAO.ActualizarEstado(idCita, estado);
         }
 
         public bool Eliminar(int idCita)

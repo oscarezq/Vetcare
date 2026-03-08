@@ -70,22 +70,25 @@
                 </UniformGrid>
 
                 <StackPanel Margin="5,0,5,15">
-                    <TextBlock Text="Estado" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="cbEstado" Height="30">
-                        <ComboBoxItem Content="Pendiente"/>
-                        <ComboBoxItem Content="Completada"/>
-                        <ComboBoxItem Content="Cancelada"/>
-                    </ComboBox>
-                </StackPanel>
-
-                <StackPanel Margin="5,0,5,15">
                     <TextBlock Text="Motivo de la cita" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtMotivo" Height="50" TextWrapping="Wrap" AcceptsReturn="True" Padding="5"/>
+                    <TextBox x:Name="txtMotivo" 
+                             Height="60" 
+                             TextWrapping="Wrap" 
+                             AcceptsReturn="True" 
+                             VerticalContentAlignment="Top"
+                             VerticalScrollBarVisibility="Auto"
+                             Padding="5"/>
                 </StackPanel>
 
                 <StackPanel Margin="5,0,5,25">
                     <TextBlock Text="Observaciones" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtObservaciones" Height="70" TextWrapping="Wrap" AcceptsReturn="True" Padding="5"/>
+                    <TextBox x:Name="txtObservaciones" 
+                             Height="150" 
+                             TextWrapping="Wrap" 
+                             AcceptsReturn="True" 
+                             VerticalContentAlignment="Top"
+                             VerticalScrollBarVisibility="Auto"
+                             Padding="5"/>
                 </StackPanel>
             </StackPanel>
 
