@@ -2,10 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Ficha de Usuario" Height="560" Width="1000"
-        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="#ECF0F1">
+        WindowStartupLocation="CenterOwner" Background="#ECF0F1">
 
     <Window.Resources>
-        <!-- Estilos de menú y textos -->
         <Style x:Key="MenuButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="50"/>
             <Setter Property="Margin" Value="20,8"/>
@@ -37,7 +36,7 @@
         <Style x:Key="ValueStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="17"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="0,2,0,12"/>
+            <Setter Property="Margin" Value="0,2,0,25"/>
         </Style>
     </Window.Resources>
 
@@ -47,7 +46,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ================= MENU LATERAL ================= -->
         <Border Background="#2C3E50" Grid.Column="0">
             <StackPanel Margin="0,40,0,0">
                 <TextBlock TextAlignment="Center" Margin="20,0,20,40" Foreground="White" FontSize="18" FontWeight="Bold" TextWrapping="Wrap">
@@ -56,46 +54,30 @@
                     <Run Text="{Binding NombreRol}" FontSize="13" FontWeight="Normal" Foreground="#1ABC9C"/>
                 </TextBlock>
 
-                <Button x:Name="btnDatos"
-                        Content="Datos Generales"
-                        Style="{StaticResource MenuButtonStyle}"
-                        Click="btnDatos_Click"/>
-
-                <Button x:Name="btnProfesional"
-                        Content="Datos Profesionales"
-                        Style="{StaticResource MenuButtonStyle}"
-                        Click="btnProfesional_Click"
-                        Visibility="Collapsed"/>
+                <Button x:Name="btnDatos" Content="Datos Generales" Style="{StaticResource MenuButtonStyle}" Click="btnDatos_Click"/>
             </StackPanel>
         </Border>
 
-        <!-- ================= PANEL PRINCIPAL ================= -->
-        <Grid Grid.Column="1" Background="White" Margin="0">
-            <!-- Datos Generales -->
+        <Grid Grid.Column="1" Background="White">
             <Grid x:Name="panelDatosGenerales" Margin="50,40">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                    <DockPanel Margin="0,0,0,30">
-                        <StackPanel DockPanel.Dock="Left">
-                            <TextBlock Text="Perfil de Usuario" FontSize="26" FontWeight="Bold" Foreground="#2C3E50"/>
-                        </StackPanel>
+                <DockPanel Margin="0,0,0,30">
+                    <TextBlock Text="Perfil de Usuario" FontSize="26" FontWeight="Bold" Foreground="#2C3E50" DockPanel.Dock="Left"/>
+                    <Button x:Name="btnEditarUsuario" Content="Editar Información" Width="160" Height="40" Background="#3498DB" Foreground="White" FontWeight="Bold" HorizontalAlignment="Right" Click="btnEditarUsuario_Click">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
 
-                        <Button x:Name="btnEditarUsuario" Content="Editar Información" 
-                            Width="160" Height="40" Background="#3498DB" Foreground="White" 
-                            FontWeight="Bold" HorizontalAlignment="Right" Click="btnEditarUsuario_Click">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="6"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
-                    </DockPanel>
-
-                    <Grid Grid.Row="1" Margin="0">
+                <StackPanel Grid.Row="1">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -108,9 +90,6 @@
                             <TextBlock Text="Nombre" Style="{StaticResource LabelStyle}"/>
                             <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
 
-                            <TextBlock Text="Apellidos" Style="{StaticResource LabelStyle}"/>
-                            <TextBlock Text="{Binding Apellidos}" Style="{StaticResource ValueStyle}"/>
-
                             <TextBlock Text="Correo Electrónico" Style="{StaticResource LabelStyle}"/>
                             <TextBlock Text="{Binding Email}" Style="{StaticResource ValueStyle}"/>
                         </StackPanel>
@@ -119,43 +98,33 @@
                             <TextBlock Text="Estado" Style="{StaticResource LabelStyle}"/>
                             <TextBlock Text="Cuenta Activa" Foreground="#27AE60" Style="{StaticResource ValueStyle}"/>
 
-                            <TextBlock Text="Fecha de alta" Style="{StaticResource LabelStyle}"/>
-                            <TextBlock Text="{Binding FechaAlta, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
+                            <TextBlock Text="Apellidos" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding Apellidos}" Style="{StaticResource ValueStyle}"/>
 
                             <TextBlock Text="Teléfono" Style="{StaticResource LabelStyle}"/>
                             <TextBlock Text="{Binding Telefono}" Style="{StaticResource ValueStyle}"/>
                         </StackPanel>
                     </Grid>
-                </Grid>
-            </Grid>
 
-            <!-- Datos Profesionales -->
-            <Grid x:Name="panelDatosProfesional" Margin="50,40" Visibility="Collapsed">
-                <StackPanel>
-                    <TextBlock Text="Datos Profesionales"
-                   FontSize="26"
-                   FontWeight="Bold"
-                   Foreground="#2C3E50"
-                   Margin="0,0,0,30"/>
-
-                    <Grid>
+                    <Grid x:Name="seccionProfesional" Visibility="Collapsed" Margin="0,10,0,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Número de Colegiado -->
-                        <StackPanel Grid.Column="0">
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
                             <TextBlock Text="Número de Colegiado" Style="{StaticResource LabelStyle}" />
                             <TextBlock x:Name="txtNumeroColegiado" Style="{StaticResource ValueStyle}" />
                         </StackPanel>
 
-                        <!-- Especialidad -->
-                        <StackPanel Grid.Column="1">
+                        <StackPanel Grid.Column="1" Margin="20,0,0,0">
                             <TextBlock Text="Especialidad" Style="{StaticResource LabelStyle}" />
                             <TextBlock x:Name="txtEspecialidad" Style="{StaticResource ValueStyle}" />
                         </StackPanel>
                     </Grid>
+
+                    <TextBlock Text="Fecha de alta" Style="{StaticResource LabelStyle}"/>
+                    <TextBlock Text="{Binding FechaAlta, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
                 </StackPanel>
             </Grid>
         </Grid>

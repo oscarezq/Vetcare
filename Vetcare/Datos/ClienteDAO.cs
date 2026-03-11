@@ -18,7 +18,8 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, telefono, email, direccion, fecha_alta
+                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, telefono, email, 
+                                      calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta
                                FROM clientes";
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
                 using (MySqlDataReader rdr = cmd.ExecuteReader())
@@ -38,7 +39,8 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, telefono, email, direccion, fecha_alta
+                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, telefono, email, 
+                                      calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta
                                FROM clientes
                                WHERE id_cliente = @id";
 
@@ -63,46 +65,15 @@ namespace Vetcare.Datos
             {
                 con.Open();
                 string sql = @"INSERT INTO clientes
-                               (tipo_documento, num_documento, nombre, apellidos, telefono, email, direccion, fecha_alta)
-                               VALUES (@tipoDocumento, @numDocumento, @nombre, @apellidos, @telefono, @email, @direccion, @fechaAlta)";
+                               (tipo_documento, num_documento, nombre, apellidos, telefono, email, 
+                                calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta)
+                               VALUES (@tipoDocumento, @numDocumento, @nombre, @apellidos, @telefono, @email, 
+                                @calle, @numero, @pisoPuerta, @codigoPostal, @localidad, @provincia, @fechaAlta)";
 
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
                 {
                     CargarParametros(cmd, cliente);
                     return cmd.ExecuteNonQuery() > 0;
-                }
-            }
-        }
-
-        public bool InsertarVarios(List<Cliente> clientes)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlTransaction transaccion = con.BeginTransaction();
-
-                try
-                {
-                    string sql = @"INSERT INTO clientes
-                                   (tipo_documento, num_documento, nombre, apellidos, telefono, email, direccion, fecha_alta)
-                                   VALUES (@tipoDocumento, @numDocumento, @nombre, @apellidos, @telefono, @email, @direccion, @fechaAlta)";
-
-                    foreach (Cliente cliente in clientes)
-                    {
-                        using (MySqlCommand cmd = new MySqlCommand(sql, con, transaccion))
-                        {
-                            CargarParametros(cmd, cliente);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-
-                    transaccion.Commit();
-                    return true;
-                }
-                catch
-                {
-                    transaccion.Rollback();
-                    return false;
                 }
             }
         }
@@ -119,7 +90,12 @@ namespace Vetcare.Datos
                                    apellidos = @apellidos,
                                    telefono = @telefono,
                                    email = @email,
-                                   direccion = @direccion
+                                   calle = @calle,
+                                   numero = @numero,
+                                   piso_puerta = @pisoPuerta,
+                                   codigo_postal = @codigoPostal,
+                                   localidad = @localidad,
+                                   provincia = @provincia
                                WHERE id_cliente = @id";
 
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
@@ -127,46 +103,6 @@ namespace Vetcare.Datos
                     CargarParametros(cmd, cliente);
                     cmd.Parameters.AddWithValue("@id", cliente.IdCliente);
                     return cmd.ExecuteNonQuery() > 0;
-                }
-            }
-        }
-
-        public bool ActualizarVarios(List<Cliente> clientes)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlTransaction transaccion = con.BeginTransaction();
-
-                try
-                {
-                    string sql = @"UPDATE clientes 
-                                   SET tipo_documento = @tipoDocumento,
-                                       num_documento = @numDocumento,
-                                       nombre = @nombre,
-                                       apellidos = @apellidos,
-                                       telefono = @telefono,
-                                       email = @email,
-                                       direccion = @direccion
-                                   WHERE id_cliente = @id";
-
-                    foreach (Cliente cliente in clientes)
-                    {
-                        using (MySqlCommand cmd = new MySqlCommand(sql, con, transaccion))
-                        {
-                            CargarParametros(cmd, cliente);
-                            cmd.Parameters.AddWithValue("@id", cliente.IdCliente);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-
-                    transaccion.Commit();
-                    return true;
-                }
-                catch
-                {
-                    transaccion.Rollback();
-                    return false;
                 }
             }
         }
@@ -230,7 +166,13 @@ namespace Vetcare.Datos
                 Apellidos = rdr["apellidos"].ToString(),
                 Telefono = rdr["telefono"].ToString(),
                 Email = rdr["email"].ToString(),
-                Direccion = rdr["direccion"].ToString(),
+                // Mapeo de nuevos campos de dirección
+                CalleDireccion = rdr["calle"].ToString(),
+                NumeroDireccion = rdr["numero"].ToString(),
+                PisoPuertaDireccion = rdr["piso_puerta"].ToString(),
+                CodigoPostalDireccion = rdr["codigo_postal"].ToString(),
+                LocalidadDireccion = rdr["localidad"].ToString(),
+                ProvinciaDireccion = rdr["provincia"].ToString(),
                 FechaAlta = Convert.ToDateTime(rdr["fecha_alta"])
             };
         }
@@ -244,7 +186,12 @@ namespace Vetcare.Datos
             cmd.Parameters.AddWithValue("@apellidos", cliente.Apellidos);
             cmd.Parameters.AddWithValue("@telefono", cliente.Telefono);
             cmd.Parameters.AddWithValue("@email", cliente.Email);
-            cmd.Parameters.AddWithValue("@direccion", cliente.Direccion);
+            cmd.Parameters.AddWithValue("@calle", cliente.CalleDireccion);
+            cmd.Parameters.AddWithValue("@numero", cliente.NumeroDireccion);
+            cmd.Parameters.AddWithValue("@pisoPuerta", cliente.PisoPuertaDireccion);
+            cmd.Parameters.AddWithValue("@codigoPostal", cliente.CodigoPostalDireccion);
+            cmd.Parameters.AddWithValue("@localidad", cliente.LocalidadDireccion);
+            cmd.Parameters.AddWithValue("@provincia", cliente.ProvinciaDireccion);
             cmd.Parameters.AddWithValue("@fechaAlta", cliente.FechaAlta);
         }
     }

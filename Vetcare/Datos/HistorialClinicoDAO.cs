@@ -18,15 +18,17 @@ namespace Vetcare.DAO
         {
             return new HistorialClinico
             {
-                IdHistorial = reader.GetInt32("id_historial"),
-                IdMascota = reader.GetInt32("id_mascota"),
-                IdCita = reader.IsDBNull(reader.GetOrdinal("id_cita")) ? null : reader.GetInt32("id_cita"),
-                IdVeterinario = reader.GetInt32("id_veterinario"),
-                FechaHora = reader.GetDateTime("fecha_hora"),
-                Peso = reader.IsDBNull(reader.GetOrdinal("peso")) ? null : reader.GetDecimal("peso"),
-                Diagnostico = reader.GetString("diagnostico"),
-                Tratamiento = reader.IsDBNull(reader.GetOrdinal("tratamiento")) ? null : reader.GetString("tratamiento"),
-                Observaciones = reader.IsDBNull(reader.GetOrdinal("observaciones")) ? null : reader.GetString("observaciones")
+                IdHistorial = Convert.ToInt32(reader["id_historial"]),
+                IdMascota = Convert.ToInt32(reader["id_mascota"]),
+                IdVeterinario = Convert.ToInt32(reader["id_veterinario"]),
+                // id_cita puede ser null en tu BD, manejamos el nulo:
+                IdCita = reader["id_cita"] != DBNull.Value ? Convert.ToInt32(reader["id_cita"]) : (int?)null,
+
+                FechaHora = Convert.ToDateTime(reader["fecha_hora"]),
+                Peso = reader["peso"] != DBNull.Value ? Convert.ToDecimal(reader["peso"]) : 0,
+                Diagnostico = reader["diagnostico"].ToString(),
+                Tratamiento = reader["tratamiento"].ToString(),
+                Observaciones = reader["observaciones"].ToString(),
             };
         }
 
@@ -144,30 +146,47 @@ namespace Vetcare.DAO
         // LISTAR POR MASCOTA
         // =========================
 
-        public List<HistorialClinico> ListarPorMascota(int idMascota)
+        public List<HistorialClinico> ObtenerPorMascota(int idMascota)
         {
             List<HistorialClinico> lista = new List<HistorialClinico>();
 
             using (MySqlConnection conn = conexion.ObtenerConexion())
             {
-                string sql = @"SELECT * 
-                               FROM historial_clinico 
-                               WHERE id_mascota=@idMascota
-                               ORDER BY fecha_hora DESC";
+                // Consulta ajustada a tu estructura de tablas real
+                string sql = @"
+                                SELECT h.*, 
+                                       CONCAT(u.nombre, ' ', u.apellidos) AS nombre_veterinario, 
+                                       c.motivo AS motivo_cita
+                                FROM historial_clinico h
+                                INNER JOIN veterinarios v ON h.id_veterinario = v.id_veterinario
+                                INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
+                                LEFT JOIN citas c ON h.id_cita = c.id_cita
+                                WHERE h.id_mascota = @idMascota
+                                ORDER BY h.fecha_hora DESC";
 
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@idMascota", idMascota);
 
-                conn.Open();
-
-                MySqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                try
                 {
-                    lista.Add(Map(reader));
+                    conn.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            HistorialClinico historial = Map(reader);
+                            historial.NombreVeterinario = reader["nombre_veterinario"].ToString();
+                            historial.Motivo = reader["motivo_cita"].ToString();
+
+                            lista.Add(historial);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al obtener historial clínico: " + ex.Message);
                 }
             }
-
             return lista;
         }
 

@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Usuarios;
 
 namespace Vetcare.Presentacion.Veterinarios
 {
@@ -69,5 +70,16 @@ namespace Vetcare.Presentacion.Veterinarios
         private void dgVeterinarios_MouseDoubleClick(object sender, MouseButtonEventArgs e) => FinalizarSeleccion();
         private void btnSeleccionar_Click(object sender, RoutedEventArgs e) => FinalizarSeleccion();
         private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
+
+        private void btnNuevoVeterinario_Click(object sender, RoutedEventArgs e)
+        {
+            // Supongo que tienes una ventana llamada WindowVeterinario
+            WindowUsuario win = new WindowUsuario();
+            if (win.ShowDialog() == true)
+            {
+                // Refrescar la lista después de crear uno nuevo
+                CargarLista();
+            }
+        }
     }
 }

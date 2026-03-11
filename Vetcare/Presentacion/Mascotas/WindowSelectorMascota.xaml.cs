@@ -45,6 +45,28 @@ namespace Vetcare.Presentacion
             else MessageBox.Show("Seleccione una mascota.");
         }
 
+        private void btnNuevo_Click(object sender, RoutedEventArgs e)
+        {
+            // Abrir la ventana de registro de mascota (sin pasarle objeto para que sea modo "Nuevo")
+            WindowMascota ventanaMascota = new WindowMascota();
+            ventanaMascota.Owner = this;
+
+            if (ventanaMascota.ShowDialog() == true)
+            {
+                // Refrescamos la lista para que aparezca la que acabas de crear
+                CargarLista();
+
+                // Opcional: Si quieres que se seleccione automáticamente la nueva
+                if (listaMascotas != null && listaMascotas.Count > 0)
+                {
+                    // Buscamos la mascota con el ID más alto (la última creada)
+                    var nueva = listaMascotas.OrderByDescending(m => m.IdMascota).FirstOrDefault();
+                    dgMascotas.SelectedItem = nueva;
+                    dgMascotas.ScrollIntoView(nueva);
+                }
+            }
+        }
+
         private void btnSeleccionar_Click(object sender, RoutedEventArgs e) => Finalizar();
         private void dgMascotas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) => Finalizar();
         private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();

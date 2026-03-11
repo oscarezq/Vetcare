@@ -84,13 +84,6 @@
                         </StackPanel>
                     </Button>
 
-                    <Button x:Name="btnHistorial" Style="{StaticResource MenuButtonStyle}" Click="btnHistorial_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Resources/historial.png" Width="18" Margin="0,0,10,0"/>
-                            <TextBlock Text="HISTORIAL"/>
-                        </StackPanel>
-                    </Button>
-
                     <Button x:Name="btnUsuarios" Style="{StaticResource MenuButtonStyle}" Click="btnUsuarios_Click">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/Resources/usuarios.png" Width="18" Margin="0,0,10,0"/>
@@ -102,6 +95,20 @@
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
                             <TextBlock Text="VETERINARIOS"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="btnServicios" Style="{StaticResource MenuButtonStyle}" Click="btnServicios_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
+                            <TextBlock Text="SERVICIOS"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="btnFacturas" Style="{StaticResource MenuButtonStyle}" Click="btnFacturas_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
+                            <TextBlock Text="FACTURAS"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

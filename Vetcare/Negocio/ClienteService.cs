@@ -43,16 +43,6 @@ namespace Vetcare.Negocio
         }
 
         /// <summary>
-        /// Método para insertar varios clientes
-        /// </summary>
-        /// <param name="clientes">Lista de clientes que se van a insertar</param>
-        /// <returns>Booleano que indica si se han insertado correctamente</returns>
-        public bool InsertarVarios(List<Cliente> clientes)
-        {
-            return clienteDAO.InsertarVarios(clientes);
-        }
-
-        /// <summary>
         /// Método para actualizar un cliente existente.
         /// </summary>
         /// <param name="cliente">Cliente con los datos actualizados.</param>
@@ -60,16 +50,6 @@ namespace Vetcare.Negocio
         public bool Actualizar(Cliente cliente)
         {
             return clienteDAO.Actualizar(cliente);
-        }
-
-        /// <summary>
-        /// Método para actualizar varios clientes.
-        /// </summary>
-        /// <param name="clientes">Lista de clientes con los datos actualizados.</param>
-        /// <returns>Booleano que indica si se han actualizado correctamente.</returns>
-        public bool ActualizarVarios(List<Cliente> clientes)
-        {
-            return clienteDAO.ActualizarVarios(clientes);
         }
 
         /// <summary>

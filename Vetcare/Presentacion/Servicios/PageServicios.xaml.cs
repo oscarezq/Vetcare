@@ -1,0 +1,135 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Vetcare.Datos;
+using Vetcare.Entidades;
+
+namespace Vetcare.Presentacion.Servicios
+{
+    /// <summary>
+    /// Lógica de interacción para PageServicios.xaml
+    /// </summary>
+    public partial class PageServicios : Page
+    {
+        private ServicioDAO servicioDAO = new ServicioDAO();
+        private List<Servicio> listaCompleta = new List<Servicio>();
+
+        public PageServicios()
+        {
+            InitializeComponent();
+            CargarDatos();
+        }
+
+        private void CargarDatos()
+        {
+            try
+            {
+                listaCompleta = servicioDAO.ObtenerTodos();
+                AplicarFiltros();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void AplicarFiltros()
+        {
+            if (listaCompleta == null || rbAsc == null || dgServicios == null) return;
+
+            IEnumerable<Servicio> filtrados = listaCompleta;
+
+            // 1. Filtro por Nombre
+            if (!string.IsNullOrWhiteSpace(txtBuscaNombre.Text))
+            {
+                filtrados = filtrados.Where(s => s.Nombre.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
+            }
+
+            // 2. Filtro por Precio Mínimo
+            if (decimal.TryParse(txtPrecioMin.Text, out decimal pMin))
+            {
+                filtrados = filtrados.Where(s => s.PrecioBase >= pMin);
+            }
+
+            // 3. Filtro por Precio Máximo
+            if (decimal.TryParse(txtPrecioMax.Text, out decimal pMax))
+            {
+                filtrados = filtrados.Where(s => s.PrecioBase <= pMax);
+            }
+
+            // 4. Ordenación
+            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString();
+            bool ascendente = rbAsc.IsChecked == true;
+
+            switch (criterio)
+            {
+                case "Precio":
+                    filtrados = ascendente ? filtrados.OrderBy(s => s.PrecioBase) : filtrados.OrderByDescending(s => s.PrecioBase);
+                    break;
+                case "ID":
+                    filtrados = ascendente ? filtrados.OrderBy(s => s.IdServicio) : filtrados.OrderByDescending(s => s.IdServicio);
+                    break;
+                default: // Nombre
+                    filtrados = ascendente ? filtrados.OrderBy(s => s.Nombre) : filtrados.OrderByDescending(s => s.Nombre);
+                    break;
+            }
+
+            dgServicios.ItemsSource = filtrados.ToList();
+        }
+
+        private void FiltroServicio_Changed(object sender, TextChangedEventArgs e) => AplicarFiltros();
+
+        private void FiltroServicio_Changed(object sender, SelectionChangedEventArgs e) => AplicarFiltros();
+
+        private void FiltroServicio_Changed(object sender, RoutedEventArgs e) => AplicarFiltros();
+
+        private void btnLimpiar_Click(object sender, RoutedEventArgs e)
+        {
+            txtBuscaNombre.Text = "";
+            txtPrecioMin.Text = "";
+            txtPrecioMax.Text = "";
+            cbOrdenarPor.SelectedIndex = 0;
+            rbAsc.IsChecked = true;
+            AplicarFiltros();
+        }
+
+        private void btnNuevoServicio_Click(object sender, RoutedEventArgs e)
+        {
+            // Aquí llamarías a tu WindowServicio (Formulario)
+            WindowServicio win = new WindowServicio();
+            if (win.ShowDialog() == true) 
+                CargarDatos();
+        }
+
+        private void btnEditarServicio_Click(object sender, RoutedEventArgs e)
+        {
+            var servicio = (Servicio)((Button)sender).DataContext;
+            WindowServicio win = new WindowServicio(servicio);
+            if (win.ShowDialog() == true) CargarDatos();
+        }
+
+        private void btnEliminarServicio_Click(object sender, RoutedEventArgs e)
+        {
+            var servicio = (Servicio)((Button)sender).DataContext;
+            var result = MessageBox.Show($"¿Estás seguro de eliminar el servicio {servicio.Nombre}?",
+                                       "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                // Lógica de borrado en DAO
+                CargarDatos();
+            }
+        }
+    }
+}

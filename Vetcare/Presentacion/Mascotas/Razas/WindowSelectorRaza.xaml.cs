@@ -64,8 +64,7 @@ namespace Vetcare.Presentacion.Mascotas.Razas
 
         private void btnNuevaRaza_Click(object sender, RoutedEventArgs e)
         {
-            // Pasamos el ID de la especie actual si queremos que la nueva raza se asigne a ella automáticamente
-            WindowRaza ventana = new WindowRaza();
+            WindowRaza ventana = new WindowRaza(_idEspecieFiltrar);
             ventana.Owner = this;
 
             if (ventana.ShowDialog() == true)
@@ -75,5 +74,6 @@ namespace Vetcare.Presentacion.Mascotas.Razas
                 MessageBox.Show("Raza guardada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
     }
 }

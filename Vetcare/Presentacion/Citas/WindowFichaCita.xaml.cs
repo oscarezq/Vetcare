@@ -4,6 +4,7 @@ using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Clientes;
 using Vetcare.Presentacion.HistorialesClinicos;
+using Vetcare.Presentacion.Mascotas;
 using Vetcare.Presentacion.Usuarios;
 using Vetcare.Service;
 

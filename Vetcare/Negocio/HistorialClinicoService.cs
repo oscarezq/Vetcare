@@ -30,7 +30,7 @@ namespace Vetcare.Service
 
         public List<HistorialClinico> ObtenerPorMascota(int idMascota)
         {
-            return dao.ListarPorMascota(idMascota);
+            return dao.ObtenerPorMascota(idMascota);
         }
 
         public bool Insertar(HistorialClinico historial)

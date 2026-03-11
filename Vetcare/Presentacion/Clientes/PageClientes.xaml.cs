@@ -18,7 +18,7 @@ namespace Vetcare.Presentacion.Clientes
 
         // Servicio de la capa de negocio para la gestión de operaciones de clientes.
         ClienteService cs = new ClienteService();
-
+        
         /// <summary>
         /// Inicializa una nueva instancia de la clase <see cref="PageClientes"/>.
         /// </summary>
@@ -76,14 +76,12 @@ namespace Vetcare.Presentacion.Clientes
                     string clienteBusca = txtBuscaCliente.Text.ToLower();
                     string telBusca = txtBuscaTelefono.Text.ToLower();
                     string emailBusca = txtBuscaEmail.Text.ToLower();
-                    string dirBusca = txtBuscaDireccion.Text.ToLower();
 
                     // Comprobamos cada filtro. Si no cumple alguno, pasamos al siguiente cliente
                     if (!string.IsNullOrEmpty(dniBusca) && !c.NumDocumento.ToLower().Contains(dniBusca)) continue;
                     if (!string.IsNullOrEmpty(clienteBusca) && !c.NombreCompleto.ToLower().Contains(clienteBusca)) continue;
                     if (!string.IsNullOrEmpty(telBusca) && !c.Telefono.ToLower().Contains(telBusca)) continue;
                     if (!string.IsNullOrEmpty(emailBusca) && !c.Email.ToLower().Contains(emailBusca)) continue;
-                    if (!string.IsNullOrEmpty(dirBusca) && !c.Direccion.ToLower().Contains(dirBusca)) continue;
 
                     // Filtro especial para la fecha (Desde - Hasta)
                     // Si existe fecha "Desde"
@@ -183,17 +181,6 @@ namespace Vetcare.Presentacion.Clientes
 
                             break;
 
-                        // Si el usuario eligió ordenar por el domicilio registrado
-                        case "Dirección":
-                            if (esAscendente) // Orden alfabético de calles/ciudades
-                                              // Compara las direcciones como cadenas de caracteres
-                                listaFiltrada.Sort((x, y) => x.Direccion.CompareTo(y.Direccion));
-                            else // Orden alfabético inverso de calles/ciudades
-                                 // Compara las direcciones de forma inversa para invertir el listado
-                                listaFiltrada.Sort((x, y) => y.Direccion.CompareTo(x.Direccion));
-
-                            break;
-
                         // Si el usuario eligió ordenar por el momento de registro en el sistema
                         case "Fecha de Alta":
                             if (esAscendente) // De la fecha más antigua a la más reciente
@@ -250,7 +237,6 @@ namespace Vetcare.Presentacion.Clientes
             txtBuscaCliente.Clear();
             txtBuscaTelefono.Clear();
             txtBuscaEmail.Clear();
-            txtBuscaDireccion.Clear();
             dtpBuscaFechaDesde.SelectedDate = null;
             dtpBuscaFechaHasta.SelectedDate = null;
             cbOrdenarPor.SelectedIndex = 0;

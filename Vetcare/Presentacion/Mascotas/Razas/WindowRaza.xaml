@@ -1,16 +1,12 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Mascotas.Razas.WindowRaza"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Nueva Raza" Height="320" Width="380"
+        Title="Nueva Raza" Height="260" Width="380"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="#F4F6F7">
     <Grid Margin="25">
         <StackPanel>
             <TextBlock Text="REGISTRAR NUEVA RAZA" FontSize="16" FontWeight="Bold" Foreground="#1B2631"/>
             <Rectangle Height="2" Fill="#2ECC71" HorizontalAlignment="Left" Width="40" Margin="2,5,0,25"/>
-
-            <TextBlock Text="ESPECIE" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D" Margin="0,0,0,5"/>
-            <ComboBox x:Name="cmbEspecies" Height="30" DisplayMemberPath="NombreEspecie" SelectedValuePath="IdEspecie" 
-                      Margin="0,0,0,20" VerticalContentAlignment="Center"/>
 
             <TextBlock Text="NOMBRE DE LA RAZA" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D" Margin="0,0,0,5"/>
             <TextBox x:Name="txtNombreRaza" Height="30" VerticalContentAlignment="Center" 

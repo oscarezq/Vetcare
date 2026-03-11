@@ -82,21 +82,41 @@ namespace Vetcare.Presentacion
         /// </summary>
         private void CargarDatos()
         {
+            // Datos básicos
             txtNombre.Text = mascota.Nombre;
-            txtNombreEspecie.Text = mascota.NombreEspecie;
-            txtNombreRaza.Text = mascota.NombreRaza;
             txtPeso.Text = mascota.Peso.ToString();
             dpNacimiento.SelectedDate = mascota.FechaNacimiento;
-            txtChip.Text = mascota.NumeroChip;
 
-            // Cargamos los datos del dueño en el botón/label
+            // Lógica del Chip
+            txtChip.Text = mascota.NumeroChip;
+            if (mascota.NumeroChip == "N/A")
+            {
+                chkNoChip.IsChecked = true;
+            }
+
+            // --- CARGA DE ESPECIE ---
+            txtIdEspecie.Text = mascota.IdEspecie.ToString();
+            txtNombreEspecie.Text = mascota.NombreEspecie;
+            txtNombreEspecie.Foreground = Brushes.Black; // Cambiar de gris a negro
+            txtNombreEspecie.FontWeight = FontWeights.SemiBold;
+
+            // --- CARGA DE RAZA ---
+            txtIdRaza.Text = mascota.IdRaza.ToString();
+            txtNombreRaza.Text = mascota.NombreRaza;
+            txtNombreRaza.Foreground = Brushes.Black;
+            txtNombreRaza.FontWeight = FontWeights.SemiBold;
+
+            // IMPORTANTE: Habilitar el botón de raza ya que ya tiene una especie
+            btnSeleccionarRaza.IsEnabled = true;
+
+            // --- CARGA DE DUEÑO ---
             txtIdDueño.Text = mascota.IdCliente.ToString();
             txtNombreDueño.Text = mascota.Dueno;
             txtNombreDueño.FontStyle = FontStyles.Normal;
             txtNombreDueño.Foreground = new SolidColorBrush(Color.FromRgb(27, 38, 49));
             txtNombreDueño.FontWeight = FontWeights.SemiBold;
 
-            // Seleccionar el sexo en el ComboBox comparando el contenido del texto
+            // Seleccionar el sexo
             foreach (ComboBoxItem item in cbSexo.Items)
             {
                 if (item.Content.ToString() == mascota.Sexo)
@@ -167,6 +187,23 @@ namespace Vetcare.Presentacion
         {
             if (string.IsNullOrWhiteSpace(txtChip.Text))
                 return MostrarError("El número de chip es obligatorio.");
+
+            string chip = txtChip.Text.Trim();
+            if (string.IsNullOrWhiteSpace(chip))
+            {
+                return MostrarError("El número de chip es obligatorio (o marque 'No tiene').");
+            }
+
+            // Si no es N/A, validamos los 15 dígitos
+            if (chip != "N/A")
+            {
+                // Comprobar que sean solo números y exactamente 15 caracteres
+                // Si prefieres "mínimo 15", cambia == por <
+                if (chip.Length != 15 || !chip.All(char.IsDigit))
+                {
+                    return MostrarError("El número de chip debe contener exactamente 15 dígitos numéricos.");
+                }
+            }
 
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
                 return MostrarError("El nombre de la mascota es obligatorio.");
@@ -247,6 +284,9 @@ namespace Vetcare.Presentacion
                 txtNombreEspecie.Text = especie.NombreEspecie;
                 txtNombreEspecie.Foreground = System.Windows.Media.Brushes.Black;
 
+                // Activar botón de raza
+                btnSeleccionarRaza.IsEnabled = true;
+
                 // Opcional: Limpiar la raza si cambia la especie
                 txtIdRaza.Text = "";
                 txtNombreRaza.Text = "Seleccionar raza...";
@@ -267,6 +307,23 @@ namespace Vetcare.Presentacion
                 txtNombreRaza.Text = raza.NombreRaza;
                 txtNombreRaza.Foreground = System.Windows.Media.Brushes.Black;
             }
+        }
+
+        private void chkNoChip_Checked(object sender, RoutedEventArgs e)
+        {
+            txtChip.Text = "N/A";
+            txtChip.IsEnabled = false;
+            txtChip.Background = new SolidColorBrush(Color.FromRgb(242, 244, 244));
+        }
+
+        private void chkNoChip_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (txtChip.Text == "N/A")
+            {
+                txtChip.Text = "";
+            }
+            txtChip.IsEnabled = true;
+            txtChip.Background = Brushes.White;
         }
     }
 }

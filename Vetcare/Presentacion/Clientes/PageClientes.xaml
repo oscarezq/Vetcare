@@ -17,7 +17,7 @@
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
-                <UniformGrid Columns="4" Margin="0,0,0,15">
+                <UniformGrid Columns="3" Margin="0,0,0,15">
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Número de documento" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaNumDocumento" Height="25" TextChanged="FiltroAvanzado_Changed"/>
@@ -33,10 +33,6 @@
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Email" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaEmail" Height="25" TextChanged="FiltroAvanzado_Changed"/>
-                    </StackPanel>
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Dirección" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaDireccion" Height="25" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Fecha Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
@@ -182,7 +178,6 @@
                         <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="1.5*"/>
                         <DataGridTextColumn Header="TELÉFONO" Binding="{Binding Telefono}" Width="1.1*"/>
                         <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="2.5*"/>
-                        <DataGridTextColumn Header="DIRECCIÓN" Binding="{Binding Direccion}" Width="*"/>
                         <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="1.1*"/>
 
                         <DataGridTemplateColumn Header="ACCIONES" Width="*">

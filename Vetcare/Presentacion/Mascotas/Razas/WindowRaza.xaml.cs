@@ -7,26 +7,23 @@ namespace Vetcare.Presentacion.Mascotas.Razas
 {
     public partial class WindowRaza : Window
     {
-        public WindowRaza()
+        private int _idEspecie;
+        private RazaService razaService = new RazaService();
+
+        public WindowRaza(int idEspecie)
         {
             InitializeComponent();
+            this._idEspecie = idEspecie;
             CargarEspecies();
         }
 
         private void CargarEspecies()
         {
             var lista = new EspecieService().ObtenerTodas();
-            cmbEspecies.ItemsSource = lista;
         }
 
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // Validaciones
-            if (cmbEspecies.SelectedItem == null)
-            {
-                MessageBox.Show("Debe seleccionar una especie.", "Aviso");
-                return;
-            }
 
             if (string.IsNullOrWhiteSpace(txtNombreRaza.Text))
             {
@@ -38,7 +35,7 @@ namespace Vetcare.Presentacion.Mascotas.Razas
             Raza nueva = new Raza
             {
                 NombreRaza = txtNombreRaza.Text.Trim(),
-                IdEspecie = (int)cmbEspecies.SelectedValue
+                IdEspecie = _idEspecie
             };
 
             // Guardar en Base de Datos

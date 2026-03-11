@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Ficha de Mascota" Height="520" Width="550"
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
         Background="#F8F9F9" Icon="/Resources/icono.png">
 
     <Border Padding="25">
@@ -56,8 +56,14 @@
                 <!-- Fila 2: Chip / Especie -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
-                        <TextBlock Text="Número de Chip" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtChip" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <DockPanel>
+                            <TextBlock Text="Número de Chip" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
+                            <CheckBox x:Name="chkNoChip" Content="No tiene" FontSize="10" 
+                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                      Checked="chkNoChip_Checked" Unchecked="chkNoChip_Unchecked"/>
+                        </DockPanel>
+
+                        <TextBox x:Name="txtChip" Height="30" VerticalContentAlignment="Center" Padding="5,0" MaxLength="15"/>
                     </StackPanel>
 
                     <StackPanel Margin="5">
@@ -79,7 +85,9 @@
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
                         <TextBlock Text="Raza" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <Button x:Name="btnSeleccionarRaza" Click="btnBuscarRaza_Click" Height="30" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch" Cursor="Hand">
+                        <Button x:Name="btnSeleccionarRaza" Click="btnBuscarRaza_Click" Height="30" 
+                Background="White" BorderBrush="#D5DBDB" IsEnabled="False"
+                HorizontalContentAlignment="Stretch" Cursor="Hand">
                             <Grid Margin="5,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -109,7 +117,9 @@
 
                     <StackPanel Margin="5">
                         <TextBlock Text="Fecha de Nacimiento" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <DatePicker x:Name="dpNacimiento" Height="30"/>
+                        <DatePicker x:Name="dpNacimiento" 
+                                    Height="30" 
+                                    VerticalContentAlignment="Center" />
                     </StackPanel>
                 </UniformGrid>
             </StackPanel>

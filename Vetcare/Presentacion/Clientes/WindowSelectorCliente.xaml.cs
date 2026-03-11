@@ -73,5 +73,23 @@ namespace Vetcare.Presentacion.Clientes
             this.DialogResult = false;
             this.Close();
         }
+
+        private void btnNuevoCliente_Click(object sender, RoutedEventArgs e)
+        {
+            // Asumiendo que tu ventana para crear clientes se llama WindowCliente
+            WindowCliente ventana = new WindowCliente();
+            ventana.Owner = this;
+
+            if (ventana.ShowDialog() == true)
+            {
+                CargarLista(); // Refresca el DataGrid para mostrar al nuevo cliente
+
+                // Opcional: Seleccionar automáticamente al último añadido
+                if (dgClientes.Items.Count > 0)
+                {
+                    dgClientes.SelectedIndex = dgClientes.Items.Count - 1;
+                }
+            }
+        }
     }
 }

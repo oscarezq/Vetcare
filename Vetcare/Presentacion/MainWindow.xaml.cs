@@ -3,7 +3,9 @@ using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Citas;
 using Vetcare.Presentacion.Clientes;
+using Vetcare.Presentacion.Facturas;
 using Vetcare.Presentacion.Mascotas;
+using Vetcare.Presentacion.Servicios;
 using Vetcare.Presentacion.Usuarios;
 using Vetcare.Presentacion.Veterinarios;
 
@@ -38,7 +40,7 @@ namespace Vetcare.Presentacion
             if (usuarioActual != null)
             {
                 // Mostramos Nombre y Apellidos. Si prefieres el username, usa usuarioActual.Username
-                lblNombreUsuario.Text = $"{usuarioActual.Nombre} {usuarioActual.Apellidos}";
+                lblNombreUsuario.Text = $"{usuarioActual.Username}";
             }
         }
 
@@ -76,6 +78,16 @@ namespace Vetcare.Presentacion
         private void btnVeterinarios_Click(object sender, RoutedEventArgs e)
         {
             FramePrincipal.Content = new PageVeterinarios();
+        }
+
+        private void btnServicios_Click(object sender, RoutedEventArgs e)
+        {
+            FramePrincipal.Content = new PageServicios();
+        }
+
+        private void btnFacturas_Click(object sender, RoutedEventArgs e)
+        {
+            FramePrincipal.Content = new PageFacturas();
         }
 
         private void btnSalir_Click(object sender, RoutedEventArgs e)

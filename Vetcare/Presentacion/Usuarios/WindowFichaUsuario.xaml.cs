@@ -23,38 +23,28 @@ namespace Vetcare.Presentacion.Usuarios
             if (_usuarioActual == null) { MessageBox.Show("Usuario no encontrado."); this.Close(); return; }
             this.DataContext = _usuarioActual;
 
-            // Mostrar botón de Datos Profesionales solo si es veterinario
+            // Solo si es veterinario mostramos la sección y cargamos sus datos
             if (_usuarioActual.NombreRol == "Veterinario")
             {
-                btnProfesional.Visibility = Visibility.Visible;
-
                 var vet = _veteService.ObtenerPorIdUsuario(_usuarioActual.IdUsuario);
                 if (vet != null)
                 {
+                    seccionProfesional.Visibility = Visibility.Visible;
                     txtNumeroColegiado.Text = vet.NumeroColegiado;
                     txtEspecialidad.Text = vet.Especialidad;
                 }
             }
             else
             {
-                btnProfesional.Visibility = Visibility.Collapsed;
+                seccionProfesional.Visibility = Visibility.Collapsed;
             }
 
-            // Mostrar panel de datos generales por defecto
             panelDatosGenerales.Visibility = Visibility.Visible;
-            panelDatosProfesional.Visibility = Visibility.Collapsed;
         }
 
         private void btnDatos_Click(object sender, RoutedEventArgs e)
         {
             panelDatosGenerales.Visibility = Visibility.Visible;
-            panelDatosProfesional.Visibility = Visibility.Collapsed;
-        }
-
-        private void btnProfesional_Click(object sender, RoutedEventArgs e)
-        {
-            panelDatosGenerales.Visibility = Visibility.Collapsed;
-            panelDatosProfesional.Visibility = Visibility.Visible;
         }
 
         private void btnEditarUsuario_Click(object sender, RoutedEventArgs e)

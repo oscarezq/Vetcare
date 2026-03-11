@@ -42,7 +42,17 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Dirección del cliente.
         /// </summary>
-        public string? Direccion { get; set; }
+        public string? CalleDireccion { get; set; }
+
+        public string? NumeroDireccion { get; set; }
+
+        public string? PisoPuertaDireccion { get; set; }
+
+        public string? CodigoPostalDireccion { get; set; }
+
+        public string? LocalidadDireccion { get; set; }
+
+        public string? ProvinciaDireccion { get; set; }
 
         /// <summary>
         /// Fecha de alta del cliente.

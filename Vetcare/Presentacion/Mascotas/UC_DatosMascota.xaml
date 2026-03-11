@@ -1,0 +1,104 @@
+﻿<UserControl x:Class="Vetcare.Presentacion.Mascotas.UC_DatosMascota"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+
+    <UserControl.Resources>
+        <Style x:Key="EditButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="160"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2980B9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#7F8C8D"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+
+        <Style x:Key="ValueStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="60">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Margin="0,0,0,35">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Datos de la Mascota" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
+                <Border Height="4" Width="50" Background="#3498DB" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+            </StackPanel>
+
+            <Button Content="Editar Información" 
+                    Style="{StaticResource EditButtonStyle}" 
+                    DockPanel.Dock="Right" 
+                    Click="btnEditarMascota_Click"/>
+        </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Nombre del Paciente" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Número de Chip" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{Binding NumeroChip}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Especie" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{Binding NombreEspecie}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Raza" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{Binding NombreRaza}" Style="{StaticResource ValueStyle}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="40,0,0,0">
+                <TextBlock Text="Propietario / Dueño" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Style="{StaticResource ValueStyle}">
+                    <Hyperlink Click="HyperlinkDueno_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
+                        <Run Text="{Binding Dueno, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
+
+                <TextBlock Text="Sexo" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{Binding Sexo}" Style="{StaticResource ValueStyle}"/>
+
+                <TextBlock Text="Peso Actual" Style="{StaticResource LabelStyle}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding Peso}" Style="{StaticResource ValueStyle}" Margin="0"/>
+                    <TextBlock Text=" kg" Style="{StaticResource ValueStyle}"/>
+                </StackPanel>
+
+                <TextBlock Text="Fecha de Nacimiento" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{Binding FechaNacimiento, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

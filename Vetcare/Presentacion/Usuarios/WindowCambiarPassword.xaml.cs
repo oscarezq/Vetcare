@@ -23,9 +23,16 @@ namespace Vetcare.Presentacion.Usuarios
             string confirm = txtPassConfirmar.Password;
 
             // 1. Validaciones básicas
-            if (string.IsNullOrWhiteSpace(pass) || pass.Length < 4)
+            if (string.IsNullOrWhiteSpace(pass) || pass.Length < 8)
             {
-                MostrarError("La contraseña debe tener al menos 4 caracteres.");
+                MostrarError("La contraseña debe tener al menos 8 caracteres.");
+                return;
+            }
+
+            // Validación de seguridad: mayúscula, minúscula, número, carácter especial
+            if (!EsContrasenaSegura(pass))
+            {
+                MostrarError("La contraseña debe contener al menos una mayúscula, una minúscula y un número.");
                 return;
             }
 
@@ -67,6 +74,13 @@ namespace Vetcare.Presentacion.Usuarios
             {
                 MessageBox.Show($"Error técnico: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        // Método auxiliar para validar seguridad de contraseña
+        private bool EsContrasenaSegura(string contrasena)
+        {
+            // Al menos una mayúscula, una minúscula y un número
+            return System.Text.RegularExpressions.Regex.IsMatch(contrasena, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$");
         }
 
         private void MostrarError(string mensaje)

@@ -50,7 +50,11 @@ namespace Vetcare.Presentacion.Usuarios
         {
             try
             {
-                cbRol.ItemsSource = _rolService.ListarRoles();
+                var roles = _rolService.ListarRoles()
+                       .Where(r => r.NombreRol != "Administrador")
+                       .ToList();
+
+                cbRol.ItemsSource = roles;
             }
             catch (Exception ex)
             {

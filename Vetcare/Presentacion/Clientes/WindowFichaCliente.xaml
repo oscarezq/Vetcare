@@ -2,10 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Ficha de Cliente"
-        Height="560"
+        Height="650"
         Width="1000"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
         Background="#ECF0F1">
 
     <Window.Resources>
@@ -163,37 +162,89 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <DockPanel Margin="0,0,0,35">
+                <DockPanel Margin="0,0,0,30">
                     <TextBlock Text="Datos del Cliente" FontSize="26" FontWeight="Bold" Foreground="#2C3E50" DockPanel.Dock="Left"/>
                     <Button x:Name="btnEditarCliente" Content="Editar Datos" Style="{StaticResource EditButtonStyle}" Width="150" DockPanel.Dock="Right" Click="btnEditarCliente_Click"/>
                 </DockPanel>
 
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Nombre" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
-                        <TextBlock Text="Número de documento" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding NumDocumento}" Style="{StaticResource ValueStyle}"/>
-                        <TextBlock Text="Dirección" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Direccion}" Style="{StaticResource ValueStyle}"/>
-                        <TextBlock Text="Fecha de alta" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding FechaAlta, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
-                    </StackPanel>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Nombre" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
 
-                    <StackPanel Grid.Column="1" Margin="40,0,0,0">
-                        <TextBlock Text="Apellidos" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Apellidos}" Style="{StaticResource ValueStyle}"/>
-                        <TextBlock Text="Teléfono" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Telefono}" Style="{StaticResource ValueStyle}"/>
-                        <TextBlock Text="Email" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Email}" Style="{StaticResource ValueStyle}"/>
+                                <TextBlock Text="Número de documento" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding NumDocumento}" Style="{StaticResource ValueStyle}"/>
+
+                                <TextBlock Text="Email" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Email}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Margin="40,0,0,0">
+                                <TextBlock Text="Apellidos" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Apellidos}" Style="{StaticResource ValueStyle}"/>
+
+                                <TextBlock Text="Teléfono" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Telefono}" Style="{StaticResource ValueStyle}"/>
+
+                                <TextBlock Text="Fecha de alta" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding FechaAlta, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Background="#DDE3E8" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="DIRECCIÓN" FontSize="14" FontWeight="Bold" Foreground="#E67E22" Margin="0,0,0,15"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Calle / Vía" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding CalleDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                                <TextBlock Text="Nº" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding NumeroDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" Margin="20,0,0,0">
+                                <TextBlock Text="Piso / Puerta" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding PisoPuertaDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="0">
+                                <TextBlock Text="C. Postal" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding CodigoPostalDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="20,0,0,0">
+                                <TextBlock Text="Localidad" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding LocalidadDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="2" Margin="20,0,0,0">
+                                <TextBlock Text="Provincia" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding ProvinciaDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
-                </Grid>
+                </ScrollViewer>
             </Grid>
 
             <Grid x:Name="panelMascotas" Visibility="Collapsed" Margin="60">

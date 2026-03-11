@@ -7,6 +7,7 @@ using System.Windows.Documents;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Clientes;
+using Vetcare.Presentacion.Mascotas;
 
 namespace Vetcare.Presentacion
 {

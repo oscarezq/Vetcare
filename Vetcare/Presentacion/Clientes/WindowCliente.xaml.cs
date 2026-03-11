@@ -7,27 +7,15 @@ using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Clientes
 {
-    /// <summary>
-    /// Ventana encargada de gestionar la creación y edición de clientes.
-    /// </summary>
     public partial class WindowCliente : Window
     {
-        // Cliente que se está creando o editando.
         private Cliente cliente;
-
-        // Servicio encargado de la lógica de negocio de clientes.
         private ClienteService clienteService;
-
-        // Booleano que indica si la ventana está en modo edición.
         private bool esEdicion = false;
 
-        /// <summary>
-        /// Constructor para crear un nuevo cliente.
-        /// </summary>
         public WindowCliente()
         {
             InitializeComponent();
-
             clienteService = new ClienteService();
 
             cliente = new Cliente
@@ -35,34 +23,24 @@ namespace Vetcare.Presentacion.Clientes
                 FechaAlta = DateTime.Now
             };
 
-            lblTitulo.Text = "Nuevo cliente";
+            lblTitulo.Text = "NUEVO CLIENTE";
             this.Title = "Nuevo cliente";
-            txtFechaAlta.Text = DateTime.Now.ToString("dd/MM/yyyy");
             cmbTipoDocumento.SelectedIndex = 0;
         }
 
-        /// <summary>
-        /// Constructor para editar un cliente existente.
-        /// </summary>
-        /// <param name="clienteExistente">Cliente que se desea editar.</param>
         public WindowCliente(Cliente clienteExistente)
         {
             InitializeComponent();
-
             clienteService = new ClienteService();
             cliente = clienteExistente;
             esEdicion = true;
 
-            lblTitulo.Text = "Editar cliente";
+            lblTitulo.Text = "EDITAR CLIENTE";
             this.Title = "Editar cliente";
 
-            // Mostrar los datos del cliente en los controles
             CargarDatos();
         }
 
-        /// <summary>
-        /// Carga los datos del cliente en los controles del formulario.
-        /// </summary>
         private void CargarDatos()
         {
             txtNumDocumento.Text = cliente.NumDocumento;
@@ -70,10 +48,15 @@ namespace Vetcare.Presentacion.Clientes
             txtApellidos.Text = cliente.Apellidos;
             txtTelefono.Text = cliente.Telefono;
             txtEmail.Text = cliente.Email;
-            txtDireccion.Text = cliente.Direccion;
-            txtFechaAlta.Text = cliente.FechaAlta.ToString("dd/MM/yyyy");
 
-            // Seleccionar tipo de documento en el ComboBox
+            // Nuevos campos de dirección
+            txtCalle.Text = cliente.CalleDireccion;
+            txtNumero.Text = cliente.NumeroDireccion;
+            txtPisoPuerta.Text = cliente.PisoPuertaDireccion;
+            txtCP.Text = cliente.CodigoPostalDireccion;
+            txtLocalidad.Text = cliente.LocalidadDireccion;
+            txtProvincia.Text = cliente.ProvinciaDireccion;
+
             if (!string.IsNullOrEmpty(cliente.TipoDocumento))
             {
                 foreach (ComboBoxItem item in cmbTipoDocumento.Items)
@@ -87,76 +70,53 @@ namespace Vetcare.Presentacion.Clientes
             }
         }
 
-        /// <summary>
-        /// Evento que se ejecuta al pulsar el botón Guardar.
-        /// Realiza validaciones completas antes de insertar o actualizar.
-        /// </summary>
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // Si no se cumple las validaciones, salimos del método
             if (!ValidarCampos())
                 return;
 
-            // Si se cumple las validaciones, asignamos los datos al cliente
+            // Asignación de datos básicos
             cliente.TipoDocumento = ((ComboBoxItem)cmbTipoDocumento.SelectedItem).Content.ToString();
             cliente.NumDocumento = txtNumDocumento.Text.Trim().ToUpper();
             cliente.Nombre = txtNombre.Text.Trim();
             cliente.Apellidos = txtApellidos.Text.Trim();
             cliente.Telefono = txtTelefono.Text.Trim();
             cliente.Email = txtEmail.Text.Trim();
-            cliente.Direccion = txtDireccion.Text.Trim();
+
+            // Asignación de nuevos campos de dirección
+            cliente.CalleDireccion = txtCalle.Text.Trim();
+            cliente.NumeroDireccion = txtNumero.Text.Trim();
+            cliente.PisoPuertaDireccion = txtPisoPuerta.Text.Trim();
+            cliente.CodigoPostalDireccion = txtCP.Text.Trim();
+            cliente.LocalidadDireccion = txtLocalidad.Text.Trim();
+            cliente.ProvinciaDireccion = txtProvincia.Text.Trim();
 
             try
             {
-                // Booleano para comprobar que ha salido todo bien
-                bool resultado;
-
-                if (esEdicion)
-                {
-                    // Si estamos en modo editar, actualizamos los datos del cliente en la base de datos
-                    resultado = clienteService.Actualizar(cliente);
-                }
-                else
-                {
-                    // Si estamos en modo crear, se inserta el cliente en la base de datos
-                    cliente.FechaAlta = DateTime.Now;
-                    resultado = clienteService.Insertar(cliente);
-                }
+                bool resultado = esEdicion ? clienteService.Actualizar(cliente) : clienteService.Insertar(cliente);
 
                 if (resultado)
                 {
-                    // Si todo ha ido bien, informar al usuario
-                    MessageBox.Show("Cliente guardado correctamente.", "Información",
-                                    MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    // Cerrar esta ventana
+                    MessageBox.Show("Cliente guardado correctamente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Close();
                 }
                 else
                 {
-                    // Si no se ha podido insertar cliente, informar al usuario
-                    MessageBox.Show("No se pudo guardar el cliente.", "Error",
-                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("No se pudo guardar el cliente.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                // Si ha habido algún fallo, informar al usuario
-                MessageBox.Show("Se ha producido un error: " + ex.Message, "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Se ha producido un error: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        /// <summary>
-        /// Valida todos los campos del formulario.
-        /// </summary>
-        /// <returns>True si todos los datos son correctos.</returns>
         private bool ValidarCampos()
         {
+            // 1. Validación de Documento
             string tipoDoc = ((ComboBoxItem)cmbTipoDocumento.SelectedItem).Content.ToString();
             string numeroDoc = txtNumDocumento.Text.Trim();
 
-            // Validación del tipo de documento
             if (string.IsNullOrWhiteSpace(numeroDoc))
                 return MostrarError("El número de documento es obligatorio.");
 
@@ -164,55 +124,66 @@ namespace Vetcare.Presentacion.Clientes
             {
                 case "DNI":
                     if (!Regex.IsMatch(numeroDoc, @"^\d{8}[A-Z]$"))
-                        return MostrarError("El DNI debe tener 8 números y 1 letra. Ej: 12345678A");
+                        return MostrarError("El DNI debe tener 8 números y 1 letra.");
+                    if (!EsLetraDniValida(numeroDoc))
+                        return MostrarError("La letra del DNI no es correcta.");
                     break;
                 case "NIE":
                     if (!Regex.IsMatch(numeroDoc, @"^[XYZ]\d{7}[A-Z]$"))
-                        return MostrarError("El NIE debe comenzar con X, Y o Z seguido de 7 dígitos y una letra. Ej: X1234567A");
-                    break;
-                case "Pasaporte":
-                    if (!Regex.IsMatch(numeroDoc, @"^[A-Z0-9]{5,9}$"))
-                        return MostrarError("El pasaporte debe contener entre 5 y 9 caracteres alfanuméricos.");
+                        return MostrarError("El NIE no tiene un formato válido.");
                     break;
             }
 
-            // Validaciones restantes
-            if (string.IsNullOrWhiteSpace(txtNombre.Text))
-                return MostrarError("El nombre del cliente es obligatorio.");
-            if (string.IsNullOrWhiteSpace(txtApellidos.Text))
-                return MostrarError("Los apellidos del cliente son obligatorios.");
-            if (string.IsNullOrWhiteSpace(txtTelefono.Text))
-                return MostrarError("El teléfono del cliente es obligatorio.");
+            // 2. Validación de Datos Personales
+            if (string.IsNullOrWhiteSpace(txtNombre.Text)) return MostrarError("El nombre es obligatorio.");
+            if (string.IsNullOrWhiteSpace(txtApellidos.Text)) return MostrarError("Los apellidos son obligatorios.");
+            
             if (!Regex.IsMatch(txtTelefono.Text.Trim(), @"^\d{9}$"))
-                return MostrarError("El teléfono debe contener exactamente 9 dígitos. Ej: 600123456");
-            if (string.IsNullOrWhiteSpace(txtEmail.Text))
-                return MostrarError("El email del cliente es obligatorio.");
+                return MostrarError("El teléfono debe contener 9 dígitos.");
+
             if (!Regex.IsMatch(txtEmail.Text.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-                return MostrarError("El formato del email no es válido. Ej: ejemplo@dominio.com");
-            if (string.IsNullOrWhiteSpace(txtDireccion.Text))
-                return MostrarError("La dirección del cliente es obligatoria.");
+                return MostrarError("El formato del email no es válido.");
+
+            // 3. Validación de Dirección (Campos nuevos)
+            if (string.IsNullOrWhiteSpace(txtCalle.Text)) return MostrarError("La calle es obligatoria.");
+            if (string.IsNullOrWhiteSpace(txtNumero.Text)) return MostrarError("El número de la dirección es obligatorio.");
+            if (string.IsNullOrWhiteSpace(txtLocalidad.Text)) return MostrarError("La localidad es obligatoria.");
+            
+            if (!Regex.IsMatch(txtCP.Text.Trim(), @"^\d{5}$"))
+                return MostrarError("El Código Postal debe tener 5 dígitos.");
 
             return true;
         }
 
-        /// <summary>
-        /// Muestra un mensaje de error estándar.
-        /// </summary>
-        /// <param name="mensaje">Mensaje a mostrar.</param>
-        /// <returns>Siempre devuelve false para simplificar validaciones.</returns>
+        private bool EsLetraDniValida(string documento)
+        {
+            try
+            {
+                documento = documento.ToUpper().Trim();
+                string auxiliar = documento;
+                if (auxiliar.StartsWith("X")) auxiliar = "0" + auxiliar.Substring(1);
+                else if (auxiliar.StartsWith("Y")) auxiliar = "1" + auxiliar.Substring(1);
+                else if (auxiliar.StartsWith("Z")) auxiliar = "2" + auxiliar.Substring(1);
+
+                if (!long.TryParse(auxiliar.Substring(0, 8), out long numero)) return false;
+                char letraProporcionada = auxiliar[8];
+                string letrasControl = "TRWAGMYFPDXBNJZSQVHLCKE";
+                char letraCorrecta = letrasControl[(int)(numero % 23)];
+
+                return letraProporcionada == letraCorrecta;
+            }
+            catch { return false; }
+        }
+
         private bool MostrarError(string mensaje)
         {
             MessageBox.Show(mensaje, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
 
-        /// <summary>
-        /// Evento que se ejecuta al pulsar el botón Cancelar.
-        /// </summary>
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
     }
 }
-
