@@ -1,28 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vetcare.Entidades
 {
-    public class DetalleFactura
+    public class HistorialClinico
     {
-        public int IdDetalle { get; set; }
-        public int IdFactura { get; set; }
-        public int IdServicio { get; set; }
-        public int Cantidad { get; set; }
-        public decimal PrecioUnitario { get; set; }
+        public int IdHistorial { get; set; }
 
-        // Propiedades extendidas para la interfaz (DataGrid)
-        public string NombreServicio { get; set; }
+        public int IdMascota { get; set; }
 
-        // Propiedad calculada: No está en la BD pero es vital para el DataGrid
-        public decimal Subtotal => Cantidad * PrecioUnitario;
+        public int? IdCita { get; set; }
 
-        public DetalleFactura()
-        {
-            Cantidad = 1;
-        }
+        public int IdVeterinario { get; set; }
+
+        public DateTime FechaHora { get; set; }
+
+        public decimal? Peso { get; set; }
+
+        public string Diagnostico { get; set; }
+
+        public string Tratamiento { get; set; }
+
+        public string Observaciones { get; set; }
+
+        public string Motivo { get; set; }
+
+        public string NombreVeterinario { get; set; }
     }
 }

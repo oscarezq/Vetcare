@@ -85,6 +85,11 @@ namespace Vetcare.Presentacion
             FramePrincipal.Content = new PageServicios();
         }
 
+        private void btnProductos_Click(object sender, RoutedEventArgs e)
+        {
+            FramePrincipal.Content = new PageProductos();
+        }
+
         private void btnFacturas_Click(object sender, RoutedEventArgs e)
         {
             FramePrincipal.Content = new PageFacturas();

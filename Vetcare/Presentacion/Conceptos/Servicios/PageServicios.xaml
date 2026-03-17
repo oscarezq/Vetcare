@@ -1,0 +1,177 @@
+﻿<Page x:Class="Vetcare.Presentacion.Servicios.PageServicios"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="650" d:DesignWidth="1100"
+      Title="Gestión de Servicios">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="FILTRAR SERVICIOS" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
+
+                <UniformGrid Columns="3" Margin="0,0,0,15">
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Nombre del Servicio" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaNombre" Height="25" TextChanged="FiltroServicio_Changed"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Precio Mínimo (€)" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtPrecioMin" Height="25" TextChanged="FiltroServicio_Changed"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Precio Máximo (€)" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtPrecioMax" Height="25" TextChanged="FiltroServicio_Changed"/>
+                    </StackPanel>
+                </UniformGrid>
+
+                <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
+
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="25" SelectionChanged="FiltroServicio_Changed">
+                        <ComboBoxItem Content="Nombre" IsSelected="True"/>
+                        <ComboBoxItem Content="Precio"/>
+                    </ComboBox>
+
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
+                        <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroServicio_Changed"/>
+                        <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroServicio_Changed"/>
+                    </StackPanel>
+
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click"
+                            Height="25" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
+                    <TextBlock Text="Catálogo de Servicios" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+
+                    <Button DockPanel.Dock="Right" x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Click="btnNuevoServicio_Click"
+                            Background="#1ABC9C" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </DockPanel>
+
+                <DataGrid x:Name="dgServicios" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
+                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
+                          SelectionMode="Single" SelectionUnit="FullRow">
+
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
+
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="20,0,10,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter VerticalAlignment="Center" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#F8F9F9"/>
+                            <Setter Property="Foreground" Value="#566573"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="Padding" Value="20,0,10,0"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                            <Setter Property="BorderBrush" Value="#E67E22"/>
+                        </Style>
+                    </DataGrid.Resources>
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="#EBEDEF"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#F4F6F7"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#EBF5FB"/>
+                                    <Setter Property="Foreground" Value="#2E86C1"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="NOMBRE DEL SERVICIO" Width="2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Nombre}" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion}" Width="3*" FontSize="14"/>
+
+                        <DataGridTemplateColumn Header="PRECIO BASE" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding PrecioBase, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#27AE60"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="IVA" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding IvaPorcentaje, StringFormat={}{0:N2}}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#27AE60"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <Button Content="✎" ToolTip="Editar" Click="btnEditarServicio_Click" Margin="0,0,5,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+                                        <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminarServicio_Click" 
+                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

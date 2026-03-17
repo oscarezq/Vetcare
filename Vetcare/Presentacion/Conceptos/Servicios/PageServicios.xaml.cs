@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Vetcare.Datos;
 using Vetcare.Entidades;
+using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Servicios
 {
@@ -22,8 +23,8 @@ namespace Vetcare.Presentacion.Servicios
     /// </summary>
     public partial class PageServicios : Page
     {
-        private ServicioDAO servicioDAO = new ServicioDAO();
-        private List<Servicio> listaCompleta = new List<Servicio>();
+        private ConceptoService conceptoService = new ConceptoService();
+        private List<Concepto> listaCompleta = new List<Concepto>();
 
         public PageServicios()
         {
@@ -35,7 +36,7 @@ namespace Vetcare.Presentacion.Servicios
         {
             try
             {
-                listaCompleta = servicioDAO.ObtenerTodos();
+                listaCompleta = conceptoService.ObtenerServicios();
                 AplicarFiltros();
             }
             catch (Exception ex)
@@ -48,7 +49,7 @@ namespace Vetcare.Presentacion.Servicios
         {
             if (listaCompleta == null || rbAsc == null || dgServicios == null) return;
 
-            IEnumerable<Servicio> filtrados = listaCompleta;
+            IEnumerable<Concepto> filtrados = listaCompleta;
 
             // 1. Filtro por Nombre
             if (!string.IsNullOrWhiteSpace(txtBuscaNombre.Text))
@@ -78,7 +79,7 @@ namespace Vetcare.Presentacion.Servicios
                     filtrados = ascendente ? filtrados.OrderBy(s => s.PrecioBase) : filtrados.OrderByDescending(s => s.PrecioBase);
                     break;
                 case "ID":
-                    filtrados = ascendente ? filtrados.OrderBy(s => s.IdServicio) : filtrados.OrderByDescending(s => s.IdServicio);
+                    filtrados = ascendente ? filtrados.OrderBy(s => s.IdConcepto) : filtrados.OrderByDescending(s => s.IdConcepto);
                     break;
                 default: // Nombre
                     filtrados = ascendente ? filtrados.OrderBy(s => s.Nombre) : filtrados.OrderByDescending(s => s.Nombre);
@@ -114,20 +115,20 @@ namespace Vetcare.Presentacion.Servicios
 
         private void btnEditarServicio_Click(object sender, RoutedEventArgs e)
         {
-            var servicio = (Servicio)((Button)sender).DataContext;
+            var servicio = (Concepto)((Button)sender).DataContext;
             WindowServicio win = new WindowServicio(servicio);
             if (win.ShowDialog() == true) CargarDatos();
         }
 
         private void btnEliminarServicio_Click(object sender, RoutedEventArgs e)
         {
-            var servicio = (Servicio)((Button)sender).DataContext;
+            var servicio = (Concepto)((Button)sender).DataContext;
             var result = MessageBox.Show($"¿Estás seguro de eliminar el servicio {servicio.Nombre}?",
                                        "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
             {
-                // Lógica de borrado en DAO
+                
                 CargarDatos();
             }
         }

@@ -21,9 +21,9 @@ namespace Vetcare.Presentacion.Servicios
     /// </summary>
     public partial class WindowSelectorServicio : Window
     {
-        private List<Servicio> listaServicios;
-        public Servicio ServicioSeleccionado { get; set; }
-        private ServicioService servicioService = new ServicioService();
+        private List<Concepto> listaServicios;
+        public Concepto ServicioSeleccionado { get; set; }
+        private ConceptoService servicioService = new ConceptoService();
 
         public WindowSelectorServicio()
         {
@@ -35,7 +35,7 @@ namespace Vetcare.Presentacion.Servicios
         {
             try
             {
-                listaServicios = servicioService.ObtenerTodos();
+                listaServicios = servicioService.ObtenerServicios();
                 dgServicios.ItemsSource = listaServicios;
             }
             catch (Exception ex)
@@ -61,7 +61,7 @@ namespace Vetcare.Presentacion.Servicios
 
         private void FinalizarSeleccion()
         {
-            if (dgServicios.SelectedItem is Servicio serv)
+            if (dgServicios.SelectedItem is Concepto serv)
             {
                 ServicioSeleccionado = serv;
                 this.DialogResult = true;

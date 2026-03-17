@@ -86,7 +86,7 @@
                 </DockPanel>
 
                 <DataGrid x:Name="dgFacturas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
+                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgFacturas_MouseDoubleClick"
                           Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
                           SelectionMode="Single" SelectionUnit="FullRow">
 
@@ -163,8 +163,36 @@
                         <DataGridTemplateColumn Header="ESTADO" Width="130">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="12" Padding="10,2" HorizontalAlignment="Left" Background="{Binding ColorEstado}">
-                                        <TextBlock Text="{Binding Estado}" Foreground="White" FontSize="11" FontWeight="Bold"/>
+                                    <Border CornerRadius="12" Padding="10,2" HorizontalAlignment="Left">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="Gray"/>
+
+                                                <Style.Triggers>
+
+                                                    <!-- PAGADA -->
+                                                    <DataTrigger Binding="{Binding Estado}" Value="Pagada">
+                                                        <Setter Property="Background" Value="#27AE60"/>
+                                                    </DataTrigger>
+
+                                                    <!-- PENDIENTE -->
+                                                    <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                                        <Setter Property="Background" Value="#F39C12"/>
+                                                    </DataTrigger>
+
+                                                    <!-- ANULADA -->
+                                                    <DataTrigger Binding="{Binding Estado}" Value="Anulada">
+                                                        <Setter Property="Background" Value="#E74C3C"/>
+                                                    </DataTrigger>
+
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <TextBlock Text="{Binding Estado}" 
+                                                   Foreground="White" 
+                                                   FontSize="11" 
+                                                   FontWeight="Bold"/>
                                     </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

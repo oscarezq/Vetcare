@@ -2,240 +2,220 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Clientes;
-using Vetcare.Presentacion.Servicios;
 
 namespace Vetcare.Presentacion.Facturas
 {
-    /// <summary>
-    /// Lógica de interacción para WindowFactura.xaml
-    /// </summary>
     public partial class WindowFactura : Window
     {
         private ObservableCollection<DetalleFactura> listaDetalles = new ObservableCollection<DetalleFactura>();
         private FacturaService facturaService = new FacturaService();
-        private Servicio servicioSeleccionado; // Para guardar temporalmente el servicio del selector
+        private Concepto conceptoSeleccionado;
 
         public WindowFactura()
         {
             InitializeComponent();
             dgDetalles.ItemsSource = listaDetalles;
-            txtNumFactura.Text = "FAC-" + DateTime.Now.ToString("yyyyMMddHHmm");
+            // Inicializamos el número de factura al abrir la ventana
+            txtNumFactura.Text = ObtenerSiguienteNumeroFactura();
+            lblTotal.Text = "0,00 €";
         }
 
-        // --- SELECTOR DE CLIENTE ---
+        public string ObtenerSiguienteNumeroFactura()
+        {
+            int anioActual = DateTime.Now.Year;
+            // Importante: Asegúrate que facturaService.ObtenerUltimoNumeroPorAnio llame al DAO que ya corregimos
+            string ultimoNumero = facturaService.ObtenerUltimoNumeroPorAnio(anioActual);
+
+            if (string.IsNullOrEmpty(ultimoNumero))
+                return $"{anioActual}-0001";
+
+            try
+            {
+                // El formato esperado es "2026-0005"
+                string[] partes = ultimoNumero.Split('-');
+                if (partes.Length == 2 && int.TryParse(partes[1], out int contador))
+                {
+                    contador++;
+                    return $"{anioActual}-{contador:D4}"; // El :D4 rellena con ceros a la izquierda
+                }
+            }
+            catch { }
+
+            return $"{anioActual}-0001";
+        }
+
+        // --- SELECTORES ---
         private void btnSeleccionarCliente_Click(object sender, RoutedEventArgs e)
         {
-            WindowSelectorCliente selector = new WindowSelectorCliente();
-            selector.Owner = this;
+            WindowSelectorCliente selector = new WindowSelectorCliente { Owner = this };
             if (selector.ShowDialog() == true)
             {
                 var cliente = selector.ClienteSeleccionado;
                 txtIdCliente.Text = cliente.IdCliente.ToString();
                 txtNombreCliente.Text = $"{cliente.Nombre} {cliente.Apellidos}";
+                txtNombreCliente.Foreground = Brushes.Black;
                 txtNombreCliente.FontWeight = FontWeights.Bold;
-                txtNombreCliente.Foreground = System.Windows.Media.Brushes.Black;
             }
         }
 
-        // --- SELECTOR DE SERVICIO ---
         private void btnSeleccionarServicio_Click(object sender, RoutedEventArgs e)
         {
-            WindowSelectorServicio selector = new WindowSelectorServicio();
-            selector.Owner = this;
+            WindowSelectorConcepto selector = new WindowSelectorConcepto { Owner = this };
             if (selector.ShowDialog() == true)
             {
-                servicioSeleccionado = selector.ServicioSeleccionado;
-                txtNombreServicio.Text = servicioSeleccionado.IdServicio.ToString();
-                txtNombreServicio.Text = $"{servicioSeleccionado.Nombre} ({servicioSeleccionado.PrecioBase:N2}€)";
+                conceptoSeleccionado = selector.ConceptoSeleccionado;
+                txtNombreServicio.Text = $"{conceptoSeleccionado.Nombre} ({conceptoSeleccionado.PrecioBase:N2}€)";
+                txtNombreServicio.Foreground = Brushes.Black;
                 txtNombreServicio.FontWeight = FontWeights.Bold;
-                txtNombreServicio.Foreground = System.Windows.Media.Brushes.Black;
             }
         }
 
+        // --- GESTIÓN DE LA LISTA (GRID) ---
         private void btnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            if (servicioSeleccionado == null) return;
-
-            int.TryParse(txtCantidad.Text, out int cantEntrada);
-            int cantidadAAñadir = cantEntrada > 0 ? cantEntrada : 1;
-
-            // BUSCAR SI YA EXISTE EL SERVICIO EN LA TABLA
-            var detalleExistente = listaDetalles.FirstOrDefault(d => d.IdServicio == servicioSeleccionado.IdServicio);
-
-            if (detalleExistente != null)
+            if (conceptoSeleccionado == null)
             {
-                // Si existe, simplemente sumamos la cantidad
-                detalleExistente.Cantidad += cantidadAAñadir;
+                MessageBox.Show("Seleccione un producto o servicio.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            int.TryParse(txtCantidad.Text, out int cantidad);
+            if (cantidad <= 0) cantidad = 1;
+
+            if (conceptoSeleccionado.Tipo == "Producto" && conceptoSeleccionado.Stock < cantidad)
+            {
+                MessageBox.Show($"Stock insuficiente. Disponible: {conceptoSeleccionado.Stock}",
+                                "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Buscamos si ya está en la lista para no repetir filas
+            var existente = listaDetalles.FirstOrDefault(d => d.IdConcepto == conceptoSeleccionado.IdConcepto
+                                                           && d.Tipo == conceptoSeleccionado.Tipo);
+
+            if (existente != null)
+            {
+                existente.Cantidad += cantidad;
             }
             else
             {
-                // Si no existe, creamos la fila nueva
-                var nuevoDetalle = new DetalleFactura
+                listaDetalles.Add(new DetalleFactura
                 {
-                    IdServicio = servicioSeleccionado.IdServicio,
-                    NombreServicio = servicioSeleccionado.Nombre,
-                    Cantidad = cantidadAAñadir,
-                    PrecioUnitario = servicioSeleccionado.PrecioBase
-                };
-                listaDetalles.Add(nuevoDetalle);
+                    IdConcepto = conceptoSeleccionado.IdConcepto,
+                    NombreConcepto = conceptoSeleccionado.Nombre,
+                    Tipo = conceptoSeleccionado.Tipo,
+                    Cantidad = cantidad,
+                    PrecioUnitario = conceptoSeleccionado.PrecioBase,
+                    IvaPorcentaje = conceptoSeleccionado.IvaPorcentaje
+                });
             }
 
-            // Refrescar UI y limpiar selector
-            dgDetalles.Items.Refresh();
-            CalcularTotal();
-            LimpiarSelectorServicio();
-        }
-
-        private void LimpiarSelectorServicio()
-        {
-            servicioSeleccionado = null;
-            txtNombreServicio.Text = "Seleccionar servicio...";
-            txtNombreServicio.Foreground = System.Windows.Media.Brushes.Gray;
-            txtNombreServicio.FontWeight = FontWeights.Normal;
-            txtCantidad.Text = "1";
+            ActualizarInterfaz();
+            LimpiarSelectorConcepto();
         }
 
         private void btnQuitar_Click(object sender, RoutedEventArgs e)
         {
-            if (((FrameworkElement)sender).DataContext is DetalleFactura det)
+            if ((sender as Button)?.DataContext is DetalleFactura detalle)
             {
-                listaDetalles.Remove(det);
-                CalcularTotal();
+                listaDetalles.Remove(detalle);
+                ActualizarInterfaz();
             }
-        }
-
-        private void CalcularTotal()
-        {
-            decimal total = listaDetalles.Sum(d => d.Subtotal);
-            lblTotal.Text = total.ToString("N2") + " €";
-        }
-
-        private void btnGuardar_Click(object sender, RoutedEventArgs e)
-        {
-            // 1. Validaciones previas
-            if (string.IsNullOrEmpty(txtIdCliente.Text))
-            {
-                MessageBox.Show("Por favor, seleccione un cliente antes de guardar.", "Error de validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (listaDetalles.Count == 0)
-            {
-                MessageBox.Show("La factura debe tener al menos un servicio o producto.", "Error de validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            // 2. Confirmación del usuario
-            var resultado = MessageBox.Show("¿Está seguro de que desea generar esta factura?", "Confirmar Guardado", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (resultado == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    // 3. Crear el objeto Factura (Cabecera)
-                    Factura nuevaFactura = new Factura
-                    {
-                        NumeroFactura = txtNumFactura.Text,
-                        IdCliente = int.Parse(txtIdCliente.Text),
-                        FechaEmision = DateTime.Now,
-                        MetodoPago = (cbMetodoPago.SelectedItem as ComboBoxItem)?.Content.ToString(),
-                        Observaciones = txtObservaciones.Text,
-                        Total = listaDetalles.Sum(d => d.Subtotal),
-                        // Pasamos la lista de detalles
-                        Detalles = listaDetalles.ToList()
-                    };
-
-                    // 4. Llamar al servicio de negocio para persistir en BD
-                    bool guardadoExitoso = facturaService.InsertarFacturaCompleta(nuevaFactura);
-
-                    if (guardadoExitoso)
-                    {
-                        MessageBox.Show($"Factura {nuevaFactura.NumeroFactura} guardada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                        // 5. Opcional: ¿Quieres imprimir o limpiar la ventana?
-                        LimpiarFormularioTodo();
-                        this.DialogResult = true; // Cierra la ventana devolviendo éxito
-                        this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("No se pudo guardar la factura en la base de datos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ocurrió un error inesperado: " + ex.Message, "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        // Método auxiliar para resetear todo tras el guardado
-        private void LimpiarFormularioTodo()
-        {
-            listaDetalles.Clear();
-            txtIdCliente.Clear();
-            txtNombreCliente.Text = "Seleccionar cliente...";
-            txtNombreCliente.Foreground = Brushes.Gray;
-            txtObservaciones.Clear();
-            lblTotal.Text = "0,00 €";
-            // Generar nuevo número para la siguiente (opcional si no cierras la ventana)
-            txtNumFactura.Text = "FAC-" + DateTime.Now.ToString("yyyyMMddHHmm");
         }
 
         private void btnAumentar_Click(object sender, RoutedEventArgs e)
         {
-            if (((FrameworkElement)sender).DataContext is DetalleFactura detalle)
+            if ((sender as Button)?.DataContext is DetalleFactura detalle)
             {
                 detalle.Cantidad++;
-                dgDetalles.Items.Refresh();
-                CalcularTotal();
+                ActualizarInterfaz();
             }
         }
 
         private void btnDisminuir_Click(object sender, RoutedEventArgs e)
         {
-            if (((FrameworkElement)sender).DataContext is DetalleFactura detalle && detalle.Cantidad > 1)
+            if ((sender as Button)?.DataContext is DetalleFactura detalle && detalle.Cantidad > 1)
             {
                 detalle.Cantidad--;
-                dgDetalles.Items.Refresh();
-                CalcularTotal();
+                ActualizarInterfaz();
             }
         }
 
+        // --- GUARDADO ---
+        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtIdCliente.Text) || listaDetalles.Count == 0)
+            {
+                MessageBox.Show("Faltan datos (Cliente o Conceptos).", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (MessageBox.Show("¿Generar factura?", "Confirmar", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Factura nuevaFactura = new Factura
+                    {
+                        NumeroFactura = txtNumFactura.Text,
+                        IdCliente = int.Parse(txtIdCliente.Text),
+                        MetodoPago = (cbMetodoPago.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Efectivo",
+                        Observaciones = txtObservaciones.Text,
+                        Detalles = listaDetalles.ToList() // Pasamos la lista al objeto factura
+                    };
+
+                    if (facturaService.InsertarFacturaCompleta(nuevaFactura))
+                    {
+                        MessageBox.Show("Factura guardada correctamente.", "Éxito");
+                        this.DialogResult = true;
+                        this.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("No se pudo guardar: " + ex.Message);
+                }
+            }
+        }
+
+        // --- CÁLCULOS ---
+        private void ActualizarInterfaz()
+        {
+            // Forzamos al DataGrid a redibujarse para ver los cambios de cantidad
+            dgDetalles.Items.Refresh();
+
+            decimal baseImp = listaDetalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+            decimal ivaTotal = listaDetalles.Sum(d => (d.Cantidad * d.PrecioUnitario) * (d.IvaPorcentaje / 100));
+            decimal total = baseImp + ivaTotal;
+
+            lblBaseImponible.Text = $"{baseImp:N2} €";
+            lblIvaTotal.Text = $"{ivaTotal:N2} €";
+            lblTotal.Text = $"{total:N2} €";
+        }
+
+        private void LimpiarSelectorConcepto()
+        {
+            conceptoSeleccionado = null;
+            txtNombreServicio.Text = "Seleccionar concepto...";
+            txtNombreServicio.Foreground = Brushes.Gray;
+            txtNombreServicio.FontWeight = FontWeights.Normal;
+            txtCantidad.Text = "1";
+        }
+
+        // Botones de + y - del selector superior
         private void btnCantidadMas_Click(object sender, RoutedEventArgs e)
         {
-            int cantidad = int.Parse(txtCantidad.Text);
-            cantidad++;
-            txtCantidad.Text = cantidad.ToString();
+            if (int.TryParse(txtCantidad.Text, out int c)) txtCantidad.Text = (c + 1).ToString();
         }
 
         private void btnCantidadMenos_Click(object sender, RoutedEventArgs e)
         {
-            int cantidad = int.Parse(txtCantidad.Text);
-
-            if (cantidad > 1)
-                cantidad--;
-
-            txtCantidad.Text = cantidad.ToString();
-        }
-
-        private void ActualizarTabla()
-        {
-            dgDetalles.Items.Refresh(); // Fuerza a la tabla a redibujar los cambios de cantidad y subtotal
-            CalcularTotal();
+            if (int.TryParse(txtCantidad.Text, out int c) && c > 1) txtCantidad.Text = (c - 1).ToString();
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();

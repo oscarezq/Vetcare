@@ -105,6 +105,13 @@
                         </StackPanel>
                     </Button>
 
+                    <Button x:Name="btnProductos" Style="{StaticResource MenuButtonStyle}" Click="btnProductos_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
+                            <TextBlock Text="PRODUCTOS"/>
+                        </StackPanel>
+                    </Button>
+
                     <Button x:Name="btnFacturas" Style="{StaticResource MenuButtonStyle}" Click="btnFacturas_Click">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>

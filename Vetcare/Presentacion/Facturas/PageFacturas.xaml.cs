@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Vetcare.Datos;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
@@ -95,6 +96,30 @@ namespace Vetcare.Presentacion.Facturas
             AplicarFiltrosYOrden();
         }
 
+        private void dgFacturas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // 1. Verificar que el usuario hizo clic en una fila con datos
+            if (dgFacturas.SelectedItem is Factura facturaSeleccionada)
+            {
+                try
+                {
+                    // 2. Instanciar tu nuevo DAO
+                    DetalleFacturaDAO detalleDAO = new DetalleFacturaDAO();
+
+                    // 3. Cargar las líneas de la base de datos a la factura
+                    facturaSeleccionada.Detalles = detalleDAO.ObtenerDetallesPorFactura(facturaSeleccionada.IdFactura);
+
+                    // 4. Abrir la ventana de detalle pasando el objeto ya "relleno"
+                    WindowDetalleFactura detalleWin = new WindowDetalleFactura(facturaSeleccionada);
+                    detalleWin.ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar los detalles: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
         private void btnNuevaFactura_Click(object sender, RoutedEventArgs e)
         {
             WindowFactura NuevaFacturaWin = new WindowFactura();
@@ -104,10 +129,10 @@ namespace Vetcare.Presentacion.Facturas
 
         private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
         {
-            if (((Button)sender).DataContext is Factura factura)
+            if (dgFacturas.SelectedItem is Factura facturaSeleccionada)
             {
-                // WindowDetalleFactura detalleWin = new WindowDetalleFactura(factura);
-                // detalleWin.ShowDialog();
+                WindowDetalleFactura detalleWin = new WindowDetalleFactura(facturaSeleccionada);
+                detalleWin.ShowDialog();
             }
         }
 

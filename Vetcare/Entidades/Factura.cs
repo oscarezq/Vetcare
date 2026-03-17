@@ -13,6 +13,8 @@ namespace Vetcare.Entidades
         public string NumeroFactura { get; set; }
         public string Estado { get; set; } // "Pendiente", "Pagada", "Anulada"
         public DateTime FechaEmision { get; set; }
+        public decimal BaseImponible { get; set; }
+        public decimal IvaTotal { get; set; }
         public decimal Total { get; set; }
         public string MetodoPago { get; set; } 
         public string Observaciones { get; set; }

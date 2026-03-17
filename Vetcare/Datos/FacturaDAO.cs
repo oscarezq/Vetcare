@@ -19,46 +19,80 @@ namespace Vetcare.Datos
                 {
                     try
                     {
-                        // 1. Insertar Cabecera
-                        string sqlFactura = @"INSERT INTO facturas (id_cliente, numero_factura, estado, total, metodo_pago, observaciones, fecha_emision) 
-                                    VALUES (@cli, @num, @est, @tot, @met, @obs, @fec)";
+                        // 1. Cálculo de totales (Se mantiene igual, solo corregí nombres de propiedad)
+                        f.BaseImponible = f.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+                        f.IvaTotal = f.Detalles.Sum(d => (d.Cantidad * d.PrecioUnitario) * (d.IvaPorcentaje / 100));
+                        f.Total = f.BaseImponible + f.IvaTotal;
 
+                        // 2. Insertar Cabecera
+                        string sqlFactura = @"INSERT INTO facturas 
+                            (id_cliente, numero_factura, estado, base_imponible, iva_total, total, metodo_pago, fecha_emision, observaciones) 
+                            VALUES (@cli, @num, @est, @base, @iva, @total, @met, @fec, @obs)"; // Añadido @obs
+
+                        int idFacturaGenerada;
                         using (MySqlCommand cmdF = new MySqlCommand(sqlFactura, con, tra))
                         {
                             cmdF.Parameters.AddWithValue("@cli", f.IdCliente);
                             cmdF.Parameters.AddWithValue("@num", f.NumeroFactura);
                             cmdF.Parameters.AddWithValue("@est", f.Estado ?? "Pendiente");
-                            cmdF.Parameters.AddWithValue("@tot", f.Total);
+                            cmdF.Parameters.AddWithValue("@base", f.BaseImponible);
+                            cmdF.Parameters.AddWithValue("@iva", f.IvaTotal);
+                            cmdF.Parameters.AddWithValue("@total", f.Total);
                             cmdF.Parameters.AddWithValue("@met", f.MetodoPago);
-                            cmdF.Parameters.AddWithValue("@obs", (object)f.Observaciones ?? DBNull.Value);
                             cmdF.Parameters.AddWithValue("@fec", DateTime.Now);
+                            cmdF.Parameters.AddWithValue("@obs", (object)f.Observaciones ?? DBNull.Value); // Asignación de @obs
 
                             cmdF.ExecuteNonQuery();
+                            idFacturaGenerada = Convert.ToInt32(cmdF.LastInsertedId);
+                        }
 
-                            // Convertir de long a int de forma segura
-                            int idFacturaGenerada = Convert.ToInt32(cmdF.LastInsertedId);
+                        // 3. Insertar Detalles (Corregido según tu tabla SQL)
+                        string sqlDetalle = @"INSERT INTO detalles_factura 
+                    (id_factura, id_concepto, nombre_concepto, tipo, cantidad, precio_unitario, iva_porcentaje, subtotal, iva_importe, total_linea) 
+                    VALUES (@idF, @idC, @nom, @tipo, @cant, @pre, @ivaP, @sub, @ivaI, @totL)";
 
-                            // 2. Insertar Detalles (Reutilizando el comando)
-                            string sqlDetalle = @"INSERT INTO detalles_factura (id_factura, id_servicio, cantidad, precio_unitario) 
-                                        VALUES (@idF, @idS, @cant, @pre)";
+                        using (MySqlCommand cmdD = new MySqlCommand(sqlDetalle, con, tra))
+                        {
+                            // Preparamos los parámetros una sola vez por rendimiento
+                            cmdD.Parameters.Add("@idF", MySqlDbType.Int32);
+                            cmdD.Parameters.Add("@idC", MySqlDbType.Int32);
+                            cmdD.Parameters.Add("@nom", MySqlDbType.VarChar);
+                            cmdD.Parameters.Add("@tipo", MySqlDbType.VarChar);
+                            cmdD.Parameters.Add("@cant", MySqlDbType.Int32);
+                            cmdD.Parameters.Add("@pre", MySqlDbType.Decimal);
+                            cmdD.Parameters.Add("@ivaP", MySqlDbType.Decimal);
+                            cmdD.Parameters.Add("@sub", MySqlDbType.Decimal);
+                            cmdD.Parameters.Add("@ivaI", MySqlDbType.Decimal);
+                            cmdD.Parameters.Add("@totL", MySqlDbType.Decimal);
 
-                            using (MySqlCommand cmdD = new MySqlCommand(sqlDetalle, con, tra))
+                            foreach (var det in f.Detalles)
                             {
-                                // Añadimos los parámetros una sola vez (vacíos)
-                                cmdD.Parameters.Add("@idF", MySqlDbType.Int32);
-                                cmdD.Parameters.Add("@idS", MySqlDbType.Int32);
-                                cmdD.Parameters.Add("@cant", MySqlDbType.Int32);
-                                cmdD.Parameters.Add("@pre", MySqlDbType.Decimal);
+                                decimal subtotal = det.Cantidad * det.PrecioUnitario;
+                                decimal ivaImporte = subtotal * (det.IvaPorcentaje / 100);
 
-                                foreach (var det in f.Detalles)
+                                cmdD.Parameters["@idF"].Value = idFacturaGenerada;
+                                cmdD.Parameters["@idC"].Value = det.IdConcepto;
+                                cmdD.Parameters["@nom"].Value = det.NombreConcepto;
+                                cmdD.Parameters["@tipo"].Value = det.Tipo;
+                                cmdD.Parameters["@cant"].Value = det.Cantidad;
+                                cmdD.Parameters["@pre"].Value = det.PrecioUnitario;
+                                cmdD.Parameters["@ivaP"].Value = det.IvaPorcentaje;
+                                cmdD.Parameters["@sub"].Value = subtotal;
+                                cmdD.Parameters["@ivaI"].Value = ivaImporte;
+                                cmdD.Parameters["@totL"].Value = subtotal + ivaImporte;
+
+                                cmdD.ExecuteNonQuery();
+
+                                // 4. EXTRA: Descontar stock si es Producto
+                                if (det.Tipo == "Producto")
                                 {
-                                    // Asignamos valores en cada vuelta del bucle
-                                    cmdD.Parameters["@idF"].Value = idFacturaGenerada;
-                                    cmdD.Parameters["@idS"].Value = det.IdServicio;
-                                    cmdD.Parameters["@cant"].Value = det.Cantidad;
-                                    cmdD.Parameters["@pre"].Value = det.PrecioUnitario;
-
-                                    cmdD.ExecuteNonQuery();
+                                    string sqlStock = "UPDATE conceptos SET stock = stock - @c WHERE id_concepto = @id";
+                                    using (MySqlCommand cmdS = new MySqlCommand(sqlStock, con, tra))
+                                    {
+                                        cmdS.Parameters.AddWithValue("@c", det.Cantidad);
+                                        cmdS.Parameters.AddWithValue("@id", det.IdConcepto);
+                                        cmdS.ExecuteNonQuery();
+                                    }
                                 }
                             }
                         }
@@ -69,8 +103,7 @@ namespace Vetcare.Datos
                     catch (Exception ex)
                     {
                         tra.Rollback();
-                        // Loguear el error si tienes un logger
-                        throw new Exception("Error en la base de datos: " + ex.Message);
+                        throw new Exception("Error al procesar la factura: " + ex.Message);
                     }
                 }
             }
@@ -120,6 +153,48 @@ namespace Vetcare.Datos
             }
         }
 
+        public string ObtenerUltimoNumeroPorAnio(int anioActual)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                // Usamos CONCAT para MySQL
+                string sql = @"SELECT MAX(numero_factura) 
+                       FROM Facturas 
+                       WHERE numero_factura LIKE CONCAT(@anio, '-%')";
+
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    cmd.Parameters.AddWithValue("@anio", anioActual.ToString());
+
+                    con.Open();
+                    object result = cmd.ExecuteScalar();
+
+                    // Si es nulo o vacío, devolvemos null para facilitar la lógica posterior
+                    if (result == DBNull.Value || result == null)
+                        return null;
+
+                    return result.ToString();
+                }
+            }
+        }
+
+        public bool ActualizarEstadoFactura(int idFactura, string nuevoEstado)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = @"UPDATE facturas 
+                       SET estado = @estado
+                       WHERE id_factura = @id";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@estado", nuevoEstado);
+                cmd.Parameters.AddWithValue("@id", idFactura);
+
+                con.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
         private Factura MapearFactura(MySqlDataReader dr)
         {
             return new Factura
@@ -129,6 +204,8 @@ namespace Vetcare.Datos
                 NumeroFactura = dr["numero_factura"].ToString(),
                 Estado = dr["estado"].ToString(),
                 FechaEmision = Convert.ToDateTime(dr["fecha_emision"]),
+                BaseImponible = dr["base_imponible"] != DBNull.Value ? Convert.ToDecimal(dr["base_imponible"]) : 0,
+                IvaTotal = dr["iva_total"] != DBNull.Value ? Convert.ToDecimal(dr["iva_total"]) : 0,
                 Total = Convert.ToDecimal(dr["total"]),
                 MetodoPago = dr["metodo_pago"].ToString(),
                 Observaciones = dr["observaciones"].ToString()

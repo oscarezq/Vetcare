@@ -30,5 +30,14 @@ namespace Vetcare.Negocio
             return facturaDAO.AnularFactura(idFactura);
         }
 
+        public string ObtenerUltimoNumeroPorAnio(int anioActual)
+        {
+            return facturaDAO.ObtenerUltimoNumeroPorAnio(anioActual);
+        }
+
+        public bool ActualizarEstadoFactura(int idFactura, string nuevoEstado)
+        {
+            return facturaDAO.ActualizarEstadoFactura(idFactura, nuevoEstado);
+        }
     }
 }

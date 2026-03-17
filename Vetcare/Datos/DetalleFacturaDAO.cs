@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Vetcare.Entidades;
 
 namespace Vetcare.Datos
 {
-    class DetalleFacturaDAO
+    public class DetalleFacturaDAO // Cambiado a public para poder usarlo desde otros proyectos
     {
         private Conexion conexion = new Conexion();
 
@@ -17,27 +14,37 @@ namespace Vetcare.Datos
             List<DetalleFactura> lista = new List<DetalleFactura>();
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
-                string sql = @"SELECT d.*, s.nombre as nombre_servicio 
-                       FROM detalles_factura d 
-                       INNER JOIN servicios s ON d.id_servicio = s.id_servicio 
-                       WHERE d.id_factura = @idF";
+                // Ya no necesitamos INNER JOIN porque la tabla detalles_factura 
+                // ya tiene nombre_concepto, tipo e iva_porcentaje guardados.
+                string sql = @"SELECT * FROM detalles_factura WHERE id_factura = @idF";
+
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@idF", idFactura);
-                con.Open();
-                using (MySqlDataReader dr = cmd.ExecuteReader())
+
+                try
                 {
-                    while (dr.Read())
+                    con.Open();
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
-                        lista.Add(new DetalleFactura
+                        while (dr.Read())
                         {
-                            IdDetalle = Convert.ToInt32(dr["id_detalle"]),
-                            IdFactura = Convert.ToInt32(dr["id_factura"]),
-                            IdServicio = Convert.ToInt32(dr["id_servicio"]),
-                            NombreServicio = dr["nombre_servicio"].ToString(),
-                            Cantidad = Convert.ToInt32(dr["cantidad"]),
-                            PrecioUnitario = Convert.ToDecimal(dr["precio_unitario"])
-                        });
+                            lista.Add(new DetalleFactura
+                            {
+                                IdDetalle = Convert.ToInt32(dr["id_detalle"]),
+                                IdFactura = Convert.ToInt32(dr["id_factura"]),
+                                IdConcepto = dr["id_concepto"] == DBNull.Value ? 0 : Convert.ToInt32(dr["id_concepto"]),
+                                NombreConcepto = dr["nombre_concepto"].ToString(),
+                                Tipo = dr["tipo"].ToString(),
+                                Cantidad = Convert.ToInt32(dr["cantidad"]),
+                                PrecioUnitario = Convert.ToDecimal(dr["precio_unitario"]),
+                                IvaPorcentaje = Convert.ToDecimal(dr["iva_porcentaje"])
+                            });
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al obtener los detalles: " + ex.Message);
                 }
             }
             return lista;
