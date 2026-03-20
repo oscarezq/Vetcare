@@ -69,7 +69,6 @@ namespace Vetcare.Presentacion.Mascotas.Razas
 
             if (ventana.ShowDialog() == true)
             {
-                // Recargamos la lista desde la base de datos para ver la nueva raza
                 CargarLista();
                 MessageBox.Show("Raza guardada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }

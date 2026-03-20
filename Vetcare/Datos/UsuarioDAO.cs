@@ -266,6 +266,8 @@ namespace Vetcare.Datos
             {
                 IdUsuario = Convert.ToInt32(dr["id_usuario"]),
                 Username = dr["username"].ToString(),
+                PasswordHash = dr["password_hash"].ToString(),
+                Salt = dr["salt"].ToString(),
                 IdRol = Convert.ToInt32(dr["id_rol"]),
                 NombreRol = dr["nombre_rol"].ToString(),
                 Nombre = dr["nombre"].ToString(),

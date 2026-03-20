@@ -59,8 +59,9 @@ namespace Vetcare.Presentacion.Mascotas.Especies
             if (ventana.ShowDialog() == true)
             {
                 // Recargamos el DataGrid con la especie nueva
-                CargarLista(); // Método que lista las especies desde la BD
-                dgEspecies.SelectedItem = ventana.EspecieCreada; // Seleccionamos la creada
+                CargarLista();
+                MessageBox.Show("Especie guardada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                dgEspecies.SelectedItem = ventana.EspecieCreada;
                 dgEspecies.ScrollIntoView(ventana.EspecieCreada);
             }
         }

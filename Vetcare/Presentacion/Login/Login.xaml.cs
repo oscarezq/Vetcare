@@ -47,7 +47,7 @@ namespace Vetcare.Presentacion
             {
                 if(usuarioLogueado.DebeCambiarContrasena)
                 {
-                    WindowCambiarPassword winCambio = new WindowCambiarPassword(usuarioLogueado);
+                    WindowCambiarPassword winCambio = new WindowCambiarPassword(usuarioLogueado, true);
                     winCambio.Show();
                     this.Close();
                 } 

@@ -21,7 +21,7 @@ namespace Vetcare.Datos
                         c.id_cita, 
                         c.id_mascota, 
                         c.id_veterinario, 
-                        c.fecha, 
+                        c.fecha_hora, 
                         c.motivo, 
                         c.estado, 
                         c.observaciones,
@@ -60,7 +60,7 @@ namespace Vetcare.Datos
                         c.id_cita, 
                         c.id_mascota, 
                         c.id_veterinario, 
-                        c.fecha, 
+                        c.fecha_hora, 
                         c.motivo, 
                         c.estado, 
                         c.observaciones,
@@ -95,7 +95,7 @@ namespace Vetcare.Datos
                 con.Open();
                 string sql = @"
                     INSERT INTO citas 
-                        (id_mascota, id_veterinario, fecha, motivo, estado, observaciones)
+                        (id_mascota, id_veterinario, fecha_hora, motivo, estado, observaciones)
                     VALUES 
                         (@idMascota, @idVeterinario, @fecha, @motivo, @estado, @observaciones)";
 
@@ -114,7 +114,7 @@ namespace Vetcare.Datos
                     UPDATE citas SET 
                         id_mascota = @idMascota, 
                         id_veterinario = @idVeterinario,
-                        fecha = @fecha, 
+                        fecha = @fecha_hora, 
                         motivo = @motivo, 
                         estado = @estado, 
                         observaciones = @observaciones
@@ -209,7 +209,7 @@ namespace Vetcare.Datos
                 IdVeterinario = Convert.ToInt32(rdr["id_veterinario"]),
                 IdUsuarioVeterinario = Convert.ToInt32(rdr["id_usuario_veterinario"]),
                 IdUsuarioDueno = Convert.ToInt32(rdr["id_cliente_dueno"]),
-                FechaHora = Convert.ToDateTime(rdr["fecha"]),
+                FechaHora = Convert.ToDateTime(rdr["fecha_hora"]),
                 Motivo = rdr["motivo"].ToString(),
                 Estado = rdr["estado"].ToString(),
                 Observaciones = rdr["observaciones"].ToString(),

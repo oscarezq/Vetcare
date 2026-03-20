@@ -10,83 +10,115 @@ namespace Vetcare.Presentacion.Usuarios
     {
         private Usuario _usuario;
         private UsuarioService _usuarioService = new UsuarioService();
+        private bool esPrimerLogin;
 
-        public WindowCambiarPassword(Usuario usuario)
+        // El segundo parámetro decide si pedimos la pass actual o no
+        public WindowCambiarPassword(Usuario usuario, bool esPrimerLogin = false)
         {
             InitializeComponent();
-            _usuario = usuario;
+            this._usuario = usuario;
+            this.esPrimerLogin = esPrimerLogin;
+
+            ConfigurarInterfaz();
+        }
+
+        private void ConfigurarInterfaz()
+        {
+            if (esPrimerLogin)
+            {
+                // MODO LOGIN: No pedimos la actual, solo la nueva
+                txtTitulo.Text = "Cambio Obligatorio";
+                txtSubtitulo.Text = "Tu cuenta requiere una nueva contraseña para activarse.";
+                panelPassActual.Visibility = Visibility.Collapsed;
+                this.Height = 450;
+            }
+            else
+            {
+                // MODO MENÚ: Cambio voluntario, hay que confirmar identidad
+                txtTitulo.Text = "Seguridad de Cuenta";
+                txtSubtitulo.Text = "Introduce tu clave actual para poder establecer una nueva.";
+                panelPassActual.Visibility = Visibility.Visible;
+                this.Height = 520;
+            }
         }
 
         private void btnActualizar_Click(object sender, RoutedEventArgs e)
         {
-            string pass = txtPassNueva.Password;
+            brdError.Visibility = Visibility.Collapsed;
+
+            // --- 1. VALIDACIÓN SEGÚN EL MODO ---
+            if (!esPrimerLogin)
+            {
+                // Si NO es el primer login, comparamos la actual con la de la BD
+                string hashActual = Seguridad.Encriptar(txtPassActual.Password, _usuario.Salt);
+
+                if (hashActual != _usuario.PasswordHash)
+                {
+                    MostrarError("La contraseña actual no es correcta.");
+                    return;
+                }
+            }
+
+            // --- 2. VALIDACIÓN DE LA NUEVA ---
+            string nueva = txtPassNueva.Password;
             string confirm = txtPassConfirmar.Password;
 
-            // 1. Validaciones básicas
-            if (string.IsNullOrWhiteSpace(pass) || pass.Length < 8)
+            if (nueva.Length < 8 || !ValidarSeguridad(nueva))
             {
-                MostrarError("La contraseña debe tener al menos 8 caracteres.");
+                MostrarError("Mínimo 8 caracteres, una mayúscula y un número.");
                 return;
             }
 
-            // Validación de seguridad: mayúscula, minúscula, número, carácter especial
-            if (!EsContrasenaSegura(pass))
+            if (nueva != confirm)
             {
-                MostrarError("La contraseña debe contener al menos una mayúscula, una minúscula y un número.");
+                MostrarError("Las nuevas contraseñas no coinciden.");
                 return;
             }
 
-            if (pass != confirm)
-            {
-                MostrarError("Las contraseñas no coinciden.");
-                return;
-            }
-
+            // --- 3. GUARDADO ---
             try
             {
-                // Generamos un nuevo Salt aleatorio para esta nueva contraseña
+                // Generamos seguridad fresca
                 string nuevoSalt = Guid.NewGuid().ToString();
-
-                // Encriptamos la contraseña usando tu clase de utilidad
-                string hashEncriptado = Seguridad.Encriptar(pass, nuevoSalt);
-
-                // Actualizamos el objeto con los datos encriptados
-                _usuario.PasswordHash = hashEncriptado;
+                _usuario.PasswordHash = Seguridad.Encriptar(nueva, nuevoSalt);
                 _usuario.Salt = nuevoSalt;
                 _usuario.DebeCambiarContrasena = false;
 
-                // 3. Llamada a la capa de negocio
-                bool exito = _usuarioService.Actualizar(_usuario);
+                if (_usuarioService.Actualizar(_usuario))
+                {
+                    MessageBox.Show("Contraseña actualizada.", "VetCare", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                if (exito)
-                {
-                    MessageBox.Show("Contraseña actualizada con éxito. ¡Bienvenido!", "Vetcare", MessageBoxButton.OK, MessageBoxImage.Information);
-                    MainWindow main = new MainWindow(_usuario);
-                    main.Show();
+                    if (esPrimerLogin)
+                    {
+                        // Si venimos del login, lanzamos la app
+                        MainWindow main = new MainWindow(_usuario);
+                        main.Show();
+                    }
+
+                    this.DialogResult = true;
                     this.Close();
-                }
-                else
-                {
-                    MostrarError("No se pudo actualizar la contraseña. Inténtalo de nuevo.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error técnico: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MostrarError("Error de conexión con la base de datos.");
             }
         }
 
-        // Método auxiliar para validar seguridad de contraseña
-        private bool EsContrasenaSegura(string contrasena)
+        private bool ValidarSeguridad(string pass)
         {
-            // Al menos una mayúscula, una minúscula y un número
-            return System.Text.RegularExpressions.Regex.IsMatch(contrasena, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$");
+            return System.Text.RegularExpressions.Regex.IsMatch(pass, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$");
         }
 
         private void MostrarError(string mensaje)
         {
             lblError.Text = mensaje;
-            lblError.Visibility = Visibility.Visible;
+            brdError.Visibility = Visibility.Visible;
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            brdError.Visibility = Visibility.Collapsed;
         }
     }
 }

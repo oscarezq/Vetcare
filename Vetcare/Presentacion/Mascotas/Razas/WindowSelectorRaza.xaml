@@ -18,7 +18,7 @@
         <Grid Grid.Row="0" Margin="0,0,0,15">
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="RAZAS" FontSize="18" FontWeight="Bold" Foreground="#1B2631"/>
-                <Rectangle Height="2" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,3,0,0"/>
+                <Rectangle Height="2" Fill="#2ECC71" HorizontalAlignment="Left" Width="40" Margin="2,3,0,0"/>
             </StackPanel>
 
             <Button Content="+ Nueva Raza" Click="btnNuevaRaza_Click"
@@ -77,7 +77,7 @@
                     Background="#BDC3C7" Foreground="Black" BorderThickness="0"/>
 
             <Button Content="Seleccionar" Click="btnSeleccionar_Click" Width="110" Height="30" 
-                    Background="#E67E22" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
+                    Background="#2ECC71" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
         </StackPanel>
     </Grid>
 </Window>

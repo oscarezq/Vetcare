@@ -98,6 +98,7 @@ namespace Vetcare.Presentacion.Clientes
                 if (resultado)
                 {
                     MessageBox.Show("Cliente guardado correctamente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
                     this.Close();
                 }
                 else

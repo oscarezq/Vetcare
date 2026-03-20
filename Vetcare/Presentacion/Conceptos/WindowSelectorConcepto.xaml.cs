@@ -5,14 +5,13 @@ using System.Windows;
 using System.Windows.Controls;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Servicios;
 
 namespace Vetcare.Presentacion.Facturas
 {
     public partial class WindowSelectorConcepto : Window
     {
-        // Esta es la propiedad que leerá WindowFactura
         public Concepto ConceptoSeleccionado { get; private set; }
-
         private ConceptoService _conceptoService = new ConceptoService();
         private List<Concepto> _listaOriginal = new List<Concepto>();
 
@@ -26,37 +25,35 @@ namespace Vetcare.Presentacion.Facturas
         {
             try
             {
-                // Cargamos todos los conceptos (Servicios y Productos)
                 _listaOriginal = _conceptoService.ObtenerTodos();
                 dgConceptos.ItemsSource = _listaOriginal;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar conceptos: " + ex.Message);
+                MessageBox.Show("Error al cargar: " + ex.Message);
             }
         }
 
-        private void txtBusqueda_TextChanged(object sender, TextChangedEventArgs e)
+        // Evento único para manejar ambos filtros (Texto y ComboBox)
+        private void Filtro_Changed(object sender, EventArgs e)
         {
-            // Filtro rápido en memoria
+            if (_listaOriginal == null || dgConceptos == null) return;
+
             string busqueda = txtBusqueda.Text.ToLower();
-            var filtrados = _listaOriginal.Where(c =>
-                c.Nombre.ToLower().Contains(busqueda) ||
-                c.Tipo.ToLower().Contains(busqueda)
-            ).ToList();
+            string tipoSeleccionado = (cbTipoFiltro.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            var filtrados = _listaOriginal.Where(c => {
+                bool coincideNombre = c.Nombre.ToLower().Contains(busqueda);
+                bool coincideTipo = tipoSeleccionado == "Todos" || c.Tipo.Equals(tipoSeleccionado, StringComparison.OrdinalIgnoreCase);
+                return coincideNombre && coincideTipo;
+            }).ToList();
 
             dgConceptos.ItemsSource = filtrados;
         }
 
-        private void btnSeleccionar_Click(object sender, RoutedEventArgs e)
-        {
-            SeleccionarYSalir();
-        }
+        private void btnSeleccionar_Click(object sender, RoutedEventArgs e) => SeleccionarYSalir();
 
-        private void dgConceptos_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            SeleccionarYSalir();
-        }
+        private void dgConceptos_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) => SeleccionarYSalir();
 
         private void SeleccionarYSalir()
         {
@@ -68,7 +65,7 @@ namespace Vetcare.Presentacion.Facturas
             }
             else
             {
-                MessageBox.Show("Por favor, seleccione un elemento de la lista.");
+                MessageBox.Show("Por favor, seleccione un elemento de la lista.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -76,6 +73,19 @@ namespace Vetcare.Presentacion.Facturas
         {
             this.DialogResult = false;
             this.Close();
+        }
+
+        // Métodos para los botones de añadir (deberás llamar a tus ventanas de creación)
+        private void btnNuevoProducto_Click(object sender, RoutedEventArgs e)
+        {
+            WindowProducto win = new WindowProducto();
+            if(win.ShowDialog() == true) CargarDatos();
+        }
+
+        private void btnNuevoServicio_Click(object sender, RoutedEventArgs e)
+        {
+            WindowServicio win = new WindowServicio();
+            if(win.ShowDialog() == true) CargarDatos();
         }
     }
 }

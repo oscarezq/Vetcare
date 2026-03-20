@@ -101,5 +101,35 @@ namespace Vetcare.Presentacion
             login.Show();
             this.Close();
         }
+
+        // Abre el menú al hacer clic izquierdo en el nombre de usuario
+        private void btnPerfil_Click(object sender, RoutedEventArgs e)
+        {
+            if (btnPerfil.ContextMenu != null)
+            {
+                // Posicionamos el menú justo debajo del botón
+                btnPerfil.ContextMenu.PlacementTarget = btnPerfil;
+                btnPerfil.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                btnPerfil.ContextMenu.IsOpen = true;
+            }
+        }
+
+        // Acción: Ver Información
+        private void btnVerInfo_Click(object sender, RoutedEventArgs e)
+        {
+            if (usuarioActual != null)
+            {
+                WindowVerPerfil perfil = new WindowVerPerfil(usuarioActual);
+                perfil.Owner = Window.GetWindow(this);
+                perfil.ShowDialog();
+            }
+        }
+
+        // Acción: Cambiar Contraseña
+        private void btnCambiarPass_Click(object sender, RoutedEventArgs e)
+        {
+            WindowCambiarPassword win = new WindowCambiarPassword(usuarioActual, false);
+            win.ShowDialog();
+        }
     }
 }

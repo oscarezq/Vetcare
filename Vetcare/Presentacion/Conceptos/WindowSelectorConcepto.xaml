@@ -1,9 +1,11 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Facturas.WindowSelectorConcepto"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Seleccionar Concepto" Height="450" Width="600"
-        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
-    <Grid Margin="10">
+        Title="Vetcare - Seleccionar Concepto" Height="550" Width="700"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" 
+        Background="#F4F6F7" AllowsTransparency="False" WindowStyle="ThreeDBorderWindow">
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -11,28 +13,99 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Seleccionar Producto o Servicio" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-
-        <DockPanel Grid.Row="1" Margin="0,5">
-            <TextBlock Text="Buscar:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtBusqueda" TextChanged="txtBusqueda_TextChanged" Height="25"/>
-        </DockPanel>
-
-        <DataGrid x:Name="dgConceptos" Grid.Row="2" AutoGenerateColumns="False" 
-                  IsReadOnly="True" SelectionMode="Single" MouseDoubleClick="dgConceptos_MouseDoubleClick"
-                  Margin="0,10" VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="80"/>
-                <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*"/>
-                <DataGridTextColumn Header="Precio Base" Binding="{Binding PrecioBase, StringFormat={}{0:N2} €}" Width="100"/>
-                <DataGridTextColumn Header="IVA" Binding="{Binding IvaPorcentaje, StringFormat={}{0}%}" Width="60"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="btnCancelar" Content="Cancelar" Width="100" Margin="5" Click="btnCancelar_Click"/>
-            <Button x:Name="btnSeleccionar" Content="Seleccionar" Width="100" Margin="5" 
-                    Background="#007ACC" Foreground="White" FontWeight="Bold" Click="btnSeleccionar_Click"/>
+        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+            <TextBlock Text="SELECCIONAR CONCEPTO" FontSize="20" FontWeight="Bold" Foreground="#2C3E50"/>
+            <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
         </StackPanel>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="12" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="BUSCAR POR NOMBRE" FontSize="10" FontWeight="Bold" Foreground="#85929E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtBusqueda" TextChanged="Filtro_Changed" Height="32" VerticalContentAlignment="Center" Padding="5,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                    <TextBlock Text="FILTRAR TIPO" FontSize="10" FontWeight="Bold" Foreground="#85929E" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="cbTipoFiltro" Height="32" SelectionChanged="Filtro_Changed" VerticalContentAlignment="Center">
+                        <ComboBoxItem Content="Todos" IsSelected="True"/>
+                        <ComboBoxItem Content="Producto"/>
+                        <ComboBoxItem Content="Servicio"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Orientation="Horizontal">
+                    <Button x:Name="btnNuevoProducto" Click="btnNuevoProducto_Click" Content="+ Producto" Background="#3498DB" Foreground="White" Width="90" Height="32" Margin="0,0,5,0" BorderThickness="0" Cursor="Hand"/>
+                    <Button x:Name="btnNuevoServicio" Click="btnNuevoServicio_Click" Content="+ Servicio" Background="#9B59B6" Foreground="White" Width="90" Height="32" BorderThickness="0" Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="#D5DBDB" BorderThickness="1" Padding="5">
+            <DataGrid x:Name="dgConceptos" AutoGenerateColumns="False" IsReadOnly="True" 
+                      SelectionMode="Single" MouseDoubleClick="dgConceptos_MouseDoubleClick"
+                      HeadersVisibility="Column" GridLinesVisibility="None" Background="White" BorderThickness="0">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="TIPO" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border x:Name="brdTipo" CornerRadius="4" Padding="5,2" HorizontalAlignment="Center" Background="#BDC3C7">
+                                    <TextBlock Text="{Binding Tipo}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                </Border>
+
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Tipo}" Value="Producto">
+                                        <Setter TargetName="brdTipo" Property="Background" Value="#3498DB"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Tipo}" Value="Servicio">
+                                        <Setter TargetName="brdTipo" Property="Background" Value="#9B59B6"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="10,0"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="PRECIO BASE" Binding="{Binding PrecioBase, StringFormat={}{0:N2}€}" Width="110">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="Margin" Value="0,0,10,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="IVA" Binding="{Binding IvaPorcentaje, StringFormat={}{0}%}" Width="60"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <Grid Grid.Row="3" Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="1.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="CANCELAR" Click="btnCancelar_Click" Height="40" Background="#BDC3C7" Foreground="Black" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+
+            <Button Grid.Column="2" x:Name="btnSeleccionar" Content="SELECCIONAR ELEMENTO" Click="btnSeleccionar_Click" Height="40" Background="#2E86C1" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+        </Grid>
     </Grid>
 </Window>
