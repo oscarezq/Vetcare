@@ -1,11 +1,52 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Usuarios.WindowUsuario"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Ficha de Usuario" Height="560" Width="700"
-        WindowStartupLocation="CenterScreen"
-        Background="#F8F9F9" Icon="/Resources/icono.png">
+        Title="Ficha de Usuario" Height="650" Width="950"
+        WindowStartupLocation="CenterScreen" Background="#F8FAFC"
+        TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
+        SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
-    <Grid Margin="25">
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="ModernInput" TargetType="Control">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Control">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernCombo" TargetType="ComboBox">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -14,91 +55,100 @@
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,0,15,0">
             <StackPanel>
                 <StackPanel Margin="0,0,0,25">
-                    <TextBlock x:Name="lblTitulo" Text="NUEVO USUARIO" FontSize="20" FontWeight="Bold" Foreground="#1B2631"/>
-                    <Rectangle Height="2" Fill="#E67E22" HorizontalAlignment="Left" Width="50" Margin="2,5,0,0"/>
+                    <TextBlock x:Name="lblTitulo" Text="NUEVO USUARIO" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+                    <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
                 </StackPanel>
 
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
-                        <TextBlock Text="Username" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtUsername" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <TextBlock Text="USERNAME" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtUsername" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
 
                     <StackPanel Margin="5">
-                        <TextBlock Text="Rol de Usuario" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <ComboBox x:Name="cbRol" Height="30" 
+                        <TextBlock Text="ROL DE USUARIO" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox x:Name="cbRol" 
+                                  Style="{StaticResource ModernCombo}"
                                   DisplayMemberPath="NombreRol" 
                                   SelectedValuePath="IdRol"
-                                  SelectionChanged="cbRol_SelectionChanged" />
+                                  SelectionChanged="cbRol_SelectionChanged"/>
                     </StackPanel>
                 </UniformGrid>
 
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
-                        <TextBlock Text="Nombre" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtNombre" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <TextBlock Text="NOMBRE" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtNombre" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
                     <StackPanel Margin="5">
-                        <TextBlock Text="Apellidos" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtApellidos" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <TextBlock Text="APELLIDOS" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtApellidos" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
                 </UniformGrid>
 
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
-                        <TextBlock Text="Email" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtEmail" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <TextBlock Text="EMAIL" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtEmail" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
                     <StackPanel Margin="5">
-                        <TextBlock Text="Teléfono" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtTelefono" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <TextBlock Text="TELÉFONO" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtTelefono" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
                 </UniformGrid>
 
                 <Border x:Name="borderVeterinario" 
                         Visibility="Collapsed" 
-                        Background="#FDF2E9" 
-                        CornerRadius="8" 
-                        Padding="10" 
-                        Margin="5,0,5,15" 
-                        BorderBrush="#E67E22" 
+                        Background="#FFF7ED" 
+                        CornerRadius="12" 
+                        Padding="15" 
+                        Margin="5,10,5,20" 
+                        BorderBrush="#FED7AA" 
                         BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="DATOS PROFESIONALES (VETERINARIO)" FontSize="10" FontWeight="Bold" Foreground="#E67E22" Margin="0,0,0,10"/>
+                        <TextBlock Text="DATOS PROFESIONALES (VETERINARIO)" FontSize="10" FontWeight="Bold" Foreground="#EA580C" Margin="0,0,0,12"/>
                         <UniformGrid Columns="2">
                             <StackPanel Margin="5">
-                                <TextBlock Text="Especialidad" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                                <TextBox x:Name="txtEspecialidad" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                                <TextBlock Text="ESPECIALIDAD" Style="{StaticResource FieldLabel}" Foreground="#C2410C"/>
+                                <TextBox x:Name="txtEspecialidad" Style="{StaticResource ModernInput}" BorderBrush="#FDBA74"/>
                             </StackPanel>
                             <StackPanel Margin="5">
-                                <TextBlock Text="Nº Colegiado" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                                <TextBox x:Name="txtColegiado" Height="30" VerticalContentAlignment="Center" Padding="5,0" MaxLength="9"/>
+                                <TextBlock Text="Nº COLEGIADO" Style="{StaticResource FieldLabel}" Foreground="#C2410C"/>
+                                <TextBox x:Name="txtColegiado" Style="{StaticResource ModernInput}" MaxLength="9" BorderBrush="#FDBA74"/>
                             </StackPanel>
                         </UniformGrid>
                     </StackPanel>
                 </Border>
 
-                <StackPanel >
-                    <StackPanel x:Name="panelPassword" Margin="5">
-                        <TextBlock x:Name="lblPassword" Text="Contraseña inicial" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <PasswordBox x:Name="txtPassword" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
-                        <Border Background="#EBF5FB" CornerRadius="4" Margin="0,8,0,0" Padding="10,8">
+                <StackPanel x:Name="panelPassword" Margin="5,0,5,15">
+                    <TextBlock x:Name="lblPassword" Text="CONTRASEÑA INICIAL" Style="{StaticResource FieldLabel}"/>
+                    <PasswordBox x:Name="txtPassword" Style="{StaticResource ModernInput}"/>
+                    <Border Background="#F0F9FF" CornerRadius="8" Margin="0,12,0,0" Padding="12" BorderBrush="#BAE6FD" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="ℹ️" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="El usuario deberá crear una contraseña nueva en su primer acceso." 
-                                   FontSize="10.5" Foreground="#566573" TextWrapping="Wrap"/>
-                        </Border>
-                    </StackPanel>
+                                       FontSize="11" Foreground="#0369A1" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button x:Name="btnCancelar" Content="Cancelar" Width="90" Height="32" Margin="10,0" Click="btnCancelar_Click" Cursor="Hand" Background="#FBFCFC" BorderBrush="#D5DBDB"/>
-            <Button x:Name="btnGuardar" Content="Guardar Usuario" Width="130" Height="32" Background="#E67E22" Foreground="White" FontWeight="Bold" Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="4"/>
-                    </Style>
-                </Button.Resources>
+            <Button x:Name="btnCancelar" Content="Cancelar" Width="100" Height="42" 
+                    Click="btnCancelar_Click" Cursor="Hand" Background="Transparent" 
+                    Foreground="#64748B" FontWeight="SemiBold" BorderThickness="0"/>
+
+            <Button x:Name="btnGuardar" Content="Guardar Usuario" Width="160" Height="42" 
+                    Background="#E67E22" Foreground="White" FontWeight="Bold" 
+                    Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
         </StackPanel>
     </Grid>

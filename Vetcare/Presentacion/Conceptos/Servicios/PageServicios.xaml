@@ -66,7 +66,7 @@
                     <TextBlock Text="Catálogo de Servicios" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
                     <Button DockPanel.Dock="Right" x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Click="btnNuevoServicio_Click"
-                            Background="#1ABC9C" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
+                            Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -76,7 +76,7 @@
                 </DockPanel>
 
                 <DataGrid x:Name="dgServicios" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
+                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgServicios_MouseDoubleClick"
                           Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
                           SelectionMode="Single" SelectionUnit="FullRow">
 
@@ -141,10 +141,10 @@
 
                         <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion}" Width="3*" FontSize="14"/>
 
-                        <DataGridTemplateColumn Header="PRECIO BASE" Width="*">
+                        <DataGridTemplateColumn Header="BASE" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding PrecioBase, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#27AE60"/>
+                                    <TextBlock Text="{Binding PrecioBase, StringFormat={}{0:N2} €}" VerticalAlignment="Center" Foreground="#7F8C8D"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -152,19 +152,42 @@
                         <DataGridTemplateColumn Header="IVA" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding IvaPorcentaje, StringFormat={}{0:N2}}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#27AE60"/>
+                                    <TextBlock Text="{Binding IvaPorcentaje, StringFormat={}{0}%}" VerticalAlignment="Center" Foreground="#566573"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                        <DataGridTemplateColumn Header="PRECIO CON IVA" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button Content="✎" ToolTip="Editar" Click="btnEditarServicio_Click" Margin="0,0,5,0" 
-                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminarServicio_Click" 
-                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
+                                    <TextBlock Text="{Binding PrecioFinal, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2E86C1" FontSize="15"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <Button Content="✏️" ToolTip="Editar Producto" Click="btnEditarServicio_Click" Margin="0,0,8,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="40" Height="32" 
+                                                BorderBrush="#AED6F1" Cursor="Hand" FontSize="14">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="4"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+
+                                        <Button Content="🗑️" ToolTip="Eliminar Producto" Click="btnEliminarServicio_Click" 
+                                                Background="#FDEDEC" Foreground="#CB4335" Width="40" Height="32" 
+                                                BorderBrush="#FADBD8" Cursor="Hand" FontSize="14">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="4"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

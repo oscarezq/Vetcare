@@ -1,51 +1,84 @@
 ﻿<Window x:Class="Vetcare.Presentacion.WindowMascota"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="Ficha de Mascota" Height="520" Width="550"
-        WindowStartupLocation="CenterScreen"
-        Background="#F8F9F9" Icon="/Resources/icono.png">
+        Title="Ficha de Mascota" Height="700" Width="950"
+        WindowStartupLocation="CenterScreen" Background="#F8FAFC"
+        TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
+        SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
-    <Border Padding="25">
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Margin" Value="0,0,0,6"/> 
+        </Style>
+
+        <Style x:Key="ModernInput" TargetType="Control">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="InputButton" TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="8">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Padding="30">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <!-- Contenido del formulario -->
                 <RowDefinition Height="Auto"/>
-                <!-- Botones -->
             </Grid.RowDefinitions>
 
-            <!-- Contenido del formulario -->
             <StackPanel Grid.Row="0">
-                <!-- Título -->
-                <StackPanel Margin="0,0,0,25">
-                    <TextBlock x:Name="lblTitulo" Text="NUEVA MASCOTA" FontSize="20" FontWeight="Bold" Foreground="#1B2631"/>
-                    <Rectangle Height="2" Fill="#E67E22" HorizontalAlignment="Left" Width="50" Margin="2,5,0,0"/>
+                <StackPanel Margin="0,0,0,30">
+                    <TextBlock x:Name="lblTitulo" Text="NUEVA MASCOTA" FontSize="26" FontWeight="Bold" Foreground="#2C3E50"/>
+                    <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
                 </StackPanel>
 
-                <!-- Fila 1: Nombre / Dueño -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
-                        <TextBlock Text="Nombre" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtNombre" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <TextBlock Text="NOMBRE" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtNombre" Style="{StaticResource ModernInput}">
+                            <TextBox.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
                     </StackPanel>
 
                     <StackPanel Margin="5">
-                        <TextBlock Text="Dueño" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <Button x:Name="btnSeleccionarDueño" Click="btnBuscarDueño_Click" Height="30" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch" Cursor="Hand">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="2"/>
-                                </Style>
-                            </Button.Resources>
-                            <Grid Margin="5,0">
+                        <TextBlock Text="DUEÑO" Style="{StaticResource FieldLabel}"/>
+                        <Button x:Name="btnSeleccionarDueño" Click="btnBuscarDueño_Click" Style="{StaticResource InputButton}">
+                            <Grid Margin="12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="txtNombreDueño" Text="Seleccionar cliente..." VerticalAlignment="Center" Foreground="#7F8C8D" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock x:Name="txtNombreDueño" Text="Seleccionar cliente..." VerticalAlignment="Center" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Grid.Column="1" Text="👤" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
                             </Grid>
                         </Button>
@@ -53,29 +86,33 @@
                     </StackPanel>
                 </UniformGrid>
 
-                <!-- Fila 2: Chip / Especie -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
                         <DockPanel>
-                            <TextBlock Text="Número de Chip" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                            <CheckBox x:Name="chkNoChip" Content="No tiene" FontSize="10" 
-                      HorizontalAlignment="Right" VerticalAlignment="Center"
-                      Checked="chkNoChip_Checked" Unchecked="chkNoChip_Unchecked"/>
+                            <TextBlock Text="NÚMERO DE CHIP" Style="{StaticResource FieldLabel}"/>
+                            <CheckBox x:Name="chkNoChip" Content="No tiene" FontSize="11" Foreground="#64748B"
+                                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                                      Checked="chkNoChip_Checked" Unchecked="chkNoChip_Unchecked"/>
                         </DockPanel>
-
-                        <TextBox x:Name="txtChip" Height="30" VerticalContentAlignment="Center" Padding="5,0" MaxLength="15"/>
+                        <TextBox x:Name="txtChip" Style="{StaticResource ModernInput}" MaxLength="15">
+                            <TextBox.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
                     </StackPanel>
 
                     <StackPanel Margin="5">
-                        <TextBlock Text="Especie" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <Button x:Name="btnSeleccionarEspecie" Click="btnBuscarEspecie_Click" Height="30" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch" Cursor="Hand">
-                            <Grid Margin="5,0">
+                        <TextBlock Text="ESPECIE" Style="{StaticResource FieldLabel}"/>
+                        <Button x:Name="btnSeleccionarEspecie" Click="btnBuscarEspecie_Click" Style="{StaticResource InputButton}">
+                            <Grid Margin="12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="txtNombreEspecie" Text="Seleccionar especie..." VerticalAlignment="Center" Foreground="#7F8C8D" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
+                                <TextBlock x:Name="txtNombreEspecie" Text="Seleccionar especie..." VerticalAlignment="Center" Foreground="#64748B"/>
+                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#E67E22"/>
                             </Grid>
                         </Button>
                         <TextBox x:Name="txtIdEspecie" Visibility="Collapsed"/>
@@ -84,60 +121,63 @@
 
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
-                        <TextBlock Text="Raza" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <Button x:Name="btnSeleccionarRaza" Click="btnBuscarRaza_Click" Height="30" 
-                Background="White" BorderBrush="#D5DBDB" IsEnabled="False"
-                HorizontalContentAlignment="Stretch" Cursor="Hand">
-                            <Grid Margin="5,0">
+                        <TextBlock Text="RAZA" Style="{StaticResource FieldLabel}"/>
+                        <Button x:Name="btnSeleccionarRaza" Click="btnBuscarRaza_Click" Style="{StaticResource InputButton}" IsEnabled="False">
+                            <Grid Margin="12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="txtNombreRaza" Text="Seleccionar raza..." VerticalAlignment="Center" Foreground="#7F8C8D" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
+                                <TextBlock x:Name="txtNombreRaza" Text="Seleccionar raza..." VerticalAlignment="Center" Foreground="#64748B"/>
+                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#94A3B8"/>
                             </Grid>
                         </Button>
                         <TextBox x:Name="txtIdRaza" Visibility="Collapsed"/>
                     </StackPanel>
+
                     <StackPanel Margin="5">
-                        <TextBlock Text="Sexo" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <ComboBox x:Name="cbSexo" Height="30">
+                        <TextBlock Text="SEXO" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox x:Name="cbSexo" Height="40" VerticalContentAlignment="Center">
                             <ComboBoxItem Content="Macho"/>
                             <ComboBoxItem Content="Hembra"/>
                         </ComboBox>
                     </StackPanel>
                 </UniformGrid>
 
-                <!-- Fila 4: Peso / Fecha Nacimiento -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
-                        <TextBlock Text="Peso (kg)" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtPeso" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                        <TextBlock Text="PESO (KG)" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtPeso" Style="{StaticResource ModernInput}">
+                            <TextBox.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
                     </StackPanel>
 
                     <StackPanel Margin="5">
-                        <TextBlock Text="Fecha de Nacimiento" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <DatePicker x:Name="dpNacimiento" 
-                                    Height="30" 
-                                    VerticalContentAlignment="Center" />
+                        <TextBlock Text="FECHA DE NACIMIENTO" Style="{StaticResource FieldLabel}"/>
+                        <DatePicker x:Name="dpNacimiento" Height="40" VerticalContentAlignment="Center" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
                 </UniformGrid>
             </StackPanel>
 
-            <!-- Botones Cancelar / Guardar -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button x:Name="btnCancelar" Content="Cancelar" Width="90" Height="32"
-                        Margin="10,0" Click="btnCancelar_Click" Cursor="Hand"
-                        Background="#FBFCFC" BorderBrush="#D5DBDB"/>
+                <Button x:Name="btnCancelar" Content="Cancelar" Width="110" Height="45"
+                        Background="Transparent" Foreground="#64748B" FontWeight="SemiBold"
+                        BorderThickness="0" Margin="0,0,10,0" Click="btnCancelar_Click" Cursor="Hand"/>
 
-                <Button x:Name="btnGuardar" Content="Guardar Mascota" Width="130" Height="32"
+                <Button x:Name="btnGuardar" Content="Guardar Mascota" Width="180" Height="45"
                         Background="#E67E22" Foreground="White" FontWeight="Bold"
                         Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4"/>
-                        </Style>
-                    </Button.Resources>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
                 </Button>
             </StackPanel>
         </Grid>

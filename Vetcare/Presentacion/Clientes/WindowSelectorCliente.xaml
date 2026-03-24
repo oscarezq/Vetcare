@@ -1,10 +1,74 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Clientes.WindowSelectorCliente"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Seleccionar Propietario" Height="550" Width="650"
-        WindowStartupLocation="CenterOwner" Background="#F4F6F7">
+        Title="Seleccionar Propietario" Height="650" Width="760"
+        WindowStartupLocation="CenterOwner" Background="#F8FAFC"
+        TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
+        SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
-    <Grid Margin="15">
+    <Window.Resources>
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="ModernRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F1F5F9"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#E0E7FF"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="BorderBrush" Value="#6366F1"/>
+                    <Setter Property="BorderThickness" Value="2,0,0,0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="ModernCellStyle" TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="15,8" Background="Transparent" BorderThickness="0">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="#2C3E50"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernDataGrid" TargetType="DataGrid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="RowHeight" Value="50"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="CellStyle" Value="{StaticResource ModernCellStyle}"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -12,57 +76,100 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" Margin="5,0,5,15" LastChildFill="False">
-            <TextBlock Text="BUSCADOR DE CLIENTES" 
-                       FontSize="18" 
-                       FontWeight="Bold" 
-                       Foreground="#2C3E50" 
-                       VerticalAlignment="Center"
-                       DockPanel.Dock="Left"/>
+        <DockPanel Grid.Row="0" Margin="0,0,0,30" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Buscador de Clientes" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
+            </StackPanel>
 
-            <Button Content="+ NUEVO CLIENTE" 
+            <Button DockPanel.Dock="Right" 
+                    Content="+ NUEVO CLIENTE" 
                     Click="btnNuevoCliente_Click" 
-                    DockPanel.Dock="Right" 
-                    Background="#1ABC9C" 
-                    Foreground="White" 
-                    FontWeight="Bold" 
-                    Padding="20,5" 
-                    BorderThickness="0" 
-                    Cursor="Hand"
-                    VerticalAlignment="Center">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5"/>
-                    </Style>
-                </Button.Resources>
+                    Background="#1ABC9C" Foreground="White" 
+                    Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
         </DockPanel>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="FILTRAR POR NOMBRE, APELLIDO O DNI" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D"/>
-                <TextBox x:Name="txtBuscaCliente" Height="25" Margin="0,5,0,0" 
+                <TextBlock Text="FILTRAR POR NOMBRE, APELLIDO O DNI" Style="{StaticResource LabelStyle}"/>
+                <TextBox x:Name="txtBuscaCliente" 
+                         Height="40" 
+                         FontSize="16"
+                         Padding="10,0"
                          VerticalContentAlignment="Center"
-                         TextChanged="txtBuscaCliente_TextChanged"/>
+                         Background="#F1F5F9"
+                         BorderThickness="1"
+                         BorderBrush="#CBD5E1"
+                         TextChanged="txtBuscaCliente_TextChanged">
+                    <TextBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="5">
-            <DataGrid x:Name="dgClientes" AutoGenerateColumns="False" IsReadOnly="True" 
-                      CanUserAddRows="False" GridLinesVisibility="None" HeadersVisibility="Column"
-                      MouseDoubleClick="dgClientes_MouseDoubleClick" SelectionMode="Single"
-                      Background="White" BorderThickness="0" FontSize="13">
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="10">
+            <DataGrid x:Name="dgClientes" 
+                      Style="{StaticResource ModernDataGrid}"
+                      RowStyle="{StaticResource ModernRowStyle}"
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True" 
+                      CanUserAddRows="False" 
+                      SelectionMode="Single"
+                      MouseDoubleClick="dgClientes_MouseDoubleClick"
+                      HorizontalScrollBarVisibility="Disabled"      
+                      ColumnWidth="*">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#94A3B8"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Padding" Value="10,0,10,15"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="1.5*"/>
-                    <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="2*"/>
-                    <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="2*"/>
+                    <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="150"/>
+                    <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="*"/>
+                    <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Cancelar" Click="btnCancelar_Click" Width="100" Height="30" Margin="0,0,10,0" Background="#BDC3C7" BorderThickness="0"/>
-            <Button Content="Seleccionar" Click="btnSeleccionar_Click" Width="120" Height="30" Background="#E67E22" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
+            <Button Content="Cancelar" 
+                    Click="btnCancelar_Click" 
+                    Width="120" Height="45" 
+                    Background="Transparent" 
+                    Foreground="#64748B" 
+                    FontWeight="SemiBold"
+                    BorderThickness="0"
+                    Margin="0,0,15,0"/>
+
+            <Button Content="Seleccionar" 
+                    Click="btnSeleccionar_Click" 
+                    Width="200" Height="45" 
+                    Background="#E67E22" Foreground="White" 
+                    FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

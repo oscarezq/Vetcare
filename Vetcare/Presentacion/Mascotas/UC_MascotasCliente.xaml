@@ -29,7 +29,7 @@
             </Button>
         </DockPanel>
 
-        <DataGrid x:Name="dgMascotas" Grid.Row="1" 
+        <DataGrid x:Name="dgMascotas" Grid.Row="1" MouseDoubleClick="dgMascotas_MouseDoubleClick"
                   AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
                   HeadersVisibility="Column" 
                   GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F2F2F2"

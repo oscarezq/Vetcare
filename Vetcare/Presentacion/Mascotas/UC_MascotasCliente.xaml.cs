@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Mascotas;
@@ -38,11 +39,27 @@ namespace Vetcare.Presentacion.Clientes
         {
             if (sender is Hyperlink hl && hl.DataContext is Mascota mascota)
             {
-                WindowFichaMascota ficha = new WindowFichaMascota(mascota.IdMascota);
-                ficha.Owner = Window.GetWindow(this);
-                ficha.ShowDialog();
-                CargarMascotas(); // Recargar por si se editó algo en la ficha
+                AbrirFichaMascota(mascota);
             }
+        }
+
+        private void dgMascotas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // Obtenemos la mascota seleccionada
+            var mascotaSeleccionada = dgMascotas.SelectedItem as Mascota;
+
+            if (mascotaSeleccionada != null)
+            {
+                AbrirFichaMascota(mascotaSeleccionada);
+            }
+        }
+
+        private void AbrirFichaMascota(Mascota mascota)
+        {
+            WindowFichaMascota ficha = new WindowFichaMascota(mascota.IdMascota);
+            ficha.Owner = Window.GetWindow(this);
+            ficha.ShowDialog();
+            CargarMascotas();
         }
 
         private void btnAnadirMascota_Click(object sender, RoutedEventArgs e)

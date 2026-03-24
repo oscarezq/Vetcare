@@ -13,6 +13,11 @@ namespace Vetcare.Negocio
             return razaDAO.ObtenerTodas();
         }
 
+        public List<Raza> ObtenerPorEspecie(int idEspecie)
+        {
+            return razaDAO.ObtenerPorEspecie(idEspecie);
+        }
+
         public Raza ObtenerPorId(int id)
         {
             return razaDAO.ObtenerPorId(id);

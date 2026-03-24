@@ -140,19 +140,26 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nº FACTURA" Binding="{Binding NumeroFactura}" Width="120" FontWeight="Bold"/>
+                        <DataGridTextColumn Header="Nº FACTURA" Binding="{Binding NumeroFactura}" Width="160" FontWeight="Bold"/>
 
-                        <DataGridTextColumn Header="FECHA" Binding="{Binding FechaEmision, StringFormat=\{0:dd/MM/yyyy\}}" Width="120"/>
+                        <DataGridTextColumn Header="FECHA" Binding="{Binding FechaEmision, StringFormat=\{0:dd/MM/yyyy\}}" Width="160"/>
 
-                        <DataGridTemplateColumn Header="CLIENTE" Width="2*">
+                        <DataGridTemplateColumn Header="CLIENTE" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding NombreCliente}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock VerticalAlignment="Center">
+                                            <Run Text="{Binding NombreCliente}" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                                            <Run Text="{Binding ApellidosCliente}" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding NumeroDocumentoCliente, StringFormat=' ({0})'}" 
+                           Foreground="#7F8C8D" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="TOTAL" Width="120">
+                        <DataGridTemplateColumn Header="TOTAL" Width="160">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Total, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2C3E50"/>
@@ -160,7 +167,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ESTADO" Width="130">
+                        <DataGridTemplateColumn Header="ESTADO" Width="160">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border CornerRadius="12" Padding="10,2" HorizontalAlignment="Left">
@@ -198,14 +205,12 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="170">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                         <Button Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="0,0,5,0" 
                                                 Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="⎙" ToolTip="Imprimir" Click="btnImprimir_Click" Margin="0,0,5,0" 
-                                                Background="#F4F6F7" Foreground="#566573" Width="35" Height="30" BorderBrush="#D5DBDB" Cursor="Hand"/>
                                         <Button Content="🗑" ToolTip="Anular" Click="btnAnular_Click" 
                                                 Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
                                     </StackPanel>

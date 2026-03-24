@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Conceptos.Productos;
 
 namespace Vetcare.Presentacion.Servicios
 {
@@ -139,6 +141,31 @@ namespace Vetcare.Presentacion.Servicios
                 // Lógica para eliminar mediante el servicio
                 // productoService.Eliminar(producto.IdProducto);
                 CargarDatos();
+            }
+        }
+
+        private void dgProductos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgProductos.SelectedItem is Concepto productoSeleccionado)
+            {
+                try
+                {
+                    // 1. Instanciamos la ventana
+                    WindowDetalleProducto ventanaDetalle = new WindowDetalleProducto(productoSeleccionado.IdConcepto);
+
+                    // 2. IMPORTANTE: Verificamos si ShowDialog devuelve 'true'
+                    // Esto ocurrirá si dentro del detalle se pulsó "Guardar" en el ajuste de stock
+                    if (ventanaDetalle.ShowDialog() == true)
+                    {
+                        // 3. Si hubo cambios, refrescamos la lista de la página
+                        CargarDatos();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al intentar abrir el detalle del producto: " + ex.Message,
+                                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
     }

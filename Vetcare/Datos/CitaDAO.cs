@@ -21,7 +21,8 @@ namespace Vetcare.Datos
                         c.id_cita, 
                         c.id_mascota, 
                         c.id_veterinario, 
-                        c.fecha_hora, 
+                        c.fecha_hora,
+                        c.duracion_estimada,
                         c.motivo, 
                         c.estado, 
                         c.observaciones,
@@ -60,7 +61,8 @@ namespace Vetcare.Datos
                         c.id_cita, 
                         c.id_mascota, 
                         c.id_veterinario, 
-                        c.fecha_hora, 
+                        c.fecha_hora,
+                        c.duracion_estimada,
                         c.motivo, 
                         c.estado, 
                         c.observaciones,
@@ -94,10 +96,10 @@ namespace Vetcare.Datos
             {
                 con.Open();
                 string sql = @"
-                    INSERT INTO citas 
-                        (id_mascota, id_veterinario, fecha_hora, motivo, estado, observaciones)
-                    VALUES 
-                        (@idMascota, @idVeterinario, @fecha, @motivo, @estado, @observaciones)";
+            INSERT INTO citas 
+                (id_mascota, id_veterinario, fecha_hora, duracion_estimada, motivo, estado, observaciones)
+            VALUES 
+                (@idMascota, @idVeterinario, @fecha_hora, @duracion_estimada, @motivo, @estado, @observaciones)";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 CargarParametros(cmd, cita);
@@ -111,14 +113,15 @@ namespace Vetcare.Datos
             {
                 con.Open();
                 string sql = @"
-                    UPDATE citas SET 
-                        id_mascota = @idMascota, 
-                        id_veterinario = @idVeterinario,
-                        fecha = @fecha_hora, 
-                        motivo = @motivo, 
-                        estado = @estado, 
-                        observaciones = @observaciones
-                    WHERE id_cita = @id";
+            UPDATE citas SET 
+                id_mascota = @idMascota, 
+                id_veterinario = @idVeterinario,
+                fecha_hora = @fecha_hora,
+                duracion_estimada = @duracion_estimada,
+                motivo = @motivo, 
+                estado = @estado, 
+                observaciones = @observaciones
+            WHERE id_cita = @id";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 CargarParametros(cmd, cita);
@@ -194,8 +197,9 @@ namespace Vetcare.Datos
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@idMascota", cita.IdMascota);
             cmd.Parameters.AddWithValue("@idVeterinario", cita.IdVeterinario);
-            cmd.Parameters.AddWithValue("@fecha", cita.FechaHora);
-            cmd.Parameters.AddWithValue("@motivo", cita.Motivo);
+            cmd.Parameters.AddWithValue("@fecha_hora", cita.FechaHora);
+            cmd.Parameters.AddWithValue("@duracion_estimada", cita.DuracionEstimada);
+            cmd.Parameters.AddWithValue("@motivo", (object)cita.Motivo ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@estado", cita.Estado);
             cmd.Parameters.AddWithValue("@observaciones", cita.Observaciones);
         }
@@ -210,13 +214,14 @@ namespace Vetcare.Datos
                 IdUsuarioVeterinario = Convert.ToInt32(rdr["id_usuario_veterinario"]),
                 IdUsuarioDueno = Convert.ToInt32(rdr["id_cliente_dueno"]),
                 FechaHora = Convert.ToDateTime(rdr["fecha_hora"]),
+                DuracionEstimada = Convert.ToInt32(rdr["duracion_estimada"]),
                 Motivo = rdr["motivo"].ToString(),
                 Estado = rdr["estado"].ToString(),
                 Observaciones = rdr["observaciones"].ToString(),
                 NombreMascota = rdr["nombre_mascota"].ToString(),
                 NombreDueno = rdr["nombre_dueno"].ToString(),
                 NombreVeterinario = rdr["nombre_veterinario"].ToString(),
-                NumeroColegiado = rdr["numero_colegiado"].ToString()
+                NumeroColegiado = rdr["numero_colegiado"].ToString(),
             };
         }
     }

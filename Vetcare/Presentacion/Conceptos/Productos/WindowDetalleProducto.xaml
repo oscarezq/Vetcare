@@ -1,0 +1,136 @@
+﻿<Window x:Class="Vetcare.Presentacion.Conceptos.Productos.WindowDetalleProducto"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Detalles del Producto" Height="600" Width="750"
+        WindowStartupLocation="CenterScreen" Background="#F8FAFC"
+        TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
+        SnapsToDevicePixels="True" FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style x:Key="DetailLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+
+        <Style x:Key="DetailValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#1E293B"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="InfoGroup" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,25">
+            <TextBlock Text="DETALLES DEL PRODUCTO" FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
+            <Rectangle Height="3" Fill="#27AE60" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Border Background="White" CornerRadius="12" Padding="25" BorderBrush="#E2E8F0" BorderThickness="1">
+                <StackPanel>
+
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="NOMBRE DEL PRODUCTO" Style="{StaticResource DetailLabel}"/>
+                            <TextBlock x:Name="txtNombre" Text="Pienso Senior 10kg" Style="{StaticResource DetailValue}" FontSize="20" Foreground="#27AE60"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1" Background="#F0FDF4" CornerRadius="8" Padding="15,5" BorderBrush="#DCFCE7" BorderThickness="1" VerticalAlignment="Center">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="STOCK DISPONIBLE" FontSize="10" FontWeight="Bold" Foreground="#166534" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="txtStock" Text="24" FontSize="18" FontWeight="Bold" Foreground="#15803D" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <StackPanel Style="{StaticResource InfoGroup}">
+                        <TextBlock Text="DESCRIPCIÓN / ESPECIFICACIONES" Style="{StaticResource DetailLabel}"/>
+                        <TextBlock x:Name="txtDescripcion" 
+                                   Text="No hay descripción disponible." 
+                                   Style="{StaticResource DetailValue}" 
+                                   FontWeight="Normal" 
+                                   Foreground="#475569"/>
+                    </StackPanel>
+
+                    <Separator Margin="0,5,0,25" Background="#F1F5F9"/>
+
+                    <UniformGrid Columns="2" Margin="0,0,0,20">
+                        <StackPanel Margin="0,0,10,0">
+                            <TextBlock Text="PRECIO COMPRA (BASE)" Style="{StaticResource DetailLabel}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="txtPrecio" Text="15.00" Style="{StaticResource DetailValue}"/>
+                                <TextBlock Text=" €" Style="{StaticResource DetailValue}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="IVA" Style="{StaticResource DetailLabel}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="txtIva" Text="21" Style="{StaticResource DetailValue}"/>
+                                <TextBlock Text=" %" Style="{StaticResource DetailValue}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <Border Background="#F0F9FF" Padding="15" CornerRadius="8" Margin="0,10,0,0" BorderBrush="#BAE6FD" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="PRECIO CON IVA: " FontWeight="Bold" Foreground="#0369A1" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="txtTotal" Text="18.15 €" FontSize="20" FontWeight="Bold" Foreground="#0284C7" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" Margin="0,20,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                <Button x:Name="btnAjustarStock" Click="btnEditarStock_Click"
+                        Height="40" Width="160" Margin="0,0,10,0"
+                        Background="#0284C7" Foreground="White" FontWeight="Bold"
+                        BorderThickness="0" Cursor="Hand">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="AJUSTAR STOCK" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button x:Name="btnCerrar" Content="Cerrar" 
+                        Height="40" Width="100"
+                        Background="#64748B" Foreground="White" FontWeight="Bold"
+                        BorderThickness="0" Cursor="Hand" Click="btnCerrar_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

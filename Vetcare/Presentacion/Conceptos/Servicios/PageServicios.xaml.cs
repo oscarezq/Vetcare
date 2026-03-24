@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Vetcare.Datos;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Presentacion.Conceptos.Servicios;
 
 namespace Vetcare.Presentacion.Servicios
 {
@@ -130,6 +131,30 @@ namespace Vetcare.Presentacion.Servicios
             {
                 
                 CargarDatos();
+            }
+        }
+
+        private void dgServicios_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // 1. Obtenemos el elemento seleccionado
+            if (dgServicios.SelectedItem is Concepto conceptoSeleccionado)
+            {
+                try
+                {
+                    // 2. Instanciamos la ventana de detalle pasando el ID
+                    // (Asegúrate de que el nombre de la clase coincida con el que creamos antes)
+                    WindowDetalleServicio ventanaDetalle = new WindowDetalleServicio(conceptoSeleccionado.IdConcepto);
+
+                    // 3. La abrimos como diálogo (bloquea la anterior hasta cerrar)
+                    ventanaDetalle.ShowDialog();
+
+                    // Opcional: Si la ventana de detalle permitiera editar, 
+                    // aquí podrías refrescar el DataGrid al volver.
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al abrir el detalle: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
     }

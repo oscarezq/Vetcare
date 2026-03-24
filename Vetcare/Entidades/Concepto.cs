@@ -14,6 +14,15 @@ namespace Vetcare.Entidades
         public string Descripcion { get; set; }
         public decimal PrecioBase { get; set; }
         public decimal IvaPorcentaje { get; set; }
+
+        public decimal PrecioFinal
+        {
+            get
+            {
+                return PrecioBase * (1 + (IvaPorcentaje / 100m));
+            }
+        }
+
         public bool Activo { get; set; }
         public int? Stock { get; set; }
         public DateTime FechaAlta { get; set; }

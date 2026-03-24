@@ -4,37 +4,59 @@
              Background="White">
 
     <UserControl.Resources>
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="Margin" Value="0,0,0,30"/>
+        </Style>
+
         <Style x:Key="LabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Foreground" Value="#7F8C8D"/>
-            <Setter Property="Margin" Value="0,0,0,2"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
         </Style>
 
         <Style x:Key="ValueStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#2C3E50"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="30">
+    <Grid Margin="30,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,30">
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,35">
             <StackPanel DockPanel.Dock="Left">
                 <TextBlock Text="Ficha del Cliente" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
-                <TextBlock Text="Gestión de información personal y localización" Foreground="#7F8C8D" FontSize="14"/>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Border Background="#DBEAFE" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                        <TextBlock Text="ACTIVO" FontSize="10" FontWeight="Bold" Foreground="#1E40AF"/>
+                    </Border>
+                </StackPanel>
             </StackPanel>
 
             <Button DockPanel.Dock="Right" 
-                    Content="Editar Cliente" 
+                    Content="Editar Cliente"
                     Click="btnEditarCliente_Click"
                     Background="#3498DB" Foreground="White" 
-                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand">
+                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -47,58 +69,67 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <UniformGrid Columns="2">
-                    <StackPanel Margin="10,0,20,0">
-                        <TextBlock Text="NOMBRE" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
 
-                        <TextBlock Text="DNI / DOCUMENTO" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding NumDocumento}" Style="{StaticResource ValueStyle}"/>
-
-                        <TextBlock Text="EMAIL" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Email}" Style="{StaticResource ValueStyle}" Foreground="#3498DB"/>
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="DATOS PERSONALES" Style="{StaticResource SectionTitleStyle}"/>
+                        <UniformGrid Columns="3">
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="NOMBRE" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
+                                <TextBlock Text="DOCUMENTO" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding NumDocumento}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="APELLIDOS" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Apellidos}" Style="{StaticResource ValueStyle}"/>
+                                <TextBlock Text="TELÉFONO" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Telefono}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="EMAIL" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Email}" Style="{StaticResource ValueStyle}" Foreground="#3498DB"/>
+                                <TextBlock Text="MIEMBRO DESDE" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding FechaAlta, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                        </UniformGrid>
                     </StackPanel>
+                </Border>
 
-                    <StackPanel Margin="10,0">
-                        <TextBlock Text="APELLIDOS" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Apellidos}" Style="{StaticResource ValueStyle}"/>
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="DIRECCIÓN DE CONTACTO" Style="{StaticResource SectionTitleStyle}"/>
 
-                        <TextBlock Text="TELÉFONO" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding Telefono}" Style="{StaticResource ValueStyle}"/>
+                        <UniformGrid Columns="3">
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="CALLE / VÍA" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding CalleDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="NÚMERO" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding NumeroDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="PISO / PUERTA" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding PisoPuertaDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
 
-                        <TextBlock Text="FECHA DE ALTA" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding FechaAlta, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="LOCALIDAD" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding LocalidadDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="PROVINCIA" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding ProvinciaDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="CÓDIGO POSTAL" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding CodigoPostalDireccion}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                        </UniformGrid>
                     </StackPanel>
-                </UniformGrid>
+                </Border>
 
-                <Separator Margin="10,10,10,25" Background="#ECF0F1" Height="1"/>
-
-                <TextBlock Text="DIRECCIÓN DE CONTACTO" FontSize="13" FontWeight="Bold" Foreground="#E67E22" Margin="10,0,0,20"/>
-
-                <UniformGrid Columns="2">
-                    <StackPanel Margin="10,0,20,0">
-                        <TextBlock Text="CALLE / VÍA" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding CalleDireccion}" Style="{StaticResource ValueStyle}"/>
-
-                        <TextBlock Text="LOCALIDAD" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Text="{Binding LocalidadDireccion}" Style="{StaticResource ValueStyle}"/>
-                    </StackPanel>
-
-                    <StackPanel Margin="10,0">
-                        <TextBlock Text="NÚMERO / PISO / PUERTA" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Style="{StaticResource ValueStyle}">
-                            <Run Text="{Binding NumeroDireccion}"/>
-                            <Run Text=" - " Foreground="#BDC3C7"/>
-                            <Run Text="{Binding PisoPuertaDireccion}"/>
-                        </TextBlock>
-
-                        <TextBlock Text="PROVINCIA / CP" Style="{StaticResource LabelStyle}"/>
-                        <TextBlock Style="{StaticResource ValueStyle}">
-                            <Run Text="{Binding ProvinciaDireccion}"/>
-                            <Run Text=" ("/><Run Text="{Binding CodigoPostalDireccion}"/><Run Text=")"/>
-                        </TextBlock>
-                    </StackPanel>
-                </UniformGrid>
             </StackPanel>
         </ScrollViewer>
     </Grid>

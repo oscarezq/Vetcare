@@ -71,6 +71,39 @@ namespace Vetcare.Datos
             return raza;
         }
 
+        public List<Raza> ObtenerPorEspecie(int idEspecie)
+        {
+            List<Raza> lista = new List<Raza>();
+
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+
+                string sql = @"
+            SELECT 
+                r.id_raza,
+                r.nombre,
+                r.id_especie,
+                e.nombre AS nombre_especie
+            FROM razas r
+            INNER JOIN especies e ON r.id_especie = e.id_especie
+            WHERE r.id_especie = @idEspecie";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEspecie", idEspecie);
+
+                using (MySqlDataReader rdr = cmd.ExecuteReader())
+                {
+                    while (rdr.Read())
+                    {
+                        lista.Add(MappingRaza(rdr));
+                    }
+                }
+            }
+
+            return lista;
+        }
+
         public bool Insertar(Raza raza)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())

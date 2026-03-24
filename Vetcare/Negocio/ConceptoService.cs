@@ -17,6 +17,11 @@ namespace Vetcare.Negocio
             return servicioDAO.ObtenerTodos();
         }
 
+        public Concepto ObtenerPorId(int idConcepto)
+        {
+            return servicioDAO.ObtenerPorId(idConcepto);
+        }
+
         public List<Concepto> ObtenerServicios()
         {
             return servicioDAO.ObtenerServicios();
@@ -37,5 +42,9 @@ namespace Vetcare.Negocio
             return servicioDAO.Actualizar(servicio);
         }
 
+        public bool ActualizarStock(int id, int nuevoStock)
+        {
+            return servicioDAO.ActualizarStock(id, nuevoStock);
+        }
     }
 }

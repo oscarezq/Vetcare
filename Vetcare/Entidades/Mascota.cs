@@ -64,6 +64,11 @@ namespace Vetcare.Entidades
         public string NumeroIdentificacionDueno { get; set; }
 
         /// <summary>
+        /// Nombre + Apellidos del dueño.
+        /// </summary>
+        public string NombreApellidosDueno => $"{this.NombreDueno} {this.ApellidosDueno}";
+
+        /// <summary>
         /// Nombre + Apellidos + (Identificador) del dueño.
         /// </summary>
         public string Dueno => $"{this.NombreDueno} {this.ApellidosDueno} ({this.NumeroIdentificacionDueno})";

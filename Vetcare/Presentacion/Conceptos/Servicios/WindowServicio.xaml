@@ -1,75 +1,145 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Servicios.WindowServicio"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Ficha de Servicio" Height="440" Width="500"
-        WindowStartupLocation="CenterScreen"
-        Background="#F8F9F9" Icon="/Resources/icono.png">
+        Title="Ficha de Servicio" Height="570" Width="700"
+        WindowStartupLocation="CenterScreen" Background="#F8FAFC"
+        TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
+        SnapsToDevicePixels="True" FontFamily="Segoe UI" Icon="/Resources/icono.png">
 
-    <Border Padding="25">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
 
-            <StackPanel Grid.Row="0">
-                <StackPanel Margin="0,0,0,25">
-                    <TextBlock x:Name="lblTitulo" Text="NUEVO SERVICIO" FontSize="20" FontWeight="Bold" Foreground="#1B2631"/>
-                    <Rectangle Height="2" Fill="#E67E22" HorizontalAlignment="Left" Width="50" Margin="2,5,0,0"/>
-                </StackPanel>
+        <Style x:Key="ModernInput" TargetType="TextBox">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#E67E22"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                <StackPanel Margin="5,0,5,15">
-                    <TextBlock Text="Nombre del Servicio" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtNombre" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
-                </StackPanel>
+        <Style x:Key="IvaButtonStyle" TargetType="RepeatButton">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E2E8F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
-                <UniformGrid Columns="2" Margin="5,0,5,15">
-                    <StackPanel Margin="0,0,10,0">
-                        <TextBlock Text="Precio Base (€)" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtPrecio" Height="32" VerticalContentAlignment="Center" Padding="8,0" 
-                 BorderBrush="#D5DBDB" PreviewTextInput="txtPrecio_PreviewTextInput"/>
-                    </StackPanel>
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-                    <StackPanel Margin="10,0,0,0">
-                        <TextBlock Text="IVA (%)" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                        <Grid Height="32">
-                            <TextBox x:Name="txtIva" Text="21" VerticalContentAlignment="Center" 
-                     Padding="8,0,35,0" BorderBrush="#D5DBDB" 
-                     PreviewTextInput="txtPrecio_PreviewTextInput" LostFocus="txtIva_LostFocus"/>
-
-                            <StackPanel HorizontalAlignment="Right" Width="30" Margin="1">
-                                <RepeatButton x:Name="btnSubirIva" Content="▲" FontSize="8" Height="15" 
-                              Delay="500" Interval="50" Click="btnSubirIva_Click"
-                              Background="#F4F6F7" BorderThickness="1,0,0,0.5" BorderBrush="#D5DBDB"/>
-                                <RepeatButton x:Name="btnBajarIva" Content="▼" FontSize="8" Height="15" 
-                              Delay="500" Interval="50" Click="btnBajarIva_Click"
-                              Background="#F4F6F7" BorderThickness="1,0.5,0,0" BorderBrush="#D5DBDB"/>
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
-                </UniformGrid>
-
-                <StackPanel Margin="5,0,5,15">
-                    <TextBlock Text="Descripción / Observaciones" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtDescripcion" Height="80" TextWrapping="Wrap" AcceptsReturn="True" Padding="5" VerticalContentAlignment="Top"/>
-                </StackPanel>
+        <StackPanel Grid.Row="0">
+            <StackPanel Margin="0,0,0,30">
+                <TextBlock x:Name="lblTitulo" Text="NUEVO SERVICIO" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+                <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button x:Name="btnCancelar" Content="Cancelar" Width="90" Height="32"
-                        Margin="10,0" Click="btnCancelar_Click" Cursor="Hand"
-                        Background="#FBFCFC" BorderBrush="#D5DBDB"/>
+            <Border Background="White" CornerRadius="12" Padding="20" BorderBrush="#E2E8F0" BorderThickness="1">
+                <StackPanel>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="NOMBRE DEL SERVICIO" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtNombre" Style="{StaticResource ModernInput}"/>
+                    </StackPanel>
 
-                <Button x:Name="btnGuardar" Content="Guardar Servicio" Width="140" Height="32"
-                        Background="#E67E22" Foreground="White" FontWeight="Bold"
-                        Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-            </StackPanel>
-        </Grid>
-    </Border>
+                    <UniformGrid Columns="2" Margin="0,0,0,20">
+                        <StackPanel Margin="0,0,10,0">
+                            <TextBlock Text="PRECIO BASE (€)" Style="{StaticResource FieldLabel}"/>
+                            <TextBox x:Name="txtPrecio" Style="{StaticResource ModernInput}" 
+                                     PreviewTextInput="txtPrecio_PreviewTextInput"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="IVA (%)" Style="{StaticResource FieldLabel}"/>
+                            <Grid Height="38">
+                                <TextBox x:Name="txtIva" Text="21" Style="{StaticResource ModernInput}"
+                                         Padding="12,0,35,0"
+                                         PreviewTextInput="txtPrecio_PreviewTextInput" 
+                                         LostFocus="txtIva_LostFocus"/>
+
+                                <Border CornerRadius="0,8,8,0" HorizontalAlignment="Right" Width="30" ClipToBounds="True">
+                                    <StackPanel>
+                                        <RepeatButton x:Name="btnSubirIva" Content="▲" FontSize="7" Height="19" 
+                                                      Style="{StaticResource IvaButtonStyle}" 
+                                                      BorderThickness="1,0,0,0.5" Click="btnSubirIva_Click"/>
+                                        <RepeatButton x:Name="btnBajarIva" Content="▼" FontSize="7" Height="19" 
+                                                      Style="{StaticResource IvaButtonStyle}" 
+                                                      BorderThickness="1,0.5,0,0" Click="btnBajarIva_Click"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <StackPanel>
+                        <TextBlock Text="DESCRIPCIÓN / OBSERVACIONES" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="txtDescripcion" Style="{StaticResource ModernInput}" 
+                                 Height="100" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Padding="12,10" VerticalContentAlignment="Top"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button x:Name="btnCancelar" Content="Cancelar" Width="100" Height="42"
+                    Click="btnCancelar_Click" Cursor="Hand" Background="Transparent" 
+                    Foreground="#64748B" FontWeight="SemiBold" BorderThickness="0"/>
+
+            <Button x:Name="btnGuardar" Content="Guardar Servicio" Width="160" Height="42"
+                    Background="#E67E22" Foreground="White" FontWeight="Bold"
+                    Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+    </Grid>
 </Window>

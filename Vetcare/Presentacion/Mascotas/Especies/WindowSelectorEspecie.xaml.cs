@@ -21,7 +21,6 @@ namespace Vetcare.Presentacion.Mascotas.Especies
 
         private void CargarLista()
         {
-            // Reemplaza con tu método real de servicio
             listaEspecies = new EspecieService().ObtenerTodas();
             dgEspecies.ItemsSource = listaEspecies;
         }

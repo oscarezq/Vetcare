@@ -16,28 +16,23 @@
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
                 <TextBlock Text="FILTRAR PRODUCTOS" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
-
                 <UniformGrid Columns="5" Margin="0,0,0,15">
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nombre del Producto" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaNombre" Height="25" TextChanged="Filtro_Changed"/>
                     </StackPanel>
-
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Precio Mín. (€)" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtPrecioMin" Height="25" TextChanged="Filtro_Changed"/>
                     </StackPanel>
-
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Precio Máx. (€)" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtPrecioMax" Height="25" TextChanged="Filtro_Changed"/>
                     </StackPanel>
-
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Stock Mínimo" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtStockMin" Height="25" TextChanged="Filtro_Changed"/>
                     </StackPanel>
-
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Stock Máximo" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtStockMax" Height="25" TextChanged="Filtro_Changed"/>
@@ -48,18 +43,15 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
-
                     <ComboBox x:Name="cbOrdenarPor" Width="150" Height="25" SelectionChanged="Filtro_Changed">
                         <ComboBoxItem Content="Nombre" IsSelected="True"/>
                         <ComboBoxItem Content="Precio"/>
                         <ComboBoxItem Content="Stock"/>
                     </ComboBox>
-
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
                         <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="Filtro_Changed"/>
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="Filtro_Changed"/>
                     </StackPanel>
-
                     <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click"
                             Height="25" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
@@ -76,7 +68,7 @@
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Catálogo de Productos" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
                     <Button DockPanel.Dock="Right" x:Name="btnNuevoProducto" Content="+ Nuevo Producto" Click="btnNuevoProducto_Click"
-                            Background="#1ABC9C" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
+                            Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -86,7 +78,7 @@
                 </DockPanel>
 
                 <DataGrid x:Name="dgProductos" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
+                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgProductos_MouseDoubleClick"
                           Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
                           SelectionMode="Single" SelectionUnit="FullRow">
 
@@ -149,32 +141,69 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion}" Width="2*" FontSize="14"/>
-
-                        <DataGridTemplateColumn Header="PRECIO BASE" Width="120">
+                        <DataGridTemplateColumn Header="DESCRIPCIÓN" Width="3*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding PrecioBase, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#27AE60"/>
+                                    <TextBlock Text="{Binding Descripcion}" VerticalAlignment="Center" FontSize="14" TextTrimming="CharacterEllipsis"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="STOCK" Width="100">
+                        <DataGridTemplateColumn Header="BASE" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Stock}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding PrecioBase, StringFormat={}{0:N2} €}" VerticalAlignment="Center" Foreground="#7F8C8D"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                        <DataGridTemplateColumn Header="IVA" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Button Content="✎" ToolTip="Editar" Click="btnEditarProducto_Click" Margin="0,0,5,0" 
-                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminarProducto_Click" 
-                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
+                                    <TextBlock Text="{Binding IvaPorcentaje, StringFormat={}{0}%}" VerticalAlignment="Center" Foreground="#566573"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="PRECIO CON IVA" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding PrecioFinal, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2E86C1" FontSize="15"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="STOCK" Width="0.8*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Stock}" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" Foreground="#27AE60"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <Button Content="✏️" ToolTip="Editar Producto" Click="btnEditarProducto_Click" Margin="0,0,8,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="40" Height="32" 
+                                                BorderBrush="#AED6F1" Cursor="Hand" FontSize="14">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="4"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+
+                                        <Button Content="🗑️" ToolTip="Eliminar Producto" Click="btnEliminarProducto_Click" 
+                                                Background="#FDEDEC" Foreground="#CB4335" Width="40" Height="32" 
+                                                BorderBrush="#FADBD8" Cursor="Hand" FontSize="14">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="4"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

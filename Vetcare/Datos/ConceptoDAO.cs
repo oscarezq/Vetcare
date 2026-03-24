@@ -33,6 +33,35 @@ namespace Vetcare.Datos
             return lista;
         }
 
+        public Concepto ObtenerPorId(int id)
+        {
+            Concepto concepto = null;
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = "SELECT * FROM conceptos WHERE id_concepto = @id";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                try
+                {
+                    con.Open();
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            concepto = MapearConcepto(dr);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al obtener el concepto por ID: " + ex.Message);
+                }
+            }
+
+            return concepto;
+        }
+
         public List<Concepto> ObtenerServicios()
         {
             List<Concepto> lista = new List<Concepto>();
@@ -165,6 +194,26 @@ namespace Vetcare.Datos
                     // Nota: Si el concepto ya está en una factura, esto fallará por FK.
                     // Podrías considerar un "Borrado Lógico" cambiando Activo = 0.
                     throw new Exception("Error al eliminar: " + ex.Message);
+                }
+            }
+        }
+
+        public bool ActualizarStock(int id, int nuevoStock)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                string sql = "UPDATE conceptos SET stock = @stock WHERE id_concepto = @id";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@stock", nuevoStock);
+                cmd.Parameters.AddWithValue("@id", id);
+                try
+                {
+                    con.Open();
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al actualizar stock: " + ex.Message);
                 }
             }
         }

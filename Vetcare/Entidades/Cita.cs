@@ -72,6 +72,8 @@ namespace Vetcare.Entidades
         /// </summary>
         public string NumeroColegiado { get; set; }
 
+        public int DuracionEstimada {  get; set; }
+
         // PROPIEDAD PARA LA INTERFAZ
         public string InfoVeterinario => $"{NombreVeterinario} ({NumeroColegiado})";
     }

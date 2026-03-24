@@ -38,13 +38,6 @@ namespace Vetcare.Presentacion.Usuarios
             {
                 seccionProfesional.Visibility = Visibility.Collapsed;
             }
-
-            panelDatosGenerales.Visibility = Visibility.Visible;
-        }
-
-        private void btnDatos_Click(object sender, RoutedEventArgs e)
-        {
-            panelDatosGenerales.Visibility = Visibility.Visible;
         }
 
         private void btnEditarUsuario_Click(object sender, RoutedEventArgs e)

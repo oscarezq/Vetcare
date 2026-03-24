@@ -1,104 +1,129 @@
 ﻿<UserControl x:Class="Vetcare.Presentacion.Mascotas.UC_DatosMascota"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="White">
+             Background="White" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
+             SnapsToDevicePixels="True">
 
     <UserControl.Resources>
-        <Style x:Key="EditButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="160"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="Background" Value="#3498DB"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="20">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#2980B9"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
         </Style>
 
         <Style x:Key="LabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Foreground" Value="#7F8C8D"/>
-            <Setter Property="Margin" Value="0,0,0,2"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
         </Style>
 
         <Style x:Key="ValueStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#2C3E50"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="60">
+    <Grid Margin="40,40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Margin="0,0,0,35">
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,35">
             <StackPanel DockPanel.Dock="Left">
-                <TextBlock Text="Datos de la Mascota" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
-                <Border Height="4" Width="50" Background="#3498DB" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+                <TextBlock Text="Ficha del Paciente" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
             </StackPanel>
 
-            <Button Content="Editar Información" 
-                    Style="{StaticResource EditButtonStyle}" 
-                    DockPanel.Dock="Right" 
-                    Click="btnEditarMascota_Click"/>
+            <Button DockPanel.Dock="Right" 
+                    Content="Editar Información"
+                    Click="btnEditarMascota_Click"
+                    Background="#3498DB" Foreground="White" 
+                    Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </DockPanel>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
 
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="Nombre del Paciente" Style="{StaticResource LabelStyle}"/>
-                <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="DATOS DE LA MASCOTA" Style="{StaticResource SectionTitleStyle}"/>
 
-                <TextBlock Text="Número de Chip" Style="{StaticResource LabelStyle}"/>
-                <TextBlock Text="{Binding NumeroChip}" Style="{StaticResource ValueStyle}"/>
+                        <UniformGrid Columns="3">
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="NOMBRE DEL PACIENTE" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
 
-                <TextBlock Text="Especie" Style="{StaticResource LabelStyle}"/>
-                <TextBlock Text="{Binding NombreEspecie}" Style="{StaticResource ValueStyle}"/>
+                                <TextBlock Text="NÚMERO DE CHIP" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding NumeroChip}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
 
-                <TextBlock Text="Raza" Style="{StaticResource LabelStyle}"/>
-                <TextBlock Text="{Binding NombreRaza}" Style="{StaticResource ValueStyle}"/>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="ESPECIE" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding NombreEspecie}" Style="{StaticResource ValueStyle}"/>
+
+                                <TextBlock Text="RAZA" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding NombreRaza}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="SEXO" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding Sexo}" Style="{StaticResource ValueStyle}"/>
+
+                                <TextBlock Text="PESO ACTUAL" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Style="{StaticResource ValueStyle}">
+                                    <Run Text="{Binding Peso}"/>
+                                    <Run Text=" kg" Foreground="#94A3B8" FontSize="13"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="INFORMACIÓN ADICIONAL" Style="{StaticResource SectionTitleStyle}"/>
+
+                        <UniformGrid Columns="2">
+                            <StackPanel Margin="0,0,40,0">
+                                <TextBlock Text="PROPIETARIO / DUEÑO" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Style="{StaticResource ValueStyle}">
+                                    <Hyperlink Click="HyperlinkDueno_Click" Foreground="#3498DB" TextDecorations="None" FontWeight="Bold">
+                                        <Run Text="{Binding Dueno, Mode=OneWay}"/>
+                                    </Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="FECHA DE NACIMIENTO" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="{Binding FechaNacimiento, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
+                            </StackPanel>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+
             </StackPanel>
-
-            <StackPanel Grid.Column="1" Margin="40,0,0,0">
-                <TextBlock Text="Propietario / Dueño" Style="{StaticResource LabelStyle}"/>
-                <TextBlock Style="{StaticResource ValueStyle}">
-                    <Hyperlink Click="HyperlinkDueno_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
-                        <Run Text="{Binding Dueno, Mode=OneWay}"/>
-                    </Hyperlink>
-                </TextBlock>
-
-                <TextBlock Text="Sexo" Style="{StaticResource LabelStyle}"/>
-                <TextBlock Text="{Binding Sexo}" Style="{StaticResource ValueStyle}"/>
-
-                <TextBlock Text="Peso Actual" Style="{StaticResource LabelStyle}"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding Peso}" Style="{StaticResource ValueStyle}" Margin="0"/>
-                    <TextBlock Text=" kg" Style="{StaticResource ValueStyle}"/>
-                </StackPanel>
-
-                <TextBlock Text="Fecha de Nacimiento" Style="{StaticResource LabelStyle}"/>
-                <TextBlock Text="{Binding FechaNacimiento, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
-            </StackPanel>
-        </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>

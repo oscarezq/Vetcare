@@ -1,13 +1,61 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Mascotas.Razas.WindowSelectorRaza"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Vetcare.Presentacion.Mascotas.Razas"
-        mc:Ignorable="d"
-        Title="Seleccionar Raza" Height="500" Width="500"
-        WindowStartupLocation="CenterOwner" Background="#F4F6F7">
-    <Grid Margin="15">
+        Title="Seleccionar Raza" Height="600" Width="550"
+        WindowStartupLocation="CenterOwner" Background="#F8FAFC"
+        TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
+        SnapsToDevicePixels="True" FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="ModernCellStyle" TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="15,8" Background="Transparent" BorderThickness="0">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="#2C3E50"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F1F5F9"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#E0E7FF"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="BorderBrush" Value="#6366F1"/>
+                    <Setter Property="BorderThickness" Value="4,0,0,0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -15,56 +63,57 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,15">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="RAZAS" FontSize="18" FontWeight="Bold" Foreground="#1B2631"/>
-                <Rectangle Height="2" Fill="#2ECC71" HorizontalAlignment="Left" Width="40" Margin="2,3,0,0"/>
-            </StackPanel>
-
-            <Button Content="+ Nueva Raza" Click="btnNuevaRaza_Click"
-                    HorizontalAlignment="Right" VerticalAlignment="Center"
-                    Width="110" Height="30" Background="#2ECC71" 
-                    Foreground="White" FontWeight="Bold" BorderThickness="0">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="4"/>
-                    </Style>
-                </Button.Resources>
+        <DockPanel Grid.Row="0" Margin="0,0,0,25" LastChildFill="False">
+            <TextBlock Text="Razas" FontSize="26" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+            <Button DockPanel.Dock="Right" Content="+ NUEVA" Click="btnNuevaRaza_Click" 
+                    Background="#1ABC9C" Foreground="White" Width="100" Height="38" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
-        </Grid>
+        </DockPanel>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,15">
             <StackPanel>
-                <TextBlock Text="FILTRAR POR NOMBRE DE RAZA" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D"/>
-                <TextBox x:Name="txtBuscaRaza" Height="28" Margin="0,5,0,0" 
-                         TextChanged="txtBuscaRaza_TextChanged"
-                         VerticalContentAlignment="Center" Padding="5,0"
-                         Foreground="Black" Background="White"/>
+                <TextBlock Text="BUSCAR RAZA" Style="{StaticResource LabelStyle}"/>
+                <TextBox x:Name="txtBuscaRaza" Height="40" FontSize="15" VerticalContentAlignment="Center" Padding="8,0" 
+                         Background="#F1F5F9" BorderThickness="1" BorderBrush="#CBD5E1" TextChanged="txtBuscaRaza_TextChanged">
+                    <TextBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="5">
-            <DataGrid x:Name="dgRazas" AutoGenerateColumns="False" IsReadOnly="True" 
-                      CanUserAddRows="False" GridLinesVisibility="None" HeadersVisibility="Column"
-                      MouseDoubleClick="dgRazas_MouseDoubleClick" SelectionMode="Single"
-                      Background="White" BorderThickness="0" FontSize="13">
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="5">
+            <DataGrid x:Name="dgRazas" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                      GridLinesVisibility="None" HeadersVisibility="Column" SelectionMode="Single"
+                      Background="Transparent" BorderThickness="0" RowHeight="48" FontSize="15"
+                      CellStyle="{StaticResource ModernCellStyle}" RowStyle="{StaticResource ModernRowStyle}"
+                      MouseDoubleClick="dgRazas_MouseDoubleClick" HorizontalScrollBarVisibility="Disabled" ColumnWidth="*">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#94A3B8"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="15,0,0,10"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="*">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="Margin" Value="5,0"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-
+                    <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="*"/>
                     <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="#7F8C8D"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="Margin" Value="5,0"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                                <Setter Property="FontSize" Value="13"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
@@ -72,12 +121,17 @@
             </DataGrid>
         </Border>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Cancelar" Click="btnCancelar_Click" Width="90" Height="30" Margin="0,0,10,0" 
-                    Background="#BDC3C7" Foreground="Black" BorderThickness="0"/>
-
-            <Button Content="Seleccionar" Click="btnSeleccionar_Click" Width="110" Height="30" 
-                    Background="#2ECC71" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Cancelar" Click="btnCancelar_Click" Width="100" Height="40" Background="Transparent" Foreground="#64748B" BorderThickness="0"/>
+            <Button Content="Seleccionar" Click="btnSeleccionar_Click" Width="130" Height="40" Background="#2ECC71" Foreground="White" FontWeight="Bold" BorderThickness="0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

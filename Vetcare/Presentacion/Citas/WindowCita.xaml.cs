@@ -48,6 +48,7 @@ namespace Vetcare.Presentacion.Citas
             var vete = usuarioService.ObtenerPorId(idVeterinarioSeleccionado);
             if (vete != null) ActualizarVisualSelector(txtNombreVeterinario, $"{vete.Nombre} {vete.Apellidos}");
 
+            txtDuracion.Text = cita.DuracionEstimada.ToString();
             dtpFecha.SelectedDate = cita.FechaHora.Date;
             txtHora.Text = cita.FechaHora.ToString("HH:mm");
             txtMotivo.Text = cita.Motivo;
@@ -97,6 +98,7 @@ namespace Vetcare.Presentacion.Citas
                 cita.Estado = "Pendiente";
                 cita.Motivo = txtMotivo.Text.Trim();
                 cita.Observaciones = txtObservaciones.Text.Trim();
+                cita.DuracionEstimada = int.Parse(txtDuracion.Text.Trim());
 
                 DateTime fecha = dtpFecha.SelectedDate.Value;
                 TimeSpan hora = TimeSpan.Parse(txtHora.Text);
@@ -124,6 +126,14 @@ namespace Vetcare.Presentacion.Citas
             if (!dtpFecha.SelectedDate.HasValue) return MostrarError("Seleccione una fecha.");
             if (!TimeSpan.TryParse(txtHora.Text, out _)) return MostrarError("Formato de hora (HH:mm) inválido.");
             if (string.IsNullOrWhiteSpace(txtMotivo.Text)) return MostrarError("El motivo es obligatorio.");
+            if (!int.TryParse(txtDuracion.Text.Trim(), out int duracion))
+            {
+                return MostrarError("La duración debe ser un número entero (minutos).");
+            }
+            if (duracion <= 0)
+            {
+                return MostrarError("La duración debe ser mayor a 0 minutos.");
+            }
             return true;
         }
 

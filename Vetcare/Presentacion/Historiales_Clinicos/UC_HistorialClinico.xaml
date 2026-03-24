@@ -5,121 +5,107 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="900"
-             Background="White">
+             Background="White" FontFamily="Segoe UI">
 
-    <UserControl.Resources>
-        <Style x:Key="RowButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#1ABC9C"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="20,0"/>
-            <Setter Property="MinWidth" Value="140"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="16">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#16A085"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="CenterVerticalStyle" TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="10,0"/>
-        </Style>
-    </UserControl.Resources>
-
-    <Grid Margin="40">
+    <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Margin="0,0,0,30">
-            <TextBlock Text="Historial Clínico" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
-            <Border Height="4" Width="50" Background="#1ABC9C" HorizontalAlignment="Left" Margin="0,5,0,10"/>
-            <TextBlock Text="Consulta el registro histórico de atenciones del paciente." Foreground="#7F8C8D" FontSize="14"/>
-        </StackPanel>
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,30" Cursor="">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Historial Clínico" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
+            </StackPanel>
+        </DockPanel>
 
         <DataGrid x:Name="dgHistorial" Grid.Row="1" 
-                  AutoGenerateColumns="False" 
-                  IsReadOnly="True" 
-                  Background="White" 
-                  BorderThickness="1" 
-                  BorderBrush="#EAECEE" 
-                  RowHeight="50" 
-                  GridLinesVisibility="Horizontal"
-                  HorizontalGridLinesBrush="#F2F4F4"
-                  SelectionMode="Single"
-                  CanUserAddRows="False"
+                  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
                   HeadersVisibility="Column" 
-                  RowHeaderWidth="0" 
-                  HorizontalScrollBarVisibility="Disabled">
-            <DataGrid.Resources>
-                <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#FBFCFC"/>
-                    <Setter Property="Foreground" Value="#34495E"/>
-                    <Setter Property="Height" Value="40"/>
-                    <Setter Property="FontWeight" Value="Bold"/>
-                    <Setter Property="Padding" Value="10,0"/>
-                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                    <Setter Property="BorderBrush" Value="#1ABC9C"/>
-                </Style>
+                  GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F2F2F2"
+                  Background="Transparent" BorderThickness="0"
+                  FontSize="15" RowHeight="55">
 
+            <DataGrid.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="DataGridCell">
                                 <Border Background="{TemplateBinding Background}" BorderThickness="0">
-                                    <ContentPresenter VerticalAlignment="Center" />
+                                    <ContentPresenter VerticalAlignment="Center" Margin="10,0"/>
                                 </Border>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="#F4F6F7"/>
+                            <Setter Property="Background" Value="#EBF5FB"/>
                             <Setter Property="Foreground" Value="#2C3E50"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
+
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="10,0,10,10"/>
+                    <Setter Property="Foreground" Value="#95A5A6"/>
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="BorderBrush" Value="#F2F2F2"/>
+                </Style>
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Fecha" 
-                                    Binding="{Binding FechaHora, StringFormat=dd/MM/yyyy HH:mm}" 
-                                    ElementStyle="{StaticResource CenterVerticalStyle}"
-                                    Width="1.5*"/>
-
-                <DataGridTextColumn Header="Motivo de Consulta" 
-                                    Binding="{Binding Motivo}" 
-                                    ElementStyle="{StaticResource CenterVerticalStyle}"
-                                    Width="3*"/>
-
-                <DataGridTextColumn Header="Veterinario" 
-                                    Binding="{Binding NombreVeterinario}" 
-                                    ElementStyle="{StaticResource CenterVerticalStyle}"
-                                    Width="2*"/>
-
-                <DataGridTemplateColumn Width="2*">
+                <DataGridTemplateColumn Header="FECHA" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Ver Registro" 
-                                    Style="{StaticResource RowButtonStyle}"
+                            <TextBlock VerticalAlignment="Center">
+                                <Hyperlink Foreground="#3498DB" FontWeight="Bold" TextDecorations="None">
+                                    <Run Text="{Binding FechaHora, StringFormat=dd/MM/yyyy HH:mm}"/>
+                                </Hyperlink>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="MOTIVO DE CONSULTA" 
+                                    Binding="{Binding Motivo}" 
+                                    Width="3*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="VETERINARIO" 
+                                    Binding="{Binding NombreVeterinario}" 
+                                    Width="2*"/>
+
+                <DataGridTemplateColumn Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Ver detalles" 
                                     Click="btnVerDetalle_Click"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"
-                                    Margin="5"/>
+                                    Background="Transparent" 
+                                    Foreground="#1ABC9C"
+                                    BorderBrush="#1ABC9C"
+                                    BorderThickness="1"
+                                    Height="30"
+                                    Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                                CornerRadius="15">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
