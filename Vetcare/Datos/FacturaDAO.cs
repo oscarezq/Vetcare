@@ -192,6 +192,25 @@ namespace Vetcare.Datos
             }
         }
 
+        public decimal ObtenerIngresosHoy()
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+
+                string sql = @"SELECT IFNULL(SUM(total), 0) 
+                       FROM facturas 
+                       WHERE DATE(fecha_emision) = CURDATE()
+                       AND estado = 'Pagada'";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+
+                object result = cmd.ExecuteScalar();
+
+                return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+            }
+        }
+
         private Factura MapearFactura(MySqlDataReader dr)
         {
             return new Factura

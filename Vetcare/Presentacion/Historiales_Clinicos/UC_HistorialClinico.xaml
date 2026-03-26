@@ -80,26 +80,20 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="VETERINARIO" 
-                                    Binding="{Binding NombreVeterinario}" 
-                                    Width="2*"/>
-
                 <DataGridTemplateColumn Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Ver detalles" 
                                     Click="btnVerDetalle_Click"
-                                    Background="Transparent" 
-                                    Foreground="#1ABC9C"
-                                    BorderBrush="#1ABC9C"
-                                    BorderThickness="1"
+                                    Background="#1ABC9C" 
+                                    Foreground="White"
+                                    BorderThickness="0"
                                     Height="30"
                                     Cursor="Hand">
+
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{TemplateBinding Background}" 
-                                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                                BorderThickness="{TemplateBinding BorderThickness}" 
                                                 CornerRadius="15">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>

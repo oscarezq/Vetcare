@@ -100,5 +100,10 @@ namespace Vetcare.Negocio
         {
             return mascotaDAO.EliminarVarios(idsMascotas);
         }
+
+        public int ContarMascotas()
+        {
+            return mascotaDAO.ContarMascotas();
+        }
     }
 }

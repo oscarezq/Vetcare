@@ -43,5 +43,15 @@ namespace Vetcare.Negocio
         {
             return citaDAO.EliminarVarias(ids);
         }
+
+        public int ContarCitasHoy()
+        {
+            return citaDAO.ContarCitasHoy();
+        }
+
+        public List<Cita> ObtenerProximasCitas()
+        {
+            return citaDAO.ObtenerProximasCitas();
+        }
     }
 }

@@ -4,6 +4,7 @@ using Vetcare.Negocio;
 using Vetcare.Presentacion.Citas;
 using Vetcare.Presentacion.Clientes;
 using Vetcare.Presentacion.Facturas;
+using Vetcare.Presentacion.Inicio;
 using Vetcare.Presentacion.Mascotas;
 using Vetcare.Presentacion.Servicios;
 using Vetcare.Presentacion.Usuarios;
@@ -24,6 +25,7 @@ namespace Vetcare.Presentacion
             UsuarioService usuarioService = new UsuarioService();
             var user = usuarioService.ValidarLogin("admin", "admin", out usuarioActual);
 
+            FramePrincipal.Content = new PageInicio();
             CargarDatosUsuario();
         }
 
@@ -32,6 +34,7 @@ namespace Vetcare.Presentacion
             InitializeComponent();
             usuarioActual = user;
 
+            FramePrincipal.Content = new PageInicio();
             CargarDatosUsuario();
         }
 
@@ -47,7 +50,7 @@ namespace Vetcare.Presentacion
         // --- EVENTOS DE NAVEGACIÓN ---
         private void btnInicio_Click(object sender, RoutedEventArgs e)
         {
-            //FramePrincipal.Content = new PageInicio();
+            FramePrincipal.Content = new PageInicio();
         }
 
         private void btnMascotas_Click(object sender, RoutedEventArgs e)

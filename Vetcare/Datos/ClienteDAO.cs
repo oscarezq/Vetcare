@@ -153,6 +153,17 @@ namespace Vetcare.Datos
             }
         }
 
+        public int ContarClientes()
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                string sql = "SELECT COUNT(*) FROM clientes";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
         // ------------------ MÉTODOS AUXILIARES ------------------
 
         private Cliente MappingCliente(MySqlDataReader rdr)

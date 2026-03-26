@@ -1,110 +1,109 @@
 ﻿<Window x:Class="Vetcare.Presentacion.Usuarios.WindowVerPerfil"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Mi perfil - VetCare" Height="650" Width="750"
+        Title="Mi perfil - VetCare" Height="700" Width="700"
         WindowStartupLocation="CenterScreen"
-        Background="#F4F6F7"
-        Icon="/Resources/icono.png">
+        Background="#F8FAFC"
+        FontFamily="Segoe UI"
+        
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        RenderOptions.BitmapScalingMode="HighQuality">
 
     <Grid>
-        <Border Background="#1B2631" Height="100" VerticalAlignment="Top">
-            <Grid Margin="25">
-                <StackPanel VerticalAlignment="Center">
-                    <TextBlock x:Name="txtNombreHeader"
-                               Text="NOMBRE COMPLETO"
-                               FontSize="22"
-                               FontWeight="Bold"
-                               Foreground="White"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="80"/>
+        </Grid.RowDefinitions>
 
-                    <TextBlock x:Name="txtRolHeader"
-                               Text="ROL DEL USUARIO"
-                               FontSize="14"
-                               Foreground="#D5D8DC"
-                               Margin="0,5,0,0"/>
+        <Border Grid.Row="0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#1E293B" Offset="0"/>
+                    <GradientStop Color="#334155" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid Margin="30,0">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="txtNombreHeader" Text="NOMBRE COMPLETO" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                    <Border Background="#38BDF8" HorizontalAlignment="Left" CornerRadius="4" Padding="8,2" Margin="0,8,0,0">
+                        <TextBlock x:Name="txtRolHeader" Text="ROL DEL USUARIO" FontSize="11" FontWeight="Black" Foreground="#0F172A"/>
+                    </Border>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <ScrollViewer Margin="0,100,0,80">
-            <StackPanel Margin="25">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,-20,0,0">
+            <StackPanel Margin="30,0,30,20">
 
-                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,15">
+                <Border Background="White" CornerRadius="12" Padding="25" Margin="0,0,0,20">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                    </Border.Effect>
                     <StackPanel>
-                        <TextBlock Text="Datos personales"
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Foreground="#1B2631"
-                                   Margin="0,0,0,15"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="INFORMACIÓN PERSONAL" FontSize="13" FontWeight="Bold" Foreground="#64748B"/>
+                        </StackPanel>
 
                         <UniformGrid Columns="2">
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Nombre" FontSize="11" Foreground="#566573"/>
-                                <TextBox x:Name="txtNombre" Height="30" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="0,0,10,15">
+                                <TextBlock Text="Nombre" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtNombre" Height="38" VerticalContentAlignment="Center" Padding="10,0" BorderBrush="#E2E8F0"/>
                             </StackPanel>
-
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Apellidos" FontSize="11" Foreground="#566573"/>
-                                <TextBox x:Name="txtApellidos" Height="30" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="10,0,0,15">
+                                <TextBlock Text="Apellidos" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtApellidos" Height="38" VerticalContentAlignment="Center" Padding="10,0" BorderBrush="#E2E8F0"/>
                             </StackPanel>
-
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Email" FontSize="11" Foreground="#566573"/>
-                                <TextBox x:Name="txtEmail" Height="30" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="Correo Electrónico" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtEmail" Height="38" VerticalContentAlignment="Center" Padding="10,0" BorderBrush="#E2E8F0"/>
                             </StackPanel>
-
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Teléfono" FontSize="11" Foreground="#566573"/>
-                                <TextBox x:Name="txtTelefono" Height="30" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="10,0,0,0">
+                                <TextBlock Text="Teléfono de contacto" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtTelefono" Height="38" VerticalContentAlignment="Center" Padding="10,0" BorderBrush="#E2E8F0"/>
                             </StackPanel>
                         </UniformGrid>
                     </StackPanel>
                 </Border>
 
-                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,15">
+                <Border Background="White" CornerRadius="12" Padding="25" Margin="0,0,0,20">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                    </Border.Effect>
                     <StackPanel>
-                        <TextBlock Text="Información de cuenta"
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Foreground="#1B2631"
-                                   Margin="0,0,0,15"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="DETALLES DE CUENTA" FontSize="13" FontWeight="Bold" Foreground="#64748B"/>
+                        </StackPanel>
 
                         <UniformGrid Columns="2">
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Nombre de Usuario" FontSize="11" Foreground="#566573"/>
-                                <TextBox x:Name="txtUsername" Height="30" IsEnabled="False" Background="#FBFCFC" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="Usuario" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtUsername" Height="38" IsEnabled="False" Background="#F1F5F9" Foreground="#64748B" VerticalContentAlignment="Center" Padding="10,0" BorderThickness="1" BorderBrush="#E2E8F0"/>
                             </StackPanel>
-
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Fecha de Alta" FontSize="11" Foreground="#566573"/>
-                                <TextBox x:Name="txtFechaAlta" Height="30" IsEnabled="False" Background="#FBFCFC" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="10,0,0,0">
+                                <TextBlock Text="Miembro desde" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtFechaAlta" Height="38" IsEnabled="False" Background="#F1F5F9" Foreground="#64748B" VerticalContentAlignment="Center" Padding="10,0" BorderThickness="1" BorderBrush="#E2E8F0"/>
                             </StackPanel>
                         </UniformGrid>
                     </StackPanel>
                 </Border>
 
-                <Border x:Name="borderVeterinario"
-                        Background="#FEF5E7"
-                        CornerRadius="10"
-                        Padding="20"
-                        Margin="0,0,0,15"
-                        Visibility="Collapsed">
-
+                <Border x:Name="borderVeterinario" Background="#EFF6FF" CornerRadius="12" Padding="25" BorderBrush="#DBEAFE" BorderThickness="1" Visibility="Collapsed">
                     <StackPanel>
-                        <TextBlock Text="Datos profesionales (Veterinario)"
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Foreground="#E67E22"
-                                   Margin="0,0,0,15"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="🩺" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="PERFIL PROFESIONAL" FontSize="13" FontWeight="Bold" Foreground="#2563EB"/>
+                        </StackPanel>
 
                         <UniformGrid Columns="2">
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Especialidad" FontSize="11" Foreground="#D68910"/>
-                                <TextBox x:Name="txtEspecialidad" Height="30" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="Especialidad" FontSize="11" FontWeight="SemiBold" Foreground="#3B82F6" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtEspecialidad" Height="38" VerticalContentAlignment="Center" Padding="10,0" BorderBrush="#BFDBFE"/>
                             </StackPanel>
-
-                            <StackPanel Margin="5">
-                                <TextBlock Text="Nº de Colegiado" FontSize="11" Foreground="#D68910"/>
-                                <TextBox x:Name="txtColegiado" Height="30" VerticalContentAlignment="Center"/>
+                            <StackPanel Margin="10,0,0,0">
+                                <TextBlock Text="Nº Colegiado" FontSize="11" FontWeight="SemiBold" Foreground="#3B82F6" Margin="0,0,0,5"/>
+                                <TextBox x:Name="txtColegiado" Height="38" VerticalContentAlignment="Center" Padding="10,0" BorderBrush="#BFDBFE"/>
                             </StackPanel>
                         </UniformGrid>
                     </StackPanel>
@@ -113,24 +112,20 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Border Background="White" Height="80" VerticalAlignment="Bottom" BorderBrush="#EBEDEF" BorderThickness="0,1,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20">
-                <Button Content="Cancelar"
-                        Width="100"
-                        Height="35"
-                        Margin="10,0"
-                        Background="#F2F3F4"
-                        Click="btnCancelar_Click"/>
+        <Border Grid.Row="2" Background="White" BorderBrush="#F1F5F9" BorderThickness="0,1,0,0" Padding="30,0">
+            <Grid>
+                <Button Content="Cancelar" HorizontalAlignment="Left" Width="100" Height="40" 
+                        Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand" Click="btnCancelar_Click"/>
 
-                <Button Content="Guardar cambios"
-                        Width="150"
-                        Height="35"
-                        Background="#27AE60"
-                        Foreground="White"
-                        FontWeight="Bold"
-                        BorderThickness="0"
-                        Click="btnGuardar_Click"/>
-            </StackPanel>
+                <Button Content="Guardar Cambios" HorizontalAlignment="Right" Width="180" Height="45" 
+                        Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="btnGuardar_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
         </Border>
     </Grid>
 </Window>

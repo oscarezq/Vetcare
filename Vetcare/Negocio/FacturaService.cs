@@ -39,5 +39,10 @@ namespace Vetcare.Negocio
         {
             return facturaDAO.ActualizarEstadoFactura(idFactura, nuevoEstado);
         }
+
+        public decimal ObtenerIngresosHoy()
+        {
+            return facturaDAO.ObtenerIngresosHoy();
+        }
     }
 }

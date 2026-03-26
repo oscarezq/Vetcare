@@ -71,6 +71,11 @@ namespace Vetcare.Negocio
         {
             return clienteDAO.EliminarVarios(idsClientes);
         }
+
+        public int ContarClientes()
+        {
+            return clienteDAO.ContarClientes();
+        }
     }
 }
 

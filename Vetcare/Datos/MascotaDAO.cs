@@ -286,6 +286,17 @@ namespace Vetcare.Datos
             }
         }
 
+        public int ContarMascotas()
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                string sql = "SELECT COUNT(*) FROM mascotas";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
         // -------- MÉTODOS AUXILIARES --------
 
         private void CargarParametros(MySqlCommand cmd, Mascota mascota)

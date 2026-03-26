@@ -191,6 +191,61 @@ namespace Vetcare.Datos
             }
         }
 
+        // KPI citas hoy
+        public int ContarCitasHoy()
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                string sql = "SELECT COUNT(*) FROM citas WHERE DATE(fecha_hora) = CURDATE()";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        // Próximas citas
+        public List<Cita> ObtenerProximasCitas()
+        {
+            List<Cita> lista = new List<Cita>();
+
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+
+                string sql = @"
+                SELECT c.id_cita,
+                       c.fecha_hora,
+                       c.motivo,
+                       m.nombre AS mascota,
+                       CONCAT(cl.nombre, ' ', cl.apellidos) AS cliente
+                FROM citas c
+                INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
+                INNER JOIN clientes cl ON m.id_cliente = cl.id_cliente
+                WHERE c.fecha_hora >= NOW()
+                ORDER BY c.fecha_hora
+                LIMIT 10";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+
+                using (MySqlDataReader rdr = cmd.ExecuteReader())
+                {
+                    while (rdr.Read())
+                    {
+                        lista.Add(new Cita
+                        {
+                            IdCita = Convert.ToInt32(rdr["id_cita"]),
+                            FechaHora = Convert.ToDateTime(rdr["fecha_hora"]),
+                            Motivo = rdr["motivo"].ToString(),
+                            NombreMascota = rdr["mascota"].ToString(),
+                            NombreDueno = rdr["cliente"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return lista;
+        }
+
         // --- MÉTODOS AUXILIARES ---
         private void CargarParametros(MySqlCommand cmd, Cita cita)
         {

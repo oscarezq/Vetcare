@@ -209,7 +209,7 @@ namespace Vetcare.Presentacion.Citas
 
                 if (win.ShowDialog() == true)
                 {
-                    CargarDatos(); 
+                    CargarDatos();
                 }
             }
         }
