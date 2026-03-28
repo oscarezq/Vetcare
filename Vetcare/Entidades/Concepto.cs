@@ -12,14 +12,14 @@ namespace Vetcare.Entidades
         public string Tipo { get; set; } // Producto o Servicio
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
-        public decimal PrecioBase { get; set; }
+        public decimal Precio { get; set; }
         public decimal IvaPorcentaje { get; set; }
 
-        public decimal PrecioFinal
+        public decimal PrecioSinIva
         {
             get
             {
-                return PrecioBase * (1 + (IvaPorcentaje / 100m));
+                return Precio / (1 + (IvaPorcentaje / 100m));
             }
         }
 

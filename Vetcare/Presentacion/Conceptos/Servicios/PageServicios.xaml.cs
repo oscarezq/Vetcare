@@ -61,13 +61,13 @@ namespace Vetcare.Presentacion.Servicios
             // 2. Filtro por Precio Mínimo
             if (decimal.TryParse(txtPrecioMin.Text, out decimal pMin))
             {
-                filtrados = filtrados.Where(s => s.PrecioBase >= pMin);
+                filtrados = filtrados.Where(s => s.Precio >= pMin);
             }
 
             // 3. Filtro por Precio Máximo
             if (decimal.TryParse(txtPrecioMax.Text, out decimal pMax))
             {
-                filtrados = filtrados.Where(s => s.PrecioBase <= pMax);
+                filtrados = filtrados.Where(s => s.Precio <= pMax);
             }
 
             // 4. Ordenación
@@ -77,7 +77,7 @@ namespace Vetcare.Presentacion.Servicios
             switch (criterio)
             {
                 case "Precio":
-                    filtrados = ascendente ? filtrados.OrderBy(s => s.PrecioBase) : filtrados.OrderByDescending(s => s.PrecioBase);
+                    filtrados = ascendente ? filtrados.OrderBy(s => s.Precio) : filtrados.OrderByDescending(s => s.Precio);
                     break;
                 case "ID":
                     filtrados = ascendente ? filtrados.OrderBy(s => s.IdConcepto) : filtrados.OrderByDescending(s => s.IdConcepto);

@@ -116,7 +116,7 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 string sql = @"INSERT INTO conceptos 
-                               (tipo, nombre, descripcion, precio_base, iva_porcentaje, stock, activo) 
+                               (tipo, nombre, descripcion, precio, iva_porcentaje, stock, activo) 
                                VALUES 
                                (@tipo, @nom, @desc, @precio, @iva, @stock, @activo)";
 
@@ -124,7 +124,7 @@ namespace Vetcare.Datos
                 cmd.Parameters.AddWithValue("@tipo", c.Tipo);
                 cmd.Parameters.AddWithValue("@nom", c.Nombre);
                 cmd.Parameters.AddWithValue("@desc", c.Descripcion ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@precio", c.PrecioBase);
+                cmd.Parameters.AddWithValue("@precio", c.Precio);
                 cmd.Parameters.AddWithValue("@iva", c.IvaPorcentaje);
                 cmd.Parameters.AddWithValue("@stock", c.Stock.HasValue ? c.Stock : (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@activo", c.Activo);
@@ -149,7 +149,7 @@ namespace Vetcare.Datos
                                SET tipo = @tipo,
                                    nombre = @nom,
                                    descripcion = @desc,
-                                   precio_base = @precio,
+                                   precio = @precio,
                                    iva_porcentaje = @iva,
                                    stock = @stock,
                                    activo = @activo
@@ -160,7 +160,7 @@ namespace Vetcare.Datos
                 cmd.Parameters.AddWithValue("@tipo", c.Tipo);
                 cmd.Parameters.AddWithValue("@nom", c.Nombre);
                 cmd.Parameters.AddWithValue("@desc", c.Descripcion ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@precio", c.PrecioBase);
+                cmd.Parameters.AddWithValue("@precio", c.Precio);
                 cmd.Parameters.AddWithValue("@iva", c.IvaPorcentaje);
                 cmd.Parameters.AddWithValue("@stock", c.Stock.HasValue ? c.Stock : (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@activo", c.Activo);
@@ -226,7 +226,7 @@ namespace Vetcare.Datos
                 Tipo = dr["tipo"].ToString(),
                 Nombre = dr["nombre"].ToString(),
                 Descripcion = dr["descripcion"] == DBNull.Value ? null : dr["descripcion"].ToString(),
-                PrecioBase = Convert.ToDecimal(dr["precio_base"]),
+                Precio = Convert.ToDecimal(dr["precio"]),
                 IvaPorcentaje = Convert.ToDecimal(dr["iva_porcentaje"]),
                 Stock = dr["stock"] == DBNull.Value ? (int?)null : Convert.ToInt32(dr["stock"]),
                 Activo = Convert.ToBoolean(dr["activo"]),

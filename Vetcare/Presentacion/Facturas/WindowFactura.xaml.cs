@@ -70,7 +70,7 @@ namespace Vetcare.Presentacion.Facturas
             if (selector.ShowDialog() == true)
             {
                 conceptoSeleccionado = selector.ConceptoSeleccionado;
-                txtNombreServicio.Text = $"{conceptoSeleccionado.Nombre} ({conceptoSeleccionado.PrecioBase:N2}€)";
+                txtNombreServicio.Text = $"{conceptoSeleccionado.Nombre} ({conceptoSeleccionado.Precio:N2}€)";
                 txtNombreServicio.Foreground = Brushes.Black;
                 txtNombreServicio.FontWeight = FontWeights.Bold;
             }
@@ -111,7 +111,7 @@ namespace Vetcare.Presentacion.Facturas
                     NombreConcepto = conceptoSeleccionado.Nombre,
                     Tipo = conceptoSeleccionado.Tipo,
                     Cantidad = cantidad,
-                    PrecioUnitario = conceptoSeleccionado.PrecioBase,
+                    PrecioUnitario = conceptoSeleccionado.Precio,
                     IvaPorcentaje = conceptoSeleccionado.IvaPorcentaje
                 });
             }

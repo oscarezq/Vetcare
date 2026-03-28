@@ -28,14 +28,14 @@ namespace Vetcare.Presentacion.Conceptos.Productos
                 {
                     txtNombre.Text = productoActual.Nombre;
                     txtStock.Text = productoActual.Stock?.ToString() ?? "0";
-                    txtPrecio.Text = productoActual.PrecioBase.ToString("N2");
+                    txtPrecio.Text = productoActual.Precio.ToString("N2");
                     txtIva.Text = productoActual.IvaPorcentaje.ToString("N0");
                     txtDescripcion.Text = !string.IsNullOrWhiteSpace(productoActual.Descripcion)
                                           ? productoActual.Descripcion
                                           : "Sin descripción registrada.";
 
                     // Cálculo PVP
-                    decimal precioFinal = productoActual.PrecioBase * (1 + (productoActual.IvaPorcentaje / 100m));
+                    decimal precioFinal = productoActual.Precio * (1 + (productoActual.IvaPorcentaje / 100m));
                     txtTotal.Text = precioFinal.ToString("N2") + " €";
 
                     // Cambiar color del stock si es bajo (ej. 5 o menos)

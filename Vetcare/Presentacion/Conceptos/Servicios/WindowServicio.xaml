@@ -87,30 +87,24 @@
 
                     <UniformGrid Columns="2" Margin="0,0,0,20">
                         <StackPanel Margin="0,0,10,0">
-                            <TextBlock Text="PRECIO BASE (€)" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Text="PRECIO TOTAL (€)" Style="{StaticResource FieldLabel}"/>
                             <TextBox x:Name="txtPrecio" Style="{StaticResource ModernInput}" 
                                      PreviewTextInput="txtPrecio_PreviewTextInput"/>
                         </StackPanel>
 
                         <StackPanel Margin="10,0,0,0">
                             <TextBlock Text="IVA (%)" Style="{StaticResource FieldLabel}"/>
-                            <Grid Height="38">
-                                <TextBox x:Name="txtIva" Text="21" Style="{StaticResource ModernInput}"
-                                         Padding="12,0,35,0"
-                                         PreviewTextInput="txtPrecio_PreviewTextInput" 
-                                         LostFocus="txtIva_LostFocus"/>
-
-                                <Border CornerRadius="0,8,8,0" HorizontalAlignment="Right" Width="30" ClipToBounds="True">
-                                    <StackPanel>
-                                        <RepeatButton x:Name="btnSubirIva" Content="▲" FontSize="7" Height="19" 
-                                                      Style="{StaticResource IvaButtonStyle}" 
-                                                      BorderThickness="1,0,0,0.5" Click="btnSubirIva_Click"/>
-                                        <RepeatButton x:Name="btnBajarIva" Content="▼" FontSize="7" Height="19" 
-                                                      Style="{StaticResource IvaButtonStyle}" 
-                                                      BorderThickness="1,0.5,0,0" Click="btnBajarIva_Click"/>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
+                            <ComboBox x:Name="cmbIva" Height="38" VerticalContentAlignment="Center" 
+                                Padding="12,0" Background="White" BorderBrush="#E2E8F0">
+                                <ComboBox.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </ComboBox.Resources>
+                                <ComboBoxItem Content="21" IsSelected="True"/>
+                                <ComboBoxItem Content="10"/>
+                                <ComboBoxItem Content="4"/>
+                            </ComboBox>
                         </StackPanel>
                     </UniformGrid>
 

@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using MySql.Data.MySqlClient;
 using Vetcare.Datos;
 using Vetcare.Entidades;
+using Vetcare.Negocio;
 using Vetcare.Presentacion.Citas;
 using Vetcare.Presentacion.Clientes;
 using Vetcare.Presentacion.Facturas;
@@ -14,8 +15,11 @@ namespace Vetcare.Presentacion.Inicio
 {
     public partial class PageInicio : Page
     {
-        CitaDAO citaDAO = new CitaDAO();
         Conexion conexion = new Conexion();
+        CitaService _citaService = new CitaService();
+        ClienteService _clienteService = new ClienteService();
+        MascotaService _mascotaService = new MascotaService();
+        FacturaService _facturaService = new FacturaService();
 
         public PageInicio()
         {
@@ -27,31 +31,52 @@ namespace Vetcare.Presentacion.Inicio
         {
             try
             {
-                // Citas reales desde la BD
-                List<Cita> lista = citaDAO.ObtenerTodas();
-                dgCitas.ItemsSource = lista.Where(c => c.FechaHora.Date == DateTime.Today).ToList();
+                // 1. Obtener citas
+                List<Cita> lista = _citaService.ObtenerTodas();
+                var citasHoy = lista.Where(c => c.FechaHora.Date == DateTime.Today).ToList();
 
-                // Conteos reales (Actualiza con tus tablas reales)
-                txtTotalClientes.Text = GetCount("SELECT COUNT(*) FROM clientes");
-                txtTotalMascotas.Text = GetCount("SELECT COUNT(*) FROM mascotas");
-                txtCitasHoy.Text = lista.Count(c => c.FechaHora.Date == DateTime.Today).ToString();
+                // 2. Asignar al DataGrid
+                dgCitas.ItemsSource = citasHoy;
 
-                // Ingresos mes (Formateado a moneda)
-                object ingresos = ExecuteScalar("SELECT SUM(total) FROM facturas WHERE MONTH(fecha_emision) = MONTH(CURRENT_DATE)");
+                // 3. Controlar visibilidad del mensaje de "No hay citas"
+                if (citasHoy.Count == 0)
+                {
+                    dgCitas.Visibility = Visibility.Collapsed;
+                    pnlSinCitas.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    dgCitas.Visibility = Visibility.Visible;
+                    pnlSinCitas.Visibility = Visibility.Collapsed;
+                }
+
+                // --- Resto de tus conteos ---
+                txtTotalClientes.Text = _clienteService.ContarClientes().ToString();
+                txtTotalMascotas.Text = _mascotaService.ContarMascotas().ToString();
+                txtCitasHoy.Text = citasHoy.Count.ToString();
+
+                object ingresos = _facturaService.ObtenerIngresosHoy();
                 decimal total = ingresos != DBNull.Value ? Convert.ToDecimal(ingresos) : 0;
                 txtIngresosHoy.Text = total.ToString("N2") + " €";
-
-                //lblSaludo.Text = "Clínica VetCare - " + DateTime.Now.ToLongDateString();
             }
             catch (Exception ex)
             {
-                //lblSaludo.Text = "Error al conectar con la base de datos.";
+                // Opcional: Mostrar mensaje de error en lugar de solo fallar en silencio
+                MessageBox.Show("Error al cargar el dashboard: " + ex.Message);
             }
         }
 
-        private string GetCount(string sql)
+        private void btnVerConsulta_Click(object sender, RoutedEventArgs e)
         {
-            return ExecuteScalar(sql).ToString();
+            // Obtenemos el objeto Cita vinculado a la fila del botón pulsado
+            var button = sender as Button;
+            var citaSeleccionada = button.DataContext as Cita;
+
+            if (citaSeleccionada != null)
+            {
+                WindowFichaCita window = new WindowFichaCita(citaSeleccionada.IdCita);
+                window.ShowDialog();
+            }
         }
 
         private object ExecuteScalar(string sql)
@@ -69,25 +94,25 @@ namespace Vetcare.Presentacion.Inicio
         private void btnNuevaCita_Click(object sender, RoutedEventArgs e)
         {
             WindowCita window = new WindowCita();
-            window.Show();
+            window.ShowDialog();
         }
 
         private void btnNuevaMascota_Click(object sender, RoutedEventArgs e)
         {
             WindowMascota window = new WindowMascota();
-            window.Show();
+            window.ShowDialog();
         }
 
         private void btnNuevoCliente_Click(object sender, RoutedEventArgs e)
         {
             WindowCliente window = new WindowCliente();
-            window.Show();
+            window.ShowDialog();
         }
 
         private void btnNuevaFactura_Click(object sender, RoutedEventArgs e)
         {
             WindowFactura window = new WindowFactura();
-            window.Show();
+            window.ShowDialog();
         }
     }
 }

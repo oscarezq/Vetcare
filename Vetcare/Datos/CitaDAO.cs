@@ -36,7 +36,8 @@ namespace Vetcare.Datos
                     INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
                     INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente
                     INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
-                    INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario";
+                    INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario
+                    ORDER BY c.fecha_hora ASC";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 using (MySqlDataReader rdr = cmd.ExecuteReader())

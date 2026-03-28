@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Citas;
@@ -12,9 +14,6 @@ using Vetcare.Presentacion.Veterinarios;
 
 namespace Vetcare.Presentacion
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private Usuario usuarioActual;
@@ -23,7 +22,8 @@ namespace Vetcare.Presentacion
         {
             InitializeComponent();
             UsuarioService usuarioService = new UsuarioService();
-            var user = usuarioService.ValidarLogin("admin", "admin", out usuarioActual);
+            // Simulación de login para desarrollo
+            usuarioService.ValidarLogin("admin", "admin", out usuarioActual);
 
             FramePrincipal.Content = new PageInicio();
             CargarDatosUsuario();
@@ -42,61 +42,89 @@ namespace Vetcare.Presentacion
         {
             if (usuarioActual != null)
             {
-                // Mostramos Nombre y Apellidos. Si prefieres el username, usa usuarioActual.Username
                 lblNombreUsuario.Text = $"{usuarioActual.Username}";
             }
         }
 
+        /// <summary>
+        /// Método para gestionar el estado visual de los botones del menú lateral
+        /// </summary>
+        private void SeleccionarBoton(object sender)
+        {
+            // Recorremos todos los elementos del StackPanel del menú
+            foreach (var child in pnlMenu.Children)
+            {
+                if (child is Button btn)
+                {
+                    // Quitamos la marca de "Selected" a todos
+                    btn.Tag = null;
+                }
+            }
+
+            // Aplicamos la marca de "Selected" solo al botón que se pulsó
+            if (sender is Button botonPulsado)
+            {
+                botonPulsado.Tag = "Selected";
+            }
+        }
+
         // --- EVENTOS DE NAVEGACIÓN ---
+
         private void btnInicio_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageInicio();
         }
 
         private void btnMascotas_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageMascotas();
         }
 
         private void btnClientes_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageClientes();
         }
 
         private void btnCitas_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageCitas();
-        }
-
-        private void btnHistorial_Click(object sender, RoutedEventArgs e)
-        {
-            //FramePrincipal.Content = new PageHistorialClinico();
         }
 
         private void btnUsuarios_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageUsuarios();
         }
 
         private void btnVeterinarios_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageVeterinarios();
         }
 
         private void btnServicios_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageServicios();
         }
 
         private void btnProductos_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageProductos();
         }
 
         private void btnFacturas_Click(object sender, RoutedEventArgs e)
         {
+            SeleccionarBoton(sender);
             FramePrincipal.Content = new PageFacturas();
         }
+
+        // --- GESTIÓN DE PERFIL Y SALIDA ---
 
         private void btnSalir_Click(object sender, RoutedEventArgs e)
         {
@@ -105,30 +133,26 @@ namespace Vetcare.Presentacion
             this.Close();
         }
 
-        // Abre el menú al hacer clic izquierdo en el nombre de usuario
         private void btnPerfil_Click(object sender, RoutedEventArgs e)
         {
             if (btnPerfil.ContextMenu != null)
             {
-                // Posicionamos el menú justo debajo del botón
                 btnPerfil.ContextMenu.PlacementTarget = btnPerfil;
                 btnPerfil.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
                 btnPerfil.ContextMenu.IsOpen = true;
             }
         }
 
-        // Acción: Ver Información
         private void btnVerInfo_Click(object sender, RoutedEventArgs e)
         {
             if (usuarioActual != null)
             {
                 WindowVerPerfil perfil = new WindowVerPerfil(usuarioActual);
-                perfil.Owner = Window.GetWindow(this);
+                perfil.Owner = this;
                 perfil.ShowDialog();
             }
         }
 
-        // Acción: Cambiar Contraseña
         private void btnCambiarPass_Click(object sender, RoutedEventArgs e)
         {
             WindowCambiarPassword win = new WindowCambiarPassword(usuarioActual, false);

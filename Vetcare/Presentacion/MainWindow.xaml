@@ -11,41 +11,49 @@
 
     <Window.Resources>
         <Style x:Key="MenuButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#F8F9F9"/>
-            <Setter Property="Foreground" Value="#1B2631"/>
-            <Setter Property="Height" Value="50"/>
-            <Setter Property="Margin" Value="15,5,15,5"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#BDC3C7"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#EAECEE"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Margin" Value="15,5,15,5"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="15,0,0,0"/>
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="8"/>
-                </Style>
-            </Style.Resources>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#EBEDEF"/>
-                    <Setter Property="BorderBrush" Value="#E67E22"/>
-                    <Setter Property="Cursor" Value="Hand"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="8" 
+                                BorderThickness="0">
+                            <Grid>
+                                <Rectangle x:Name="Indicator" 
+                                           HorizontalAlignment="Left" 
+                                           Width="4" 
+                                           Fill="#E67E22" 
+                                           Visibility="Collapsed" 
+                                           Margin="2,10,0,10"
+                                           RadiusX="2" RadiusY="2"/>
 
-        <Style x:Key="ModernContextMenu" TargetType="ContextMenu">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#D5DBDB"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="0"/>
-            <Style.Resources>
-                <Style TargetType="MenuItem">
-                    <Setter Property="Padding" Value="10,10"/>
-                    <Setter Property="FontSize" Value="13"/>
-                </Style>
-            </Style.Resources>
+                                <ContentPresenter HorizontalAlignment="Left" 
+                                                  VerticalAlignment="Center" 
+                                                  Margin="15,0,0,0"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#34495E"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <Trigger Property="Tag" Value="Selected">
+                                <Setter TargetName="border" Property="Background" Value="#3E5871"/>
+                                <Setter TargetName="Indicator" Property="Visibility" Value="Visible"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="HeaderUserButtonStyle" TargetType="Button">
@@ -53,16 +61,32 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#F2F4F4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernContextMenu" TargetType="ContextMenu">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D5DBDB"/>
+            <Setter Property="BorderThickness" Value="1"/>
             <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="6"/>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Padding" Value="10,10"/>
+                    <Setter Property="FontSize" Value="13"/>
                 </Style>
             </Style.Resources>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#F2F4F4"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
     </Window.Resources>
 
@@ -72,79 +96,77 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Background="#2C3E50" Grid.Column="0" BorderBrush="#D5DBDB" BorderThickness="0,0,1,0">
+        <Border Background="#2C3E50" Grid.Column="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Image Grid.Row="0" Source="/Resources/logo3-transparente.png" 
-                       Width="160" Margin="20,25"
-                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                       Width="160" Margin="20,25" RenderOptions.BitmapScalingMode="HighQuality"/>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
-                    <StackPanel>
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnInicio_Click">
+                    <StackPanel x:Name="pnlMenu">
+                        <Button x:Name="btnInicio" Style="{StaticResource MenuButtonStyle}" Tag="Selected" Click="btnInicio_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/home.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="INICIO"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnMascotas_Click">
+                        <Button x:Name="btnMascotas" Style="{StaticResource MenuButtonStyle}" Click="btnMascotas_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/clientes.png" Width="18" Margin="0,0,10,0"/>
+                                <Image Source="/Resources/pata.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="MASCOTAS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnClientes_Click">
+                        <Button x:Name="btnClientes" Style="{StaticResource MenuButtonStyle}" Click="btnClientes_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/clientes.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="CLIENTES"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnCitas_Click">
+                        <Button x:Name="btnCitas" Style="{StaticResource MenuButtonStyle}" Click="btnCitas_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/calendario.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="CITAS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnUsuarios_Click">
+                        <Button x:Name="btnUsuarios" Style="{StaticResource MenuButtonStyle}" Click="btnUsuarios_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/usuarios.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="USUARIOS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnVeterinarios_Click">
+                        <Button x:Name="btnVeterinarios" Style="{StaticResource MenuButtonStyle}" Click="btnVeterinarios_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="VETERINARIOS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnServicios_Click">
+                        <Button x:Name="btnServicios" Style="{StaticResource MenuButtonStyle}" Click="btnServicios_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
+                                <Image Source="/Resources/servicios.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="SERVICIOS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnProductos_Click">
+                        <Button x:Name="btnProductos" Style="{StaticResource MenuButtonStyle}" Click="btnProductos_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
+                                <Image Source="/Resources/productos.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="PRODUCTOS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="btnFacturas_Click">
+                        <Button x:Name="btnFacturas" Style="{StaticResource MenuButtonStyle}" Click="btnFacturas_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
+                                <Image Source="/Resources/facturas.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="FACTURAS"/>
                             </StackPanel>
                         </Button>
@@ -162,7 +184,6 @@
             <Border Grid.Row="0" Background="White" BorderBrush="#D5DBDB" BorderThickness="0,0,0,1">
                 <Grid Margin="20,0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-
                         <Button x:Name="btnPerfil" Style="{StaticResource HeaderUserButtonStyle}" Click="btnPerfil_Click">
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource ModernContextMenu}">
@@ -172,21 +193,14 @@
                                     <MenuItem Header="Cerrar Sesión" Click="btnSalir_Click" Foreground="#E67E22" FontWeight="Bold"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
-
                             <StackPanel Orientation="Horizontal">
                                 <Border Width="30" Height="30" CornerRadius="15" Background="#F2F4F4" Margin="0,0,10,0">
-                                    <Image Source="/Resources/usuarios.png" Width="14" Height="14" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <Image Source="/Resources/perfil.png" Width="16" Height="16"/>
                                 </Border>
-
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock x:Name="lblNombreUsuario" Text="Usuario" 
-                                               FontSize="12" FontWeight="Bold" Foreground="#1B2631"/>
-                                </StackPanel>
-
+                                <TextBlock x:Name="lblNombreUsuario" Text="Usuario" VerticalAlignment="Center" FontWeight="Bold" Foreground="#1B2631"/>
                                 <TextBlock Text="▾" VerticalAlignment="Center" Foreground="#ABB2B9" Margin="8,0,0,0"/>
                             </StackPanel>
                         </Button>
-
                     </StackPanel>
                 </Grid>
             </Border>

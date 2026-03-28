@@ -13,7 +13,7 @@ namespace Vetcare.Presentacion.Servicios
         private ConceptoService productoService = new ConceptoService();
         private bool esEdicion = false;
 
-        public WindowProducto() // Constructor para Nuevo
+        public WindowProducto()
         {
             InitializeComponent();
             producto = new Concepto();
@@ -22,7 +22,7 @@ namespace Vetcare.Presentacion.Servicios
             txtStock.Text = "0";
         }
 
-        public WindowProducto(Concepto productoExistente) // Constructor para Editar
+        public WindowProducto(Concepto productoExistente)
         {
             InitializeComponent();
             producto = productoExistente;
@@ -34,10 +34,20 @@ namespace Vetcare.Presentacion.Servicios
         private void CargarDatos()
         {
             txtNombre.Text = producto.Nombre;
-            txtPrecio.Text = producto.PrecioBase.ToString("N2");
-            txtIva.Text = producto.IvaPorcentaje.ToString("N2");
+            txtPrecio.Text = producto.Precio.ToString("N2");
             txtStock.Text = producto.Stock?.ToString() ?? "0";
             txtDescripcion.Text = producto.Descripcion;
+
+            // Seleccionar el IVA en el ComboBox
+            string ivaGuardado = producto.IvaPorcentaje.ToString("G29");
+            foreach (ComboBoxItem item in cmbIva.Items)
+            {
+                if (item.Content.ToString() == ivaGuardado)
+                {
+                    cmbIva.SelectedItem = item;
+                    break;
+                }
+            }
         }
 
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
@@ -47,12 +57,17 @@ namespace Vetcare.Presentacion.Servicios
             try
             {
                 producto.Nombre = txtNombre.Text.Trim();
-                producto.PrecioBase = decimal.Parse(txtPrecio.Text.Trim());
-                producto.IvaPorcentaje = decimal.Parse(txtIva.Text.Trim());
+                producto.Precio = decimal.Parse(txtPrecio.Text.Trim());
                 producto.Stock = int.Parse(txtStock.Text.Trim());
                 producto.Descripcion = txtDescripcion.Text.Trim();
                 producto.Tipo = "Producto";
                 producto.Activo = true;
+
+                // Obtener valor del IVA del ComboBox
+                if (cmbIva.SelectedItem is ComboBoxItem selectedItem)
+                {
+                    producto.IvaPorcentaje = decimal.Parse(selectedItem.Content.ToString());
+                }
 
                 bool exito = esEdicion ?
                     productoService.Actualizar(producto) :
@@ -67,7 +82,7 @@ namespace Vetcare.Presentacion.Servicios
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al procesar el producto: " + ex.Message);
+                MessageBox.Show("Error al procesar el producto: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -96,7 +111,6 @@ namespace Vetcare.Presentacion.Servicios
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
 
-        // Validar solo números y coma para precio
         private void txtPrecio_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             bool isNumber = System.Text.RegularExpressions.Regex.IsMatch(e.Text, "[0-9,]");
@@ -104,32 +118,9 @@ namespace Vetcare.Presentacion.Servicios
                 e.Handled = true;
         }
 
-        // Validar SOLO números enteros para Stock
         private void txtSoloNumeros_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !System.Text.RegularExpressions.Regex.IsMatch(e.Text, "[0-9]");
-        }
-
-        private void txtIva_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (decimal.TryParse(txtIva.Text, out decimal valor))
-            {
-                if (valor > 100) txtIva.Text = "100";
-                else if (valor < 0) txtIva.Text = "0";
-            }
-            else txtIva.Text = "21";
-        }
-
-        private void btnSubirIva_Click(object sender, RoutedEventArgs e)
-        {
-            if (decimal.TryParse(txtIva.Text, out decimal valor) && valor < 100)
-                txtIva.Text = (valor + 1).ToString();
-        }
-
-        private void btnBajarIva_Click(object sender, RoutedEventArgs e)
-        {
-            if (decimal.TryParse(txtIva.Text, out decimal valor) && valor > 0)
-                txtIva.Text = (valor - 1).ToString();
         }
     }
 }

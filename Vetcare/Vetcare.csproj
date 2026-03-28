@@ -11,6 +11,7 @@
     <None Remove="Resources\calendario.png" />
     <None Remove="Resources\clientes.png" />
     <None Remove="Resources\doctor.png" />
+    <None Remove="Resources\facturas.png" />
     <None Remove="Resources\historial.png" />
     <None Remove="Resources\home.png" />
     <None Remove="Resources\icono.ico" />
@@ -21,6 +22,9 @@
     <None Remove="Resources\logo2.png" />
     <None Remove="Resources\logo3-transparente.png" />
     <None Remove="Resources\pata.png" />
+    <None Remove="Resources\perfil.png" />
+    <None Remove="Resources\productos.png" />
+    <None Remove="Resources\servicios.png" />
     <None Remove="Resources\usuarios.png" />
   </ItemGroup>
 
@@ -32,6 +36,7 @@
     <Resource Include="Resources\calendario.png" />
     <Resource Include="Resources\clientes.png" />
     <Resource Include="Resources\doctor.png" />
+    <Resource Include="Resources\facturas.png" />
     <Resource Include="Resources\historial.png" />
     <Resource Include="Resources\home.png" />
     <Resource Include="Resources\icono.ico" />
@@ -42,6 +47,9 @@
     <Resource Include="Resources\logo2.png" />
     <Resource Include="Resources\logo3-transparente.png" />
     <Resource Include="Resources\pata.png" />
+    <Resource Include="Resources\perfil.png" />
+    <Resource Include="Resources\productos.png" />
+    <Resource Include="Resources\servicios.png" />
     <Resource Include="Resources\usuarios.png" />
   </ItemGroup>
 

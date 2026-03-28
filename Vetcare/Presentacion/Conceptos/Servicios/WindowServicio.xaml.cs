@@ -1,31 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Servicios
 {
-    /// <summary>
-    /// Lógica de interacción para WindowServicio.xaml
-    /// </summary>
     public partial class WindowServicio : Window
     {
         private Concepto concepto;
-        private ConceptoService conceptoService = new ConceptoService(); // Asumiendo que tienes esta capa
+        private ConceptoService conceptoService = new ConceptoService();
         private bool esEdicion = false;
 
-        // Constructor para Nuevo
         public WindowServicio()
         {
             InitializeComponent();
@@ -34,7 +21,6 @@ namespace Vetcare.Presentacion.Servicios
             lblTitulo.Text = "NUEVO SERVICIO";
         }
 
-        // Constructor para Editar
         public WindowServicio(Concepto servicioExistente)
         {
             InitializeComponent();
@@ -47,9 +33,19 @@ namespace Vetcare.Presentacion.Servicios
         private void CargarDatos()
         {
             txtNombre.Text = concepto.Nombre;
-            txtPrecio.Text = concepto.PrecioBase.ToString("N2");
-            txtIva.Text = concepto.IvaPorcentaje.ToString("N2");
+            txtPrecio.Text = concepto.Precio.ToString("N2");
             txtDescripcion.Text = concepto.Descripcion;
+
+            // --- LÓGICA PARA SELECCIONAR EL IVA EN EL COMBOBOX ---
+            string ivaGuardado = concepto.IvaPorcentaje.ToString("G29"); // Quita ceros innecesarios
+            foreach (ComboBoxItem item in cmbIva.Items)
+            {
+                if (item.Content.ToString() == ivaGuardado)
+                {
+                    cmbIva.SelectedItem = item;
+                    break;
+                }
+            }
         }
 
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
@@ -58,13 +54,18 @@ namespace Vetcare.Presentacion.Servicios
 
             try
             {
-                // Mapeo
+                // Mapeo básico
                 concepto.Nombre = txtNombre.Text.Trim();
-                concepto.PrecioBase = decimal.Parse(txtPrecio.Text.Trim());
-                concepto.IvaPorcentaje = decimal.Parse(txtIva.Text.Trim());
+                concepto.Precio = decimal.Parse(txtPrecio.Text.Trim());
                 concepto.Descripcion = txtDescripcion.Text.Trim();
                 concepto.Tipo = "Servicio";
                 concepto.Activo = true;
+
+                // --- OBTENER VALOR DEL COMBOBOX ---
+                if (cmbIva.SelectedItem is ComboBoxItem selectedItem)
+                {
+                    concepto.IvaPorcentaje = decimal.Parse(selectedItem.Content.ToString());
+                }
 
                 bool exito = esEdicion ?
                     conceptoService.Actualizar(concepto) :
@@ -79,7 +80,7 @@ namespace Vetcare.Presentacion.Servicios
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al procesar el servicio: " + ex.Message);
+                MessageBox.Show("Error al procesar el servicio: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -93,13 +94,7 @@ namespace Vetcare.Presentacion.Servicios
 
             if (!decimal.TryParse(txtPrecio.Text, out _))
             {
-                MessageBox.Show("Ingrese un precio válido (use coma para decimales según su región).", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (!decimal.TryParse(txtIva.Text, out decimal ivaValue) || ivaValue < 0 || ivaValue > 100)
-            {
-                MessageBox.Show("Ingrese un IVA válido entre 0 y 100.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Ingrese un precio válido.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
@@ -108,46 +103,13 @@ namespace Vetcare.Presentacion.Servicios
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
 
-        // 1. Solo permite números y una coma decimal
+        // Mantenemos solo la restricción de entrada para el precio
         private void txtPrecio_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            // Permite números y comprueba si ya existe una coma
             bool isNumber = System.Text.RegularExpressions.Regex.IsMatch(e.Text, "[0-9,]");
-
             if (!isNumber || (e.Text == "," && ((TextBox)sender).Text.Contains(",")))
             {
-                e.Handled = true; // Bloquea la tecla
-            }
-        }
-
-        // 2. Autocorrección del IVA al salir del cuadro de texto
-        private void txtIva_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (decimal.TryParse(txtIva.Text, out decimal valor))
-            {
-                if (valor > 100) txtIva.Text = "100";
-                if (valor < 0) txtIva.Text = "0";
-            }
-            else
-            {
-                txtIva.Text = "0"; // Si borran todo y salen, ponemos 0 por defecto
-            }
-        }
-
-        // 3. Los métodos de los botones (se mantienen igual pero ahora RepeatButton los llama rápido)
-        private void btnSubirIva_Click(object sender, RoutedEventArgs e)
-        {
-            if (decimal.TryParse(txtIva.Text, out decimal valor) && valor < 100)
-            {
-                txtIva.Text = (valor + 1).ToString();
-            }
-        }
-
-        private void btnBajarIva_Click(object sender, RoutedEventArgs e)
-        {
-            if (decimal.TryParse(txtIva.Text, out decimal valor) && valor > 0)
-            {
-                txtIva.Text = (valor - 1).ToString();
+                e.Handled = true;
             }
         }
     }

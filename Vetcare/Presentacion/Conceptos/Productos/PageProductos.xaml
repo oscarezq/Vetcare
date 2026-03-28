@@ -149,10 +149,10 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="BASE" Width="*">
+                        <DataGridTemplateColumn Header="PRECIO SIN IVA" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding PrecioBase, StringFormat={}{0:N2} €}" VerticalAlignment="Center" Foreground="#7F8C8D"/>
+                                    <TextBlock Text="{Binding PrecioSinIva, StringFormat={}{0:N2} €}" VerticalAlignment="Center" Foreground="#7F8C8D"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -168,7 +168,7 @@
                         <DataGridTemplateColumn Header="PRECIO CON IVA" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding PrecioFinal, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2E86C1" FontSize="15"/>
+                                    <TextBlock Text="{Binding Precio, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2E86C1" FontSize="15"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

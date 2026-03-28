@@ -4,7 +4,7 @@
         Title="Ficha de Cita"
         Height="800"
         Width="900"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         Background="#F4F6F7">
 
     <Grid Margin="40">
