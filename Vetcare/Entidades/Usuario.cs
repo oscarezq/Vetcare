@@ -13,6 +13,11 @@ namespace Vetcare.Entidades
         public int IdUsuario { get; set; }
 
         /// <summary>
+        /// Si el usuario es veterinario, este es su ID en la tabla de Veterinarios.
+        /// </summary>
+        public int? IdVeterinario { get; set; }
+
+        /// <summary>
         /// Identificador del rol del usuario.
         /// </summary>
         public int IdRol { get; set; }

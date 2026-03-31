@@ -208,7 +208,7 @@
                             Click="btnCancelar_Click" Cursor="Hand" Background="Transparent" 
                             Foreground="#64748B" FontWeight="SemiBold" BorderThickness="0"/>
 
-                    <Button x:Name="btnGuardar" Content="Guardar Cliente" Width="180" Height="45" 
+                    <Button x:Name="btnGuardar" Content="Guardar Cliente" Width="180" Height="45" IsDefault="True"
                             Margin="15,0,0,0" Background="#E67E22" Foreground="White" FontWeight="Bold" 
                             Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
                         <Button.Template>

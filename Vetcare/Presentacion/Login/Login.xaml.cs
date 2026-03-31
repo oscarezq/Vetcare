@@ -16,6 +16,7 @@ namespace Vetcare.Presentacion
     {
         // Instanciamos el Servicio para usuarios
         private UsuarioService _usuarioService = new UsuarioService();
+        private VeterinarioService _veterinarioService = new VeterinarioService();
 
         // Objeto usuario que representa el usuario con el que se hace login
         private Usuario usuarioLogueado;
@@ -45,7 +46,17 @@ namespace Vetcare.Presentacion
             // Evaluamos la respuesta
             if (string.IsNullOrEmpty(mensajeError))
             {
-                if(usuarioLogueado.DebeCambiarContrasena)
+                
+
+                if (usuarioLogueado != null && usuarioLogueado.IdRol == 2)
+                {
+                    // Buscas el ID y lo guardas en el objeto que irá a la sesión
+                    usuarioLogueado.IdVeterinario = _veterinarioService.ObtenerIdVeterinarioPorUsuario(usuarioLogueado.IdUsuario);
+                }
+
+                Sesion.UsuarioActual = usuarioLogueado;
+
+                if (usuarioLogueado.DebeCambiarContrasena)
                 {
                     WindowCambiarPassword winCambio = new WindowCambiarPassword(usuarioLogueado, true);
                     winCambio.Show();

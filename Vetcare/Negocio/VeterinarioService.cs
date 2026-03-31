@@ -104,5 +104,10 @@ namespace Vetcare.Negocio
         {
             return veteDAO.BorradoLogicoVarios(ids);
         }
+
+        public int ObtenerIdVeterinarioPorUsuario(int idUsuario)
+        {
+            return veteDAO.ObtenerIdVeterinarioPorUsuario(idUsuario);
+        }
     }
 }

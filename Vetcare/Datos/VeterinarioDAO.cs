@@ -366,5 +366,42 @@ namespace Vetcare.Datos
                 }
             }
         }
+
+        /// <summary>
+        /// Busca el ID de la tabla veterinarios que corresponde a un ID de la tabla usuarios.
+        /// </summary>
+        /// <param name="idUsuario">El ID del usuario logueado.</param>
+        /// <returns>El int id_veterinario encontrado, o 0 si no existe.</returns>
+        public int ObtenerIdVeterinarioPorUsuario(int idUsuario)
+        {
+            int idEncontrado = 0;
+            string sql = "SELECT id_veterinario FROM veterinarios WHERE id_usuario = @idUsuario";
+
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
+
+                        // ExecuteScalar es perfecto aquí porque solo queremos UNA columna de UNA fila (un int)
+                        object resultado = cmd.ExecuteScalar();
+
+                        if (resultado != null && resultado != DBNull.Value)
+                        {
+                            idEncontrado = Convert.ToInt32(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener ID de veterinario: " + ex.Message);
+            }
+
+            return idEncontrado;
+        }
     }
 }

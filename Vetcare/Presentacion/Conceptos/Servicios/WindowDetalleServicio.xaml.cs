@@ -39,17 +39,24 @@ namespace Vetcare.Presentacion.Conceptos.Servicios
 
                 if (servicioActual != null)
                 {
-                    // Asignar textos a los TextBlocks del XAML
+                    // 1. Asignar nombre y descripción
                     txtNombre.Text = servicioActual.Nombre;
-                    txtPrecio.Text = servicioActual.Precio.ToString("N2"); // Formato 0.00
-                    txtIva.Text = servicioActual.IvaPorcentaje.ToString();
                     txtDescripcion.Text = !string.IsNullOrWhiteSpace(servicioActual.Descripcion)
-                                          ? servicioActual.Descripcion
-                                          : "Sin descripción disponible.";
+                                            ? servicioActual.Descripcion
+                                            : "Sin descripción disponible.";
 
-                    // Calcular y mostrar el PVP Total
-                    decimal precioFinal = servicioActual.Precio * (1 + (servicioActual.IvaPorcentaje / 100m));
-                    txtTotal.Text = precioFinal.ToString("N2") + " €";
+                    // 2. Mostrar el IVA (solo el porcentaje)
+                    txtIva.Text = servicioActual.IvaPorcentaje.ToString();
+
+                    // 3. CALCULAR PRECIO SIN IVA (Base Imponible)
+                    // Como servicioActual.Precio ya trae el IVA, dividimos por (1 + IVA/100)
+                    decimal factorIva = 1 + (servicioActual.IvaPorcentaje / 100m);
+                    decimal precioSinIva = servicioActual.Precio / factorIva;
+
+                    txtPrecio.Text = precioSinIva.ToString("N2"); // Ahora muestra el precio base
+
+                    // 4. MOSTRAR TOTAL (Ya tiene el IVA incluido)
+                    txtTotal.Text = servicioActual.Precio.ToString("N2") + " €";
                 }
                 else
                 {

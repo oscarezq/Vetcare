@@ -20,9 +20,9 @@ namespace Vetcare.Datos
                     try
                     {
                         // 1. Cálculo de totales
-                        f.BaseImponible = f.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
-                        f.IvaTotal = f.Detalles.Sum(d => (d.Cantidad * d.PrecioUnitario) * (d.IvaPorcentaje / 100));
-                        f.Total = f.BaseImponible + f.IvaTotal;
+                        f.BaseImponible = f.Detalles.Sum(d => d.Subtotal);
+                        f.IvaTotal = f.Detalles.Sum(d => d.IvaImporte);
+                        f.Total = f.Detalles.Sum(d => d.TotalLinea);
 
                         // 2. Insertar Cabecera (Siguiendo tu esquema SQL exacto)
                         string sqlFactura = @"INSERT INTO facturas 
@@ -66,8 +66,9 @@ namespace Vetcare.Datos
 
                             foreach (var det in f.Detalles)
                             {
-                                decimal subtotal = det.Cantidad * det.PrecioUnitario;
-                                decimal ivaImporte = subtotal * (det.IvaPorcentaje / 100);
+                                decimal subtotal = det.Subtotal;
+                                decimal ivaImporte = det.IvaImporte;
+                                decimal totalLinea = det.TotalLinea;
 
                                 cmdD.Parameters["@idF"].Value = idFacturaGenerada;
                                 cmdD.Parameters["@idC"].Value = (object)det.IdConcepto ?? DBNull.Value;
@@ -78,7 +79,7 @@ namespace Vetcare.Datos
                                 cmdD.Parameters["@ivaP"].Value = det.IvaPorcentaje;
                                 cmdD.Parameters["@sub"].Value = subtotal;
                                 cmdD.Parameters["@ivaI"].Value = ivaImporte;
-                                cmdD.Parameters["@totL"].Value = subtotal + ivaImporte;
+                                cmdD.Parameters["@totL"].Value = totalLinea;
 
                                 cmdD.ExecuteNonQuery();
 

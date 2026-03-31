@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:util="clr-namespace:Vetcare.Entidades"
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="1100"
       Title="PageClientes">
@@ -17,30 +18,38 @@
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
-                <UniformGrid Columns="3" Margin="0,0,0,15">
+                <UniformGrid Columns="5" Margin="0,0,0,15">
+                    <UniformGrid.Resources>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Height" Value="28"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </UniformGrid.Resources>
+
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Número de documento" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaNumDocumento" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                        <TextBlock Text="Documento (DNI/NIE)" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaNumDocumento" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Cliente" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaCliente" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                        <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaCliente" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Teléfono" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaTelefono" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                        <TextBox x:Name="txtBuscaTelefono" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Email" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaEmail" Height="25" TextChanged="FiltroAvanzado_Changed"/>
+                        <TextBox x:Name="txtBuscaEmail" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Fecha Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpBuscaFechaDesde" Height="25" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
+                        <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Fecha Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpBuscaFechaHasta" Height="25" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
+                        <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
                     </StackPanel>
                 </UniformGrid>
 
@@ -48,21 +57,19 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
-                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="25" SelectionChanged="cbOrdenarPor_SelectionChanged">
-                        <ComboBoxItem Content="Nombre" IsSelected="True"/>
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="cbOrdenarPor_SelectionChanged">
+                        <ComboBoxItem Content="Fecha de Alta" IsSelected="True"/>
+                        <ComboBoxItem Content="DNI"/>
+                        <ComboBoxItem Content="Nombre"/>
                         <ComboBoxItem Content="Apellidos"/>
                         <ComboBoxItem Content="Teléfono"/>
                         <ComboBoxItem Content="Email"/>
-                        <ComboBoxItem Content="Dirección"/>
-                        <ComboBoxItem Content="Fecha de Alta"/>
                     </ComboBox>
-
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
                         <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="OrdenDirection_Checked"/>
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="OrdenDirection_Checked"/>
                     </StackPanel>
-
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="25" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -79,59 +86,66 @@
 
                     <Button DockPanel.Dock="Right" x:Name="btnNuevoCliente" Content="+ Nuevo Cliente" Click="btnNuevoCliente_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
-                        </Button.Resources>
+                        </Button.Style>
                     </Button>
 
-                    <Button DockPanel.Dock="Right" x:Name="btnEliminarVarios" Content="Eliminar Seleccionados" Click="btnEliminarVarios_Click" Visibility="Collapsed"
-                            Background="#FDEDEC" Foreground="#CB4335" FontWeight="Bold" Padding="15,0" Height="38" Cursor="Hand" BorderBrush="#FADBD8" BorderThickness="1">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
+                    <Button DockPanel.Dock="Right" x:Name="btnEliminarVarios" Content="Eliminar Seleccionados" Click="btnEliminarVarios_Click"
+                            Background="#FDEDEC" Foreground="#CB4335" FontWeight="Bold" Padding="15,0" Height="38" Cursor="Hand" BorderBrush="#FADBD8" BorderThickness="1" Margin="10,0,0,0">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
-                        </Button.Resources>
+                        </Button.Style>
                     </Button>
                 </DockPanel>
 
-                <DataGrid x:Name="dgClientes" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"  SelectionChanged="dgClientes_SelectionChanged"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgClientes_MouseDoubleClick"
-                          Background="White" FontSize="14" RowHeight="45" ColumnHeaderHeight="40" SelectionMode="Extended" SelectionUnit="FullRow">
+                <DataGrid x:Name="dgClientes" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
+                          MouseDoubleClick="dgClientes_MouseDoubleClick" GridLinesVisibility="None" BorderThickness="0" 
+                          HeadersVisibility="Column" SelectionChanged="dgClientes_SelectionChanged" CanUserSortColumns="False"
+                          CanUserReorderColumns="False" Background="White" FontSize="14" RowHeight="45" ColumnHeaderHeight="40" 
+                          SelectionMode="Extended" SelectionUnit="FullRow" HorizontalScrollBarVisibility="Auto">
 
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
-
                         <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="20,0,10,0"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
                                         <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                                            <ContentPresenter VerticalAlignment="Center" />
                                         </Border>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </Style>
 
-                        <Style TargetType="DataGridColumnHeader">
+                        <Style x:Key="HeaderStyleComun" TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="FontSize" Value="12"/>
-                            <Setter Property="Padding" Value="20,0,10,0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0,0,0,2"/>
                             <Setter Property="BorderBrush" Value="#E67E22"/>
                         </Style>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}"/>
                     </DataGrid.Resources>
 
                     <DataGrid.RowStyle>
@@ -146,48 +160,64 @@
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="#EBF5FB"/>
                                     <Setter Property="Foreground" Value="#2E86C1"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="CLIENTE" Width="2.4*">
+                        <DataGridTemplateColumn Header="DOCUMENTO" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock VerticalAlignment="Center">
                                         <Hyperlink Click="btnVerFichaCliente_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
-                                            <Run Text="{Binding Nombre}" FontWeight="SemiBold"/><Run Text=" "/><Run Text="{Binding Apellidos}" FontWeight="SemiBold"/>
-                                            <Hyperlink.Style>
-                                                <Style TargetType="Hyperlink">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Foreground" Value="#E67E22"/>
-                                                            <Setter Property="TextDecorations" Value="Underline"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Hyperlink.Style>
+                                            <Run Text="{Binding NumDocumento}" FontWeight="SemiBold"/>
                                         </Hyperlink>
                                     </TextBlock>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="1.5*"/>
-                        <DataGridTextColumn Header="TELÉFONO" Binding="{Binding Telefono}" Width="1.1*"/>
-                        <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="2.5*"/>
-                        <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="1.1*"/>
+                        <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="*" />
+                        <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="*" />
+                        <DataGridTextColumn Header="TELÉFONO" Binding="{Binding Telefono}" Width="110" />
+                        <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="1.5*" />
+                        <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="110" />
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="*">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="✎" ToolTip="Editar" Click="btnEditar_Click" Margin="5,0" 
-                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" FontWeight="Bold" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminar_Click" Margin="5,0" 
-                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" FontWeight="Bold" BorderBrush="#FADBD8" Cursor="Hand"/>
+                                        <Button x:Name="btnDetalles" Content="👁" Click="btnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1"/>
+                                        <Button x:Name="btnEditar" Content="✎" Click="btnEditar_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button x:Name="btnEliminar" Content="🗑" Click="btnEliminar_Click" Margin="2,0" Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

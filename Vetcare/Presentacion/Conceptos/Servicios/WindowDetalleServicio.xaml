@@ -61,7 +61,7 @@
 
                     <UniformGrid Columns="2" Margin="0,0,0,20">
                         <StackPanel Margin="0,0,10,0">
-                            <TextBlock Text="PRECIO BASE" Style="{StaticResource DetailLabel}"/>
+                            <TextBlock Text="PRECIO SIN IVA" Style="{StaticResource DetailLabel}"/>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock x:Name="txtPrecio" Text="45.00" Style="{StaticResource DetailValue}"/>
                                 <TextBlock Text=" €" Style="{StaticResource DetailValue}"/>

@@ -38,10 +38,24 @@ namespace Vetcare.Presentacion.Citas
         {
             try
             {
-                // Obtener la colección completa de citas desde el servicio
-                listaCompleta = cs.ObtenerTodas();
+                // 1. Obtener todas las citas de la base de datos
+                List<Cita> todasLasCitas = cs.ObtenerTodas();
 
-                // Refresca la interfaz de usuario
+                // 2. Aplicar restricción por Rol
+                // Si el rol es 2 (Veterinario), filtramos para que solo vea las suyas
+                if (Sesion.UsuarioActual.IdRol == 2)
+                {
+                    listaCompleta = todasLasCitas
+                        .Where(c => c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario)
+                        .ToList();
+                }
+                else
+                {
+                    // Roles 1 (Admin) y 3 (Recepcionista) ven todo
+                    listaCompleta = todasLasCitas;
+                }
+
+                // 3. Refrescar la interfaz
                 ActualizarTabla();
             }
             catch (Exception ex)
@@ -91,8 +105,8 @@ namespace Vetcare.Presentacion.Citas
                     if (dtpFechaHasta.SelectedDate.HasValue && c.FechaHora.Date > dtpFechaHasta.SelectedDate.Value.Date) continue;
 
                     // 4. Filtros de Hora (Rango HH:mm)
-                    if (TimeSpan.TryParse(txtHoraDesde.Text, out TimeSpan hMin) && c.FechaHora.TimeOfDay < hMin) continue;
-                    if (TimeSpan.TryParse(txtHoraHasta.Text, out TimeSpan hMax) && c.FechaHora.TimeOfDay > hMax) continue;
+                    if (TimeSpan.TryParse(dtpFechaDesde.Text, out TimeSpan hMin) && c.FechaHora.TimeOfDay < hMin) continue;
+                    if (TimeSpan.TryParse(dtpFechaHasta.Text, out TimeSpan hMax) && c.FechaHora.TimeOfDay > hMax) continue;
 
                     // Si pasa todos los filtros, se incluye en el resultado
                     listaFiltrada.Add(c);
@@ -151,8 +165,6 @@ namespace Vetcare.Presentacion.Citas
             cbBuscaEstado.SelectedIndex = 0;
             dtpFechaDesde.SelectedDate = null;
             dtpFechaHasta.SelectedDate = null;
-            txtHoraDesde.Clear();
-            txtHoraHasta.Clear();
             cbOrdenarPor.SelectedIndex = 0;
             rbDesc.IsChecked = true; // Por defecto solemos querer ver las citas más recientes arriba
 
@@ -218,11 +230,27 @@ namespace Vetcare.Presentacion.Citas
         {
             if (dgCitas.SelectedItem is Cita citaSeleccionada)
             {
-                WindowFichaCita ficha = new WindowFichaCita(citaSeleccionada.IdCita);
-                ficha.Owner = Window.GetWindow(this);
-                ficha.ShowDialog();
-                CargarDatos();
+                abrirVentanaDetalles(citaSeleccionada.IdCita);
             }
+        }
+
+        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        {
+            Button botonPulsado = sender as Button;
+            Cita citaDeLaFila = botonPulsado.DataContext as Cita;
+
+            if (citaDeLaFila != null)
+            {
+                abrirVentanaDetalles(citaDeLaFila.IdCita);
+            }
+        }
+
+        private void abrirVentanaDetalles(int idCita)
+        {
+            WindowFichaCita ficha = new WindowFichaCita(idCita);
+            ficha.Owner = Window.GetWindow(this);
+            ficha.ShowDialog();
+            CargarDatos();
         }
     }
 }

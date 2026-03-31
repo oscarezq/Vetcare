@@ -151,7 +151,7 @@
                         Foreground="#64748B" FontWeight="SemiBold" BorderThickness="0"/>
 
                 <Button x:Name="btnGuardar" Content="Guardar Cita" Width="160" Height="45" 
-                        Background="#E67E22" Foreground="White" FontWeight="Bold" 
+                        Background="#E67E22" Foreground="White" FontWeight="Bold" IsDefault="True"
                         Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

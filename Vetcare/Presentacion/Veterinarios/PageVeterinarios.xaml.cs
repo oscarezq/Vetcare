@@ -283,12 +283,25 @@ namespace Vetcare.Presentacion.Veterinarios
         {
             if (dgVeterinarios.SelectedItem is Veterinario v)
             {
-                WindowFichaUsuario ficha = new WindowFichaUsuario(v.IdUsuario);
-                ficha.Owner = Window.GetWindow(this);
-                ficha.ShowDialog();
-
-                CargarDatos(); // refrescar lista si hubo cambios
+                abrirVentanaDetalles(v.IdVeterinario);
             }
+        }
+
+        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgVeterinarios.SelectedItem is Veterinario v)
+            {
+                abrirVentanaDetalles(v.IdVeterinario);
+            }
+        }
+
+        private void abrirVentanaDetalles(int idVeterinario)
+        {
+            WindowFichaUsuario ficha = new WindowFichaUsuario(idVeterinario);
+            ficha.Owner = Window.GetWindow(this);
+            ficha.ShowDialog();
+
+            CargarDatos(); // refrescar lista si hubo cambios
         }
     }
 }

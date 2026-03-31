@@ -32,8 +32,7 @@ namespace Vetcare.Presentacion.Inicio
             try
             {
                 // 1. Obtener citas
-                List<Cita> lista = _citaService.ObtenerTodas();
-                var citasHoy = lista.Where(c => c.FechaHora.Date == DateTime.Today).ToList();
+                List<Cita> citasHoy = _citaService.ObtenerProximasCitas();
 
                 // 2. Asignar al DataGrid
                 dgCitas.ItemsSource = citasHoy;
@@ -76,16 +75,6 @@ namespace Vetcare.Presentacion.Inicio
             {
                 WindowFichaCita window = new WindowFichaCita(citaSeleccionada.IdCita);
                 window.ShowDialog();
-            }
-        }
-
-        private object ExecuteScalar(string sql)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                return cmd.ExecuteScalar();
             }
         }
 

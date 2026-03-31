@@ -78,14 +78,6 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="PRECIO U." Binding="{Binding PrecioUnitario, StringFormat={}{0:N2}€}" Width="130">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-
                     <DataGridTextColumn Header="IVA (%)" Binding="{Binding IvaPorcentaje, StringFormat={}{0}%}" Width="100">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
@@ -94,7 +86,15 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="SUBTOTAL" Binding="{Binding Subtotal, StringFormat={}{0:N2}€}" Width="140">
+                    <DataGridTextColumn Header="PRECIO U." Binding="{Binding PrecioUnitario, StringFormat={}{0:N2}€}" Width="130">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="SUBTOTAL" Binding="{Binding TotalLinea, StringFormat={}{0:N2}€}" Width="140">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="Foreground" Value="#2E86C1"/>

@@ -198,7 +198,10 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = "SELECT COUNT(*) FROM citas WHERE DATE(fecha_hora) = CURDATE()";
+                string sql = @"SELECT COUNT(*) 
+                       FROM citas 
+                       WHERE DATE(fecha_hora) = CURDATE() 
+                       AND estado <> 'Cancelada'";
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 return Convert.ToInt32(cmd.ExecuteScalar());
             }
@@ -217,14 +220,14 @@ namespace Vetcare.Datos
                 SELECT c.id_cita,
                        c.fecha_hora,
                        c.motivo,
+                       c.estado,
                        m.nombre AS mascota,
                        CONCAT(cl.nombre, ' ', cl.apellidos) AS cliente
                 FROM citas c
                 INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
                 INNER JOIN clientes cl ON m.id_cliente = cl.id_cliente
-                WHERE c.fecha_hora >= NOW()
-                ORDER BY c.fecha_hora
-                LIMIT 10";
+                WHERE c.fecha_hora >= NOW() AND estado <> 'Cancelada'
+                ORDER BY c.fecha_hora";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
 
@@ -238,7 +241,8 @@ namespace Vetcare.Datos
                             FechaHora = Convert.ToDateTime(rdr["fecha_hora"]),
                             Motivo = rdr["motivo"].ToString(),
                             NombreMascota = rdr["mascota"].ToString(),
-                            NombreDueno = rdr["cliente"].ToString()
+                            NombreDueno = rdr["cliente"].ToString(),
+                            Estado = rdr["estado"].ToString()
                         });
                     }
                 }

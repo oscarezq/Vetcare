@@ -21,7 +21,6 @@ namespace Vetcare.Presentacion.Facturas
         {
             InitializeComponent();
             dgDetalles.ItemsSource = listaDetalles;
-            // Inicializamos el número de factura al abrir la ventana
             txtNumFactura.Text = ObtenerSiguienteNumeroFactura();
             lblTotal.Text = "0,00 €";
         }
@@ -29,7 +28,6 @@ namespace Vetcare.Presentacion.Facturas
         public string ObtenerSiguienteNumeroFactura()
         {
             int anioActual = DateTime.Now.Year;
-            // Importante: Asegúrate que facturaService.ObtenerUltimoNumeroPorAnio llame al DAO que ya corregimos
             string ultimoNumero = facturaService.ObtenerUltimoNumeroPorAnio(anioActual);
 
             if (string.IsNullOrEmpty(ultimoNumero))
@@ -37,12 +35,11 @@ namespace Vetcare.Presentacion.Facturas
 
             try
             {
-                // El formato esperado es "2026-0005"
                 string[] partes = ultimoNumero.Split('-');
                 if (partes.Length == 2 && int.TryParse(partes[1], out int contador))
                 {
                     contador++;
-                    return $"{anioActual}-{contador:D4}"; // El :D4 rellena con ceros a la izquierda
+                    return $"{anioActual}-{contador:D4}";
                 }
             }
             catch { }
@@ -76,7 +73,7 @@ namespace Vetcare.Presentacion.Facturas
             }
         }
 
-        // --- GESTIÓN DE LA LISTA (GRID) ---
+        // --- AÑADIR LÍNEA ---
         private void btnAgregar_Click(object sender, RoutedEventArgs e)
         {
             if (conceptoSeleccionado == null)
@@ -95,9 +92,9 @@ namespace Vetcare.Presentacion.Facturas
                 return;
             }
 
-            // Buscamos si ya está en la lista para no repetir filas
-            var existente = listaDetalles.FirstOrDefault(d => d.IdConcepto == conceptoSeleccionado.IdConcepto
-                                                           && d.Tipo == conceptoSeleccionado.Tipo);
+            var existente = listaDetalles.FirstOrDefault(d =>
+                d.IdConcepto == conceptoSeleccionado.IdConcepto &&
+                d.Tipo == conceptoSeleccionado.Tipo);
 
             if (existente != null)
             {
@@ -111,7 +108,7 @@ namespace Vetcare.Presentacion.Facturas
                     NombreConcepto = conceptoSeleccionado.Nombre,
                     Tipo = conceptoSeleccionado.Tipo,
                     Cantidad = cantidad,
-                    PrecioUnitario = conceptoSeleccionado.Precio,
+                    PrecioUnitario = conceptoSeleccionado.Precio, // CON IVA
                     IvaPorcentaje = conceptoSeleccionado.IvaPorcentaje
                 });
             }
@@ -147,7 +144,7 @@ namespace Vetcare.Presentacion.Facturas
             }
         }
 
-        // --- GUARDADO ---
+        // --- GUARDAR ---
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(txtIdCliente.Text) || listaDetalles.Count == 0)
@@ -160,13 +157,22 @@ namespace Vetcare.Presentacion.Facturas
             {
                 try
                 {
+                    ActualizarInterfaz();
+
+                    decimal baseImp = listaDetalles.Sum(d => d.Subtotal);
+                    decimal ivaTotal = listaDetalles.Sum(d => d.IvaImporte);
+                    decimal total = listaDetalles.Sum(d => d.TotalLinea);
+
                     Factura nuevaFactura = new Factura
                     {
                         NumeroFactura = txtNumFactura.Text,
                         IdCliente = int.Parse(txtIdCliente.Text),
                         MetodoPago = (cbMetodoPago.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Efectivo",
                         Observaciones = txtObservaciones.Text,
-                        Detalles = listaDetalles.ToList() // Pasamos la lista al objeto factura
+                        BaseImponible = Math.Round(baseImp, 2),
+                        IvaTotal = Math.Round(ivaTotal, 2),
+                        Total = Math.Round(total, 2),
+                        Detalles = listaDetalles.ToList()
                     };
 
                     if (facturaService.InsertarFacturaCompleta(nuevaFactura))
@@ -186,12 +192,11 @@ namespace Vetcare.Presentacion.Facturas
         // --- CÁLCULOS ---
         private void ActualizarInterfaz()
         {
-            // Forzamos al DataGrid a redibujarse para ver los cambios de cantidad
             dgDetalles.Items.Refresh();
 
-            decimal baseImp = listaDetalles.Sum(d => d.Cantidad * d.PrecioUnitario);
-            decimal ivaTotal = listaDetalles.Sum(d => (d.Cantidad * d.PrecioUnitario) * (d.IvaPorcentaje / 100));
-            decimal total = baseImp + ivaTotal;
+            decimal baseImp = listaDetalles.Sum(d => d.Subtotal);
+            decimal ivaTotal = listaDetalles.Sum(d => d.IvaImporte);
+            decimal total = listaDetalles.Sum(d => d.TotalLinea);
 
             lblBaseImponible.Text = $"{baseImp:N2} €";
             lblIvaTotal.Text = $"{ivaTotal:N2} €";
@@ -207,7 +212,6 @@ namespace Vetcare.Presentacion.Facturas
             txtCantidad.Text = "1";
         }
 
-        // Botones de + y - del selector superior
         private void btnCantidadMas_Click(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(txtCantidad.Text, out int c)) txtCantidad.Text = (c + 1).ToString();

@@ -15,27 +15,35 @@
 
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
-                <TextBlock Text="FILTRAR FACTURAS" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
+                <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
                 <UniformGrid Columns="4" Margin="0,0,0,15">
+                    <UniformGrid.Resources>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Height" Value="28"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </UniformGrid.Resources>
+
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Cliente / Nº Factura" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaGeneral" Height="25" TextChanged="FiltroFactura_Changed"/>
+                        <TextBox x:Name="txtBuscaGeneral" TextChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Desde" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dpDesde" Height="25" SelectedDateChanged="FiltroFactura_Changed"/>
+                        <TextBlock Text="Fecha - Desde" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dpDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Hasta" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dpHasta" Height="25" SelectedDateChanged="FiltroFactura_Changed"/>
+                        <TextBlock Text="Fecha - Hasta" FontSize="10" Foreground="#7F8C8D"/>
+                        <DatePicker x:Name="dpHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
-                        <ComboBox x:Name="cbEstado" Height="25" SelectionChanged="FiltroFactura_Changed">
+                        <ComboBox x:Name="cbEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroFactura_Changed">
                             <ComboBoxItem Content="Todos" IsSelected="True"/>
                             <ComboBoxItem Content="Pagada"/>
                             <ComboBoxItem Content="Pendiente"/>
@@ -48,7 +56,8 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
-                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="25" SelectionChanged="FiltroFactura_Changed">
+
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroFactura_Changed">
                         <ComboBoxItem Content="Fecha" IsSelected="True"/>
                         <ComboBoxItem Content="Cliente"/>
                         <ComboBoxItem Content="Total"/>
@@ -59,8 +68,7 @@
                         <RadioButton x:Name="rbAsc" Content="Más antiguas" Checked="FiltroFactura_Changed"/>
                     </StackPanel>
 
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click"
-                            Height="25" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -87,33 +95,29 @@
 
                 <DataGrid x:Name="dgFacturas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
                           GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgFacturas_MouseDoubleClick"
-                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
-                          SelectionMode="Single" SelectionUnit="FullRow">
+                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" Margin="0,10,0,0"
+                          SelectionMode="Single" SelectionUnit="FullRow" CanUserSortColumns="False" CanUserReorderColumns="False">
 
                     <DataGrid.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
 
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="FontSize" Value="12"/>
-                            <Setter Property="Padding" Value="20,0,10,0"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0,0,0,2"/>
                             <Setter Property="BorderBrush" Value="#E67E22"/>
                         </Style>
 
                         <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="20,0,10,0"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
-                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
                                             <ContentPresenter VerticalAlignment="Center" />
                                         </Border>
                                     </ControlTemplate>
@@ -150,16 +154,17 @@
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <TextBlock VerticalAlignment="Center">
                                             <Run Text="{Binding NombreCliente}" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                                            <Run Text=" " />
                                             <Run Text="{Binding ApellidosCliente}" FontWeight="SemiBold" Foreground="#2C3E50"/>
                                         </TextBlock>
                                         <TextBlock Text="{Binding NumeroDocumentoCliente, StringFormat=' ({0})'}" 
-                           Foreground="#7F8C8D" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                   Foreground="#7F8C8D" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="TOTAL" Width="160">
+                        <DataGridTemplateColumn Header="TOTAL" Width="140">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Total, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2C3E50"/>
@@ -167,51 +172,37 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ESTADO" Width="160">
+                        <DataGridTemplateColumn Header="ESTADO" Width="130">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="12" Padding="10,2" HorizontalAlignment="Left">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="Gray"/>
-
-                                                <Style.Triggers>
-
-                                                    <!-- PAGADA -->
-                                                    <DataTrigger Binding="{Binding Estado}" Value="Pagada">
-                                                        <Setter Property="Background" Value="#27AE60"/>
-                                                    </DataTrigger>
-
-                                                    <!-- PENDIENTE -->
-                                                    <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
-                                                        <Setter Property="Background" Value="#F39C12"/>
-                                                    </DataTrigger>
-
-                                                    <!-- ANULADA -->
-                                                    <DataTrigger Binding="{Binding Estado}" Value="Anulada">
-                                                        <Setter Property="Background" Value="#E74C3C"/>
-                                                    </DataTrigger>
-
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-
-                                        <TextBlock Text="{Binding Estado}" 
-                                                   Foreground="White" 
-                                                   FontSize="11" 
-                                                   FontWeight="Bold"/>
+                                    <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left">
+                                        <TextBlock x:Name="txtEstado" Text="{Binding Estado}" FontSize="11" FontWeight="Bold"/>
                                     </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Estado}" Value="Pagada">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#FEF9E7"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#F1C40F"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Estado}" Value="Anulada">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#E74C3C"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="170">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <Button Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="0,0,5,0" 
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="🗑" ToolTip="Anular" Click="btnAnular_Click" 
+                                        <Button Content="🗑" ToolTip="Anular" Click="btnAnular_Click" Margin="2,0" 
                                                 Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
                                     </StackPanel>
                                 </DataTemplate>

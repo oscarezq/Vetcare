@@ -32,12 +32,13 @@ namespace Vetcare.Presentacion.Facturas
             // Cálculos dinámicos de totales
             if (f.Detalles != null && f.Detalles.Count > 0)
             {
-                decimal subtotalSinIva = f.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
-                decimal totalIva = f.Detalles.Sum(d => (d.Cantidad * d.PrecioUnitario) * (d.IvaPorcentaje / 100m));
+                decimal subtotalSinIva = f.Detalles.Sum(d => d.Subtotal);
+                decimal totalIva = f.Detalles.Sum(d => d.IvaImporte);
+                decimal total = f.Detalles.Sum(d => d.TotalLinea);
 
                 lblBaseImponible.Text = subtotalSinIva.ToString("N2") + " €";
                 lblIva.Text = totalIva.ToString("N2") + " €";
-                lblTotal.Text = f.Total.ToString("N2") + " €";
+                lblTotal.Text = total.ToString("N2") + " €";
 
                 dgDetalles.ItemsSource = f.Detalles;
             }

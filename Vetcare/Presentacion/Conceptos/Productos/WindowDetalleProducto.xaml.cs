@@ -28,24 +28,28 @@ namespace Vetcare.Presentacion.Conceptos.Productos
                 {
                     txtNombre.Text = productoActual.Nombre;
                     txtStock.Text = productoActual.Stock?.ToString() ?? "0";
-                    txtPrecio.Text = productoActual.Precio.ToString("N2");
                     txtIva.Text = productoActual.IvaPorcentaje.ToString("N0");
                     txtDescripcion.Text = !string.IsNullOrWhiteSpace(productoActual.Descripcion)
-                                          ? productoActual.Descripcion
-                                          : "Sin descripción registrada.";
+                                            ? productoActual.Descripcion
+                                            : "Sin descripción registrada.";
 
-                    // Cálculo PVP
-                    decimal precioFinal = productoActual.Precio * (1 + (productoActual.IvaPorcentaje / 100m));
-                    txtTotal.Text = precioFinal.ToString("N2") + " €";
+                    // --- Lógica de Precios Invertida ---
 
-                    // Cambiar color del stock si es bajo (ej. 5 o menos)
+                    // 1. El total es directamente el precio que viene de la BD (ya tiene IVA)
+                    txtTotal.Text = productoActual.Precio.ToString("N2") + " €";
+
+                    // 2. El precio mostrado en 'txtPrecio' será la Base Imponible (Precio sin IVA)
+                    decimal factorIva = 1 + (productoActual.IvaPorcentaje / 100m);
+                    decimal precioSinIva = productoActual.Precio / factorIva;
+                    txtPrecio.Text = precioSinIva.ToString("N2");
+
+                    // --- Lógica Visual de Stock ---
                     if (productoActual.Stock <= 5)
                     {
                         txtStock.Foreground = System.Windows.Media.Brushes.Red;
                     }
                     else
                     {
-                        // Importante resetear el color si el stock sube
                         txtStock.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#15803D");
                     }
                 }

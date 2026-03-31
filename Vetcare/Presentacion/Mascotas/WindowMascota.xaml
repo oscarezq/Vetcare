@@ -169,7 +169,7 @@
                         BorderThickness="0" Margin="0,0,10,0" Click="btnCancelar_Click" Cursor="Hand"/>
 
                 <Button x:Name="btnGuardar" Content="Guardar Mascota" Width="180" Height="45"
-                        Background="#E67E22" Foreground="White" FontWeight="Bold"
+                        Background="#E67E22" Foreground="White" FontWeight="Bold" IsDefault="True"
                         Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

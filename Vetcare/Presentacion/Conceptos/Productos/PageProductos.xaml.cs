@@ -150,22 +150,39 @@ namespace Vetcare.Presentacion.Servicios
             {
                 try
                 {
-                    // 1. Instanciamos la ventana
-                    WindowDetalleProducto ventanaDetalle = new WindowDetalleProducto(productoSeleccionado.IdConcepto);
-
-                    // 2. IMPORTANTE: Verificamos si ShowDialog devuelve 'true'
-                    // Esto ocurrirá si dentro del detalle se pulsó "Guardar" en el ajuste de stock
-                    if (ventanaDetalle.ShowDialog() == true)
-                    {
-                        // 3. Si hubo cambios, refrescamos la lista de la página
-                        CargarDatos();
-                    }
+                    abrirVentanaDetalles(productoSeleccionado.IdConcepto);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error al intentar abrir el detalle del producto: " + ex.Message,
                                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgProductos.SelectedItem is Concepto productoSeleccionado)
+            {
+                try
+                {
+                    abrirVentanaDetalles(productoSeleccionado.IdConcepto);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al intentar abrir el detalle del producto: " + ex.Message,
+                                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void abrirVentanaDetalles(int idProducto)
+        {
+            WindowDetalleProducto ventanaDetalle = new WindowDetalleProducto(idProducto);
+
+            if (ventanaDetalle.ShowDialog() == true)
+            {
+                CargarDatos();
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Vetcare.Presentacion.Clientes.UC_MascotasCliente"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:util="clr-namespace:Vetcare.Entidades"
              Background="White" FontFamily="Segoe UI">
     <Grid Margin="30">
         <Grid.RowDefinitions>
@@ -15,10 +16,21 @@
             </StackPanel>
 
             <Button DockPanel.Dock="Right" 
-                    Content="+ Añadir Mascota" 
-                    Click="btnAnadirMascota_Click"
-                    Background="#27AE60" Foreground="White" 
-                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand">
+            x:Name="btnAnadirMascota"
+            Content="+ Añadir Mascota" 
+            Click="btnAnadirMascota_Click"
+            Background="#27AE60" Foreground="White" 
+            Width="160" Height="45" FontWeight="Bold" Cursor="Hand">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -73,9 +85,9 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock VerticalAlignment="Center">
-                                <Hyperlink Click="HyperlinkMascota_Click" Foreground="#3498DB" FontWeight="Bold" TextDecorations="None">
-                                    <Run Text="{Binding Nombre}"/>
-                                </Hyperlink>
+                    <Hyperlink Click="HyperlinkMascota_Click" Foreground="#3498DB" FontWeight="Bold" TextDecorations="None">
+                        <Run Text="{Binding Nombre}"/>
+                    </Hyperlink>
                             </TextBlock>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -83,7 +95,32 @@
 
                 <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="*"/>
                 <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="*"/>
-                <DataGridTextColumn Header="Nº CHIP" Binding="{Binding NumeroChip}" Width="*"/>
+
+                <DataGridTemplateColumn Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Ver ficha" 
+                        Click="HyperlinkMascota_Click"
+                        Background="#1ABC9C" 
+                        Foreground="White"
+                        BorderThickness="0"
+                        Height="30"
+                        Width="110"
+                        Cursor="Hand"
+                        FontWeight="SemiBold"
+                        FontSize="13">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                    CornerRadius="15">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

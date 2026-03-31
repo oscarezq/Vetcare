@@ -21,6 +21,12 @@ namespace Vetcare.Presentacion.Mascotas
 
         private void btnEditarMascota_Click(object sender, RoutedEventArgs e)
         {
+            if (Sesion.UsuarioActual.IdRol == 2)
+            {
+                MessageBox.Show("No tienes permisos para editar esta información.");
+                return;
+            }
+
             try
             {
                 // Abrir ventana de edición (asumiendo que tienes WindowMascota)

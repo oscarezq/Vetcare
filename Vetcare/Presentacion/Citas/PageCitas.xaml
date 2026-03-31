@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:util="clr-namespace:Vetcare.Entidades"
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="1100"
       Title="Gestión de Citas">
@@ -17,30 +18,33 @@
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
-                <UniformGrid Columns="4" Margin="0,0,0,15">
+                <UniformGrid Columns="5" Margin="0,0,0,15">
+                    <UniformGrid.Resources>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Height" Value="28"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </UniformGrid.Resources>
 
-                    <!-- Mascota -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Mascota" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaPaciente" Height="25" TextChanged="FiltroCita_Changed"/>
+                        <TextBox x:Name="txtBuscaPaciente" TextChanged="FiltroCita_Changed"/>
                     </StackPanel>
 
-                    <!-- Veterinario -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Veterinario" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaVeterinario" Height="25" TextChanged="FiltroCita_Changed"/>
+                        <TextBox x:Name="txtBuscaVeterinario" TextChanged="FiltroCita_Changed"/>
                     </StackPanel>
 
-                    <!-- Dueño -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Dueño" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaDueno" Height="25" TextChanged="FiltroCita_Changed"/>
+                        <TextBox x:Name="txtBuscaDueno" TextChanged="FiltroCita_Changed"/>
                     </StackPanel>
 
-                    <!-- Estado -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
-                        <ComboBox x:Name="cbBuscaEstado" Height="25" SelectionChanged="FiltroCita_Changed">
+                        <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroCita_Changed">
                             <ComboBoxItem Content="Todos" IsSelected="True"/>
                             <ComboBoxItem Content="Pendiente"/>
                             <ComboBoxItem Content="Completada"/>
@@ -48,30 +52,15 @@
                         </ComboBox>
                     </StackPanel>
 
-                    <!-- Fecha Desde -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Fecha - Desde" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpFechaDesde" Height="25" SelectedDateChanged="FiltroCita_Changed"/>
+                        <DatePicker x:Name="dtpFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroCita_Changed"/>
                     </StackPanel>
 
-                    <!-- Fecha Hasta -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Fecha - Hasta" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpFechaHasta" Height="25" SelectedDateChanged="FiltroCita_Changed"/>
+                        <DatePicker x:Name="dtpFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroCita_Changed"/>
                     </StackPanel>
-
-                    <!-- Hora Desde -->
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Hora - Desde (HH:mm)" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtHoraDesde" Height="25" TextChanged="FiltroCita_Changed"/>
-                    </StackPanel>
-
-                    <!-- Hora Hasta -->
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Hora - Hasta (HH:mm)" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtHoraHasta" Height="25" TextChanged="FiltroCita_Changed"/>
-                    </StackPanel>
-
                 </UniformGrid>
 
                 <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
@@ -79,7 +68,7 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
 
-                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="25" SelectionChanged="FiltroCita_Changed">
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroCita_Changed">
                         <ComboBoxItem Content="Fecha" IsSelected="True"/>
                         <ComboBoxItem Content="Mascota"/>
                         <ComboBoxItem Content="Veterinario"/>
@@ -91,14 +80,7 @@
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroCita_Changed"/>
                     </StackPanel>
 
-                    <Button Content="Limpiar Filtros"
-                    Margin="30,0,0,0"
-                    Padding="15,0"
-                    Click="btnLimpiar_Click"
-                    Height="25"
-                    Cursor="Hand"
-                    Background="#F4F6F7"
-                    BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -115,43 +97,48 @@
 
                     <Button DockPanel.Dock="Right" x:Name="btnNuevaCita" Content="+ Agendar Cita" Click="btnNuevaCita_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="5"/>
+                                    </Style>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
-                        </Button.Resources>
+                        </Button.Style>
                     </Button>
                 </DockPanel>
 
-                <DataGrid x:Name="dgCitas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgCitas_MouseDoubleClick"
-                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" Margin="-10,10,10,-10">
+                <DataGrid x:Name="dgCitas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" CanUserSortColumns="False"
+                          CanUserReorderColumns="False" GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgCitas_MouseDoubleClick"
+                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" Margin="0,10,0,0">
 
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
 
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="FontSize" Value="12"/>
-                            <Setter Property="Padding" Value="20,0,10,0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0,0,0,2"/>
                             <Setter Property="BorderBrush" Value="#E67E22"/>
                         </Style>
 
                         <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="20,0,10,0"/>
-                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
-                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
                                             <ContentPresenter VerticalAlignment="Center" />
                                         </Border>
                                     </ControlTemplate>
@@ -178,9 +165,7 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="FECHA / HORA" 
-                        Binding="{Binding FechaHora, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" 
-                        Width="1.5*"/>
+                        <DataGridTextColumn Header="FECHA / HORA" Binding="{Binding FechaHora, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="1.5*"/>
 
                         <DataGridTemplateColumn Header="MASCOTA" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -191,26 +176,20 @@
                         </DataGridTemplateColumn>
 
                         <DataGridTextColumn Header="DUEÑO" Binding="{Binding NombreDueno}" Width="1.5*"/>
+                        <DataGridTextColumn Header="VETERINARIO" Binding="{Binding InfoVeterinario}" Width="1.5*"/>
 
-                        <DataGridTextColumn Header="VETERINARIO" Binding="{Binding InfoVeterinario}" Width="2*"/>
-
-                        <DataGridTemplateColumn Header="ESTADO" Width="*">
+                        <DataGridTemplateColumn Header="ESTADO" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left" Margin="5,0">
-                                        <TextBlock x:Name="txtEstado" Text="{Binding Estado}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left">
+                                        <TextBlock x:Name="txtEstado" Text="{Binding Estado}" FontSize="11" FontWeight="Bold"/>
                                     </Border>
-
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#FEF9E7"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#F1C40F"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Estado}" Value="Completada">
-                                            <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
-                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Estado}" Value="Atendida">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
                                         </DataTrigger>
@@ -223,14 +202,18 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="*">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+
                                         <Button Content="✎" ToolTip="Editar" Click="btnEditarCita_Click" Margin="2,0" 
-                            Background="#EBF5FB" Foreground="#2E86C1" Width="32" Height="28" BorderBrush="#AED6F1"/>
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+
                                         <Button Content="🗑" ToolTip="Eliminar" Click="btnEliminarCita_Click" Margin="2,0" 
-                            Background="#FDEDEC" Foreground="#CB4335" Width="32" Height="28" BorderBrush="#FADBD8"/>
+                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

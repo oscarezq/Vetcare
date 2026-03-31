@@ -24,6 +24,7 @@ namespace Vetcare.Presentacion
             UsuarioService usuarioService = new UsuarioService();
             // Simulación de login para desarrollo
             usuarioService.ValidarLogin("admin", "admin", out usuarioActual);
+            Sesion.UsuarioActual = usuarioActual;
 
             FramePrincipal.Content = new PageInicio();
             CargarDatosUsuario();
@@ -42,7 +43,7 @@ namespace Vetcare.Presentacion
         {
             if (usuarioActual != null)
             {
-                lblNombreUsuario.Text = $"{usuarioActual.Username}";
+                lblNombreUsuario.Text = Sesion.UsuarioActual.Username;
             }
         }
 
@@ -72,7 +73,7 @@ namespace Vetcare.Presentacion
 
         private void btnInicio_Click(object sender, RoutedEventArgs e)
         {
-            SeleccionarBoton(sender);
+            SeleccionarBoton(btnInicio);
             FramePrincipal.Content = new PageInicio();
         }
 

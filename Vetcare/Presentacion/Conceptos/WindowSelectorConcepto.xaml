@@ -154,19 +154,19 @@
                     <DataGridTextColumn Header="NOMBRE DEL CONCEPTO" Binding="{Binding Nombre}" Width="*" 
                                         ElementStyle="{StaticResource ColumnTextStyle}"/>
 
-                    <DataGridTextColumn Header="PRECIO BASE" Binding="{Binding PrecioBase, StringFormat={}{0:N2}€}" Width="140">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
-                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                <Setter Property="Margin" Value="0,0,20,0"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-
                     <DataGridTextColumn Header="IVA" Binding="{Binding IvaPorcentaje, StringFormat={}{0}%}" Width="80">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="PRECIO" Binding="{Binding Precio, StringFormat={}{0:N2}€}" Width="140">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="Margin" Value="0,0,20,0"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>

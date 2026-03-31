@@ -91,7 +91,7 @@
                     BorderBrush="#BDC3C7" BorderThickness="1" Foreground="#7F8C8D" Margin="0,0,15,0"
                     Cursor="Hand" Click="btnCancelar_Click"/>
 
-            <Button x:Name="btnGuardar" Content="GUARDAR CONSULTA" Width="200" Height="40" 
+            <Button x:Name="btnGuardar" Content="GUARDAR CONSULTA" Width="200" Height="40" IsDefault="True"
                     Background="#27AE60" Foreground="White" FontWeight="Bold" BorderThickness="0"
                     Cursor="Hand" Click="btnGuardar_Click">
                 <Button.Resources>

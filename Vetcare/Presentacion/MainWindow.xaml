@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:util="clr-namespace:Vetcare.Entidades"
         mc:Ignorable="d"
         Title="VetCare" Height="700" Width="1100"
         WindowStartupLocation="CenterScreen"
@@ -103,8 +104,31 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Image Grid.Row="0" Source="/Resources/logo3-transparente.png" 
-                       Width="160" Margin="20,25" RenderOptions.BitmapScalingMode="HighQuality"/>
+                <Button Grid.Row="0"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="btnInicio_Click"
+                        Cursor="Hand"
+                        Focusable="False">
+
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <ContentPresenter/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+
+                    <Image Source="/Resources/logo3-transparente.png"
+                           Width="160"
+                           Margin="20,25"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                     <StackPanel x:Name="pnlMenu">
@@ -136,14 +160,40 @@
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnUsuarios" Style="{StaticResource MenuButtonStyle}" Click="btnUsuarios_Click">
+                        <Button x:Name="btnUsuarios" Click="btnUsuarios_Click">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MenuButtonStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/usuarios.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="USUARIOS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnVeterinarios" Style="{StaticResource MenuButtonStyle}" Click="btnVeterinarios_Click">
+                        <Button x:Name="btnVeterinarios" Click="btnVeterinarios_Click">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MenuButtonStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="VETERINARIOS"/>
@@ -164,7 +214,16 @@
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnFacturas" Style="{StaticResource MenuButtonStyle}" Click="btnFacturas_Click">
+                        <Button x:Name="btnFacturas" Click="btnFacturas_Click">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MenuButtonStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/facturas.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="FACTURAS"/>

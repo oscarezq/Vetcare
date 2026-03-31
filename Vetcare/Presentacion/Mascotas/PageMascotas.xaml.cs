@@ -312,20 +312,47 @@ namespace Vetcare.Presentacion
         {
             if (dgMascotas.SelectedItem is Mascota mascotaSeleccionada)
             {
-                WindowFichaMascota win = new WindowFichaMascota(mascotaSeleccionada.IdMascota);
-                win.Owner = Window.GetWindow(this);
-                win.ShowDialog();
-
-                CargarDatos();
+                abrirVentanaDetalles(mascotaSeleccionada.IdMascota);
             }
+        }
+
+        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        {
+            Button botonPulsado = sender as Button;
+            Mascota mascotaDeLaFila = botonPulsado.DataContext as Mascota;
+
+            if (mascotaDeLaFila != null)
+            {
+                abrirVentanaDetalles(mascotaDeLaFila.IdMascota);
+            }
+        }
+
+        private void abrirVentanaDetalles(int idMascota)
+        {
+            WindowFichaMascota win = new WindowFichaMascota(idMascota);
+            win.Owner = Window.GetWindow(this);
+            win.ShowDialog();
+
+            CargarDatos();
         }
 
         private void dgMascotas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            btnEliminarVarios.Visibility =
-                dgMascotas.SelectedItems.Count > 0
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            if (Sesion.UsuarioActual.IdRol != 2)
+            {
+                if (dgMascotas.SelectedItems.Count > 1)
+                {
+                    btnEliminarVarios.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    btnEliminarVarios.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                btnEliminarVarios.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

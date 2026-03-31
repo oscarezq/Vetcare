@@ -27,7 +27,20 @@ namespace Vetcare.Presentacion.Mascotas
             try
             {
                 List<HistorialClinico> lista = historialService.ObtenerPorMascota(idMascotaActual);
-                dgHistorial.ItemsSource = lista;
+
+                if (lista != null && lista.Count > 0)
+                {
+                    // Hay datos: Mostrar tabla, ocultar mensaje
+                    dgHistorial.ItemsSource = lista;
+                    dgHistorial.Visibility = Visibility.Visible;
+                    pnlSinDatos.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    // No hay datos: Ocultar tabla, mostrar mensaje
+                    dgHistorial.Visibility = Visibility.Collapsed;
+                    pnlSinDatos.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception ex)
             {
