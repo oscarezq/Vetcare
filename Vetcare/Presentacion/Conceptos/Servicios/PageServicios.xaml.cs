@@ -127,6 +127,8 @@ namespace Vetcare.Presentacion.Servicios
             var result = MessageBox.Show($"¿Estás seguro de eliminar el servicio {servicio.Nombre}?",
                                        "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
+            conceptoService.Eliminar(servicio.IdConcepto);
+
             if (result == MessageBoxResult.Yes)
             {
                 
@@ -169,6 +171,44 @@ namespace Vetcare.Presentacion.Servicios
             WindowDetalleServicio ventanaDetalle = new WindowDetalleServicio(idServicio);
 
             ventanaDetalle.ShowDialog();
+        }
+
+        private void btnReactivarServicio_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button botonPulsado = sender as Button;
+                Concepto servicioDeLaFila = botonPulsado.DataContext as Concepto;
+
+                if (servicioDeLaFila != null)
+                {
+                    MessageBoxResult confirmacion = MessageBox.Show(
+                        $"¿Deseas reactivar el servicio {servicioDeLaFila.Nombre}?",
+                        "Confirmar acción",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (confirmacion == MessageBoxResult.Yes)
+                    {
+                        if (conceptoService.Reactivar(servicioDeLaFila.IdConcepto))
+                        {
+                            MessageBox.Show("Servicio reactivado correctamente.", "Información",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            CargarDatos();
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se pudo reactivar el servicio.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al reactivar servicio: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

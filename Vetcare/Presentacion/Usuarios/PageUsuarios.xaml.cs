@@ -107,16 +107,17 @@ namespace Vetcare.Presentacion.Usuarios
             if (win.ShowDialog() == true) CargarDatos();
         }
 
-        private void btnEditarUsuario_Click(object sender, RoutedEventArgs e)
+        private void btnEditar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is Usuario u)
             {
                 WindowUsuario win = new WindowUsuario(u) { Owner = Window.GetWindow(this) };
+
                 if (win.ShowDialog() == true) CargarDatos();
             }
         }
 
-        private void btnEliminarUsuario_Click(object sender, RoutedEventArgs e)
+        private void btnEliminar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is Usuario u)
             {
@@ -148,6 +149,44 @@ namespace Vetcare.Presentacion.Usuarios
             WindowFichaUsuario ficha = new WindowFichaUsuario(idUsuario) { Owner = Window.GetWindow(this) };
             ficha.ShowDialog();
             CargarDatos();
+        }
+
+        private void btnReactivar_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button botonPulsado = sender as Button;
+                Usuario usuarioDeLaFila = botonPulsado.DataContext as Usuario;
+
+                if (usuarioDeLaFila != null)
+                {
+                    MessageBoxResult confirmacion = MessageBox.Show(
+                        $"¿Deseas reactivar a {usuarioDeLaFila.Nombre}?",
+                        "Confirmar acción",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (confirmacion == MessageBoxResult.Yes)
+                    {
+                        if (us.Reactivar(usuarioDeLaFila.IdUsuario))
+                        {
+                            MessageBox.Show("Usuario reactivado correctamente.", "Información",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            CargarDatos();
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se pudo reactivar el usuario.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al reactivar el usuario: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

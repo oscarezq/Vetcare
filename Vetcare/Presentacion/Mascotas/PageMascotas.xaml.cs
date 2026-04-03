@@ -70,6 +70,12 @@ namespace Vetcare.Presentacion
                 // FILTRADO
                 List<Mascota> listaFiltrada = new List<Mascota>();
 
+                string estadoBusca = "";
+                if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado)
+                {
+                    estadoBusca = itemEstado.Content.ToString();
+                }
+
                 // Recorremos todas las mascotas de la lista completa
                 foreach (Mascota m in listaCompleta)
                 {
@@ -96,10 +102,12 @@ namespace Vetcare.Presentacion
                     {
                         if (m.Sexo == null || !m.Sexo.ToLower().Contains(sexoBusca)) continue;
                     }
-
-                    // Filtro para el Peso (Rango Mín - Máx)
-                    if (decimal.TryParse(txtBuscaPesoMin.Text, out decimal pMin) && m.Peso < pMin) continue;
-                    if (decimal.TryParse(txtBuscaPesoMax.Text, out decimal pMax) && m.Peso > pMax) continue;
+                    if (estadoBusca != "Todos")
+                    {
+                        bool buscarActivos = (estadoBusca == "Activo");
+                        // Si la mascota no coincide con el estado buscado, saltar
+                        if (m.Activo != buscarActivos) continue;
+                    }
 
                     // Filtro para la Fecha de Nacimiento (Desde - Hasta)
                     if (dtpBuscaFechaDesde.SelectedDate.HasValue && m.FechaNacimiento.Date < dtpBuscaFechaDesde.SelectedDate.Value.Date) continue;
@@ -160,6 +168,7 @@ namespace Vetcare.Presentacion
         private void cbOrdenarPor_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
         private void cbSexo_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
         private void OrdenDirection_Checked(object sender, RoutedEventArgs e) => ActualizarTabla();
+        private void cbBuscaEstado_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
 
 
         private void btnLimpiar_Click(object sender, RoutedEventArgs e)
@@ -169,11 +178,10 @@ namespace Vetcare.Presentacion
             txtBuscaRaza.Clear();
             cbBuscaSexo.SelectedIndex = 0;
             txtBuscaDueno.Clear();
-            txtBuscaPesoMin.Clear();
-            txtBuscaPesoMax.Clear();
             dtpBuscaFechaDesde.SelectedDate = null;
             dtpBuscaFechaHasta.SelectedDate = null;
             cbOrdenarPor.SelectedIndex = 0;
+            cbBuscaEstado.SelectedIndex = 0;
             rbAsc.IsChecked = true;
             ActualizarTabla();
         }
@@ -224,14 +232,18 @@ namespace Vetcare.Presentacion
                 if (mascotaDeLaFila != null)
                 {
                     MessageBoxResult confirmacion = MessageBox.Show(
-                        $"¿Estás seguro de que deseas eliminar a {mascotaDeLaFila.Nombre}?",
-                        "Confirmar eliminación", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        $"¿Dar de baja a {mascotaDeLaFila.Nombre}?",
+                        "Confirmar acción",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
 
                     if (confirmacion == MessageBoxResult.Yes)
                     {
-                        if (ms.Eliminar(mascotaDeLaFila.IdMascota))
+                        if (ms.Desactivar(mascotaDeLaFila.IdMascota))
                         {
-                            MessageBox.Show("Mascota eliminada correctamente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show("Mascota dada de baja correctamente.", "Información",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+
                             CargarDatos();
                         }
                     }
@@ -239,7 +251,8 @@ namespace Vetcare.Presentacion
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al eliminar mascota: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al dar de baja mascota: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -249,32 +262,39 @@ namespace Vetcare.Presentacion
             {
                 if (dgMascotas.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show("Debes seleccionar al menos una mascota.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Debes seleccionar al menos una mascota.",
+                        "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 MessageBoxResult confirmacion = MessageBox.Show(
-                    $"¿Eliminar {dgMascotas.SelectedItems.Count} mascota(s)?",
-                    "Confirmar eliminación múltiple", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    $"¿Dar de baja {dgMascotas.SelectedItems.Count} mascota(s)?",
+                    "Confirmar acción",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
 
                 if (confirmacion == MessageBoxResult.Yes)
                 {
-                    List<int> idsAEliminar = new List<int>();
-                    foreach (Mascota mascota in dgMascotas.SelectedItems)
+                    List<int> ids = new List<int>();
+
+                    foreach (Mascota m in dgMascotas.SelectedItems)
                     {
-                        idsAEliminar.Add(mascota.IdMascota);
+                        ids.Add(m.IdMascota);
                     }
 
-                    if (ms.EliminarVarios(idsAEliminar))
+                    if (ms.DesactivarVarios(ids))
                     {
-                        MessageBox.Show("Mascotas eliminadas correctamente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Mascotas dadas de baja correctamente.",
+                            "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+
                         CargarDatos();
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al eliminar mascotas: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -336,22 +356,41 @@ namespace Vetcare.Presentacion
             CargarDatos();
         }
 
-        private void dgMascotas_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void btnReactivar_Click(object sender, RoutedEventArgs e)
         {
-            if (Sesion.UsuarioActual.IdRol != 2)
+            try
             {
-                if (dgMascotas.SelectedItems.Count > 1)
+                Button botonPulsado = sender as Button;
+                Mascota mascotaDeLaFila = botonPulsado.DataContext as Mascota;
+
+                if (mascotaDeLaFila != null)
                 {
-                    btnEliminarVarios.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    btnEliminarVarios.Visibility = Visibility.Collapsed;
+                    MessageBoxResult confirmacion = MessageBox.Show(
+                        $"¿Deseas reactivar a {mascotaDeLaFila.Nombre}?",
+                        "Confirmar acción",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (confirmacion == MessageBoxResult.Yes)
+                    {
+                        if (ms.Reactivar(mascotaDeLaFila.IdMascota))
+                        {
+                            MessageBox.Show("Mascota reactivada correctamente.", "Información",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            CargarDatos();
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se pudo reactivar la mascota.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                btnEliminarVarios.Visibility = Visibility.Collapsed;
+                MessageBox.Show($"Error al reactivar mascota: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

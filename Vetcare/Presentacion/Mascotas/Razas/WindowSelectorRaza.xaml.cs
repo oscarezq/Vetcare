@@ -39,10 +39,14 @@ namespace Vetcare.Presentacion.Mascotas.Razas
         {
             if (listaRazas == null) return;
 
-            string busqueda = txtBuscaRaza.Text.ToLower();
-            dgRazas.ItemsSource = listaRazas
+            string busqueda = txtBuscaRaza.Text.ToLower().Trim();
+
+            // Aplicamos el filtro sobre la lista que ya vino filtrada por especie desde CargarLista()
+            var listaFiltrada = listaRazas
                 .Where(r => r.NombreRaza.ToLower().Contains(busqueda))
                 .ToList();
+
+            dgRazas.ItemsSource = listaFiltrada;
         }
 
         private void FinalizarSeleccion()

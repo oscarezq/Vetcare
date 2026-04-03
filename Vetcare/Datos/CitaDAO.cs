@@ -226,7 +226,7 @@ namespace Vetcare.Datos
                 FROM citas c
                 INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
                 INNER JOIN clientes cl ON m.id_cliente = cl.id_cliente
-                WHERE c.fecha_hora >= NOW() AND estado <> 'Cancelada'
+                WHERE DATE(fecha_hora) = CURDATE() AND estado <> 'Cancelada'
                 ORDER BY c.fecha_hora";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);

@@ -127,7 +127,10 @@
                       SelectionMode="Single"
                       MouseDoubleClick="dgVeterinarios_MouseDoubleClick"
                       HorizontalScrollBarVisibility="Disabled"      
-                      ColumnWidth="*">
+                      ColumnWidth="*"
+                      CanUserResizeColumns="False"
+                      CanUserReorderColumns="False"
+                      CanUserSortColumns="False">
 
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">

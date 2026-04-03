@@ -160,5 +160,10 @@ namespace Vetcare.Negocio
         {
             return _usuarioDAO.ExisteUsername(username);
         }
+
+        public bool Reactivar(int idUsuario)
+        {
+            return _usuarioDAO.Reactivar(idUsuario);
+        }
     }
 }

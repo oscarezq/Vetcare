@@ -9,6 +9,9 @@ namespace Vetcare.Datos
     {
         Conexion conexion = new Conexion();
 
+        // ===========================
+        // OBTENER MASCOTAS
+        // ===========================
         public List<Mascota> ObtenerTodas()
         {
             List<Mascota> lista = new List<Mascota>();
@@ -28,6 +31,7 @@ namespace Vetcare.Datos
                        m.sexo,
                        m.peso,
                        m.fecha_nacimiento,
+                       m.activo,
                        c.nombre AS nombre_dueno,
                        c.apellidos AS apellidos_dueno,
                        c.num_documento AS documento_dueno
@@ -69,6 +73,7 @@ namespace Vetcare.Datos
                        m.sexo,
                        m.peso,
                        m.fecha_nacimiento,
+                       m.activo,
                        c.nombre AS nombre_dueno,
                        c.apellidos AS apellidos_dueno,
                        c.num_documento AS documento_dueno
@@ -110,6 +115,7 @@ namespace Vetcare.Datos
                        m.sexo,
                        m.peso,
                        m.fecha_nacimiento,
+                       m.activo,
                        c.nombre AS nombre_dueno,
                        c.apellidos AS apellidos_dueno,
                        c.num_documento AS documento_dueno
@@ -117,7 +123,7 @@ namespace Vetcare.Datos
                 INNER JOIN clientes c ON m.id_cliente = c.id_cliente
                 INNER JOIN razas r ON m.id_raza = r.id_raza
                 INNER JOIN especies e ON r.id_especie = e.id_especie
-                WHERE m.id_cliente = @idCliente";
+                WHERE m.id_cliente = @idCliente AND m.activo = TRUE";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@idCliente", idCliente);
@@ -132,6 +138,9 @@ namespace Vetcare.Datos
             return lista;
         }
 
+        // ===========================
+        // INSERTAR / ACTUALIZAR
+        // ===========================
         public bool Insertar(Mascota mascota)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
@@ -139,44 +148,13 @@ namespace Vetcare.Datos
                 con.Open();
 
                 string sql = @"INSERT INTO mascotas
-                               (id_cliente, id_raza, numero_chip, nombre, sexo, peso, fecha_nacimiento)
-                               VALUES (@idCliente, @idRaza, @numeroChip, @nombre, @sexo, @peso, @fechaNacimiento)";
+                               (id_cliente, id_raza, numero_chip, nombre, sexo, peso, fecha_nacimiento, activo)
+                               VALUES (@idCliente, @idRaza, @numeroChip, @nombre, @sexo, @peso, @fechaNacimiento, TRUE)";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 CargarParametros(cmd, mascota);
 
                 return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-
-        public bool InsertarVarios(List<Mascota> mascotas)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlTransaction transaccion = con.BeginTransaction();
-
-                try
-                {
-                    string sql = @"INSERT INTO mascotas
-                                   (id_cliente, id_raza, numero_chip, nombre, sexo, peso, fecha_nacimiento)
-                                   VALUES (@idCliente, @idRaza, @numeroChip, @nombre, @sexo, @peso, @fechaNacimiento)";
-
-                    foreach (Mascota mascota in mascotas)
-                    {
-                        MySqlCommand cmd = new MySqlCommand(sql, con, transaccion);
-                        CargarParametros(cmd, mascota);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    transaccion.Commit();
-                    return true;
-                }
-                catch
-                {
-                    transaccion.Rollback();
-                    return false;
-                }
             }
         }
 
@@ -204,51 +182,16 @@ namespace Vetcare.Datos
             }
         }
 
-        public bool ActualizarVarios(List<Mascota> mascotas)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlTransaction transaccion = con.BeginTransaction();
-
-                try
-                {
-                    string sql = @"UPDATE mascotas
-                                   SET id_cliente = @idCliente,
-                                       id_raza = @idRaza,
-                                       numero_chip = @numeroChip,
-                                       nombre = @nombre,
-                                       sexo = @sexo,
-                                       peso = @peso,
-                                       fecha_nacimiento = @fechaNacimiento
-                                   WHERE id_mascota = @id";
-
-                    foreach (Mascota mascota in mascotas)
-                    {
-                        MySqlCommand cmd = new MySqlCommand(sql, con, transaccion);
-                        CargarParametros(cmd, mascota);
-                        cmd.Parameters.AddWithValue("@id", mascota.IdMascota);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    transaccion.Commit();
-                    return true;
-                }
-                catch
-                {
-                    transaccion.Rollback();
-                    return false;
-                }
-            }
-        }
-
-        public bool Eliminar(int idMascota)
+        // ===========================
+        // SOFT DELETE (DESACTIVAR)
+        // ===========================
+        public bool Desactivar(int idMascota)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
 
-                string sql = "DELETE FROM mascotas WHERE id_mascota = @id";
+                string sql = "UPDATE mascotas SET activo = FALSE WHERE id_mascota = @id";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@id", idMascota);
@@ -257,7 +200,7 @@ namespace Vetcare.Datos
             }
         }
 
-        public bool EliminarVarios(List<int> idsMascotas)
+        public bool DesactivarVarios(List<int> idsMascotas)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
@@ -266,7 +209,7 @@ namespace Vetcare.Datos
 
                 try
                 {
-                    string sql = "DELETE FROM mascotas WHERE id_mascota = @id";
+                    string sql = "UPDATE mascotas SET activo = FALSE WHERE id_mascota = @id";
 
                     foreach (int id in idsMascotas)
                     {
@@ -291,14 +234,30 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = "SELECT COUNT(*) FROM mascotas";
+                string sql = "SELECT COUNT(*) FROM mascotas WHERE activo = TRUE";
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
-        // -------- MÉTODOS AUXILIARES --------
+        public bool Reactivar(int idMascota)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
 
+                string sql = "UPDATE mascotas SET activo = TRUE WHERE id_mascota = @id";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", idMascota);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        // ===========================
+        // MÉTODOS AUXILIARES
+        // ===========================
         private void CargarParametros(MySqlCommand cmd, Mascota mascota)
         {
             cmd.Parameters.Clear();
@@ -321,13 +280,14 @@ namespace Vetcare.Datos
                 NumeroChip = rdr["numero_chip"].ToString(),
                 Nombre = rdr["nombre"].ToString(),
                 Sexo = rdr["sexo"].ToString(),
-                Peso = Convert.ToDecimal(rdr["peso"]),
-                FechaNacimiento = Convert.ToDateTime(rdr["fecha_nacimiento"]),
+                Peso = rdr["peso"] != DBNull.Value ? Convert.ToDecimal(rdr["peso"]) : 0,
+                FechaNacimiento = rdr["fecha_nacimiento"] != DBNull.Value ? Convert.ToDateTime(rdr["fecha_nacimiento"]) : DateTime.MinValue,
                 NombreRaza = rdr["nombre_raza"].ToString(),
                 NombreEspecie = rdr["nombre_especie"].ToString(),
                 NombreDueno = rdr["nombre_dueno"].ToString(),
                 ApellidosDueno = rdr["apellidos_dueno"].ToString(),
-                NumeroIdentificacionDueno = rdr["documento_dueno"].ToString()
+                NumeroIdentificacionDueno = rdr["documento_dueno"].ToString(),
+                Activo = Convert.ToBoolean(rdr["activo"])
             };
         }
     }

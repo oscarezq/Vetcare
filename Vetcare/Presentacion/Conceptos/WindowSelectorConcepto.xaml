@@ -128,7 +128,7 @@
                       HeadersVisibility="Column" GridLinesVisibility="None" 
                       Background="White" BorderThickness="0"
                       RowHeight="50" ColumnHeaderStyle="{StaticResource HeaderStyle}"
-                      SelectionUnit="FullRow" Focusable="False">
+                      SelectionUnit="FullRow" Focusable="False" CanUserResizeColumns="False" CanUserReorderColumns="False">
 
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="TIPO" Width="130">

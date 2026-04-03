@@ -57,19 +57,19 @@ namespace Vetcare.Negocio
         /// </summary>
         /// <param name="idCliente">Identificador del cliente</param>
         /// <returns>Booleano que indica si se ha eliminado correctamente</returns>
-        public bool Eliminar(int idCliente)
+        public bool Desactivar(int idCliente)
         {
-            return clienteDAO.Eliminar(idCliente);
+            return clienteDAO.Desactivar(idCliente);
         }
 
         /// <summary>
-        /// Método para eliminar varios clientes
+        /// Método para eliminar un cliente
         /// </summary>
-        /// <param name="idsClientes">Lista de identificadores de los clientes a eliminar</param>
-        /// <returns>Booleano que indica si se han eliminado correctamente</returns>
-        public bool EliminarVarias(List<int> idsClientes)
+        /// <param name="idCliente">Identificador del cliente</param>
+        /// <returns>Booleano que indica si se ha eliminado correctamente</returns>
+        public bool Reactivar(int idCliente)
         {
-            return clienteDAO.EliminarVarios(idsClientes);
+            return clienteDAO.Reactivar(idCliente);
         }
 
         public int ContarClientes()

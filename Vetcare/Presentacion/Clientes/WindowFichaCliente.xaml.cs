@@ -7,12 +7,14 @@ namespace Vetcare.Presentacion.Clientes
     public partial class WindowFichaCliente : Window
     {
         private ClienteService clienteService;
+        private FacturaService facturaService;
         private Cliente clienteActual;
 
         public WindowFichaCliente(int idCliente)
         {
             InitializeComponent();
             clienteService = new ClienteService();
+            facturaService = new FacturaService();
             CargarCliente(idCliente);
 
             // Mostrar por defecto los datos personales al abrir
@@ -38,14 +40,37 @@ namespace Vetcare.Presentacion.Clientes
 
         private void btnMascotas_Click(object sender, RoutedEventArgs e)
         {
-            // Inyectamos el cliente actual al UserControl de mascotas
-            ContenedorPrincipal.Content = new UC_MascotasCliente(clienteActual);
+            var uc = new UC_MascotasCliente(clienteActual);
+
+            // Ocultar botón de editar si la mascota está inactiva
+            if (!clienteActual.Activo)
+                uc.btnAnadirMascota.Visibility = Visibility.Collapsed;
+
+            ContenedorPrincipal.Content = uc;
         }
 
         private void MostrarDatosPersonales()
         {
-            // Inyectamos la ventana padre (this) para que el UC pueda llamar a CargarCliente si edita datos
-            ContenedorPrincipal.Content = new UC_DatosCliente(this) { DataContext = clienteActual };
+            var uc = new UC_DatosCliente(this);
+
+            // Ocultar botón de editar si la mascota está inactiva
+            if (!clienteActual.Activo)
+                uc.btnEditarCliente.Visibility = Visibility.Collapsed;
+
+            ContenedorPrincipal.Content = uc;
+        }
+
+        private void btnFacturas_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. Obtener los datos del servicio
+            var listaFacturas = facturaService.ObtenerPorCliente(clienteActual.IdCliente);
+            decimal deudaTotal = facturaService.CalcularDeudaCliente(clienteActual.IdCliente);
+
+            // 2. Crear el UC pasándole los datos
+            var uc = new UC_FacturasCliente(listaFacturas, deudaTotal);
+
+            // 3. Inyectar en el contenedor principal
+            ContenedorPrincipal.Content = uc;
         }
     }
 }

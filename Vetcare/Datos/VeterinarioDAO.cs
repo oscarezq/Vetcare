@@ -76,8 +76,7 @@ namespace Vetcare.Datos
                           u.nombre, u.apellidos
                    FROM veterinarios v
                    INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
-                   WHERE v.id_veterinario = @idVeterinario
-                   AND u.activo = TRUE";
+                   WHERE v.id_veterinario = @idVeterinario";
 
             try
             {
@@ -124,8 +123,7 @@ namespace Vetcare.Datos
                            u.nombre, u.apellidos
                     FROM veterinarios v
                     INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
-                    WHERE v.id_usuario = @idUsuario
-                    AND u.activo = TRUE";
+                    WHERE v.id_usuario = @idUsuario";
 
             try
             {

@@ -24,7 +24,9 @@ namespace Vetcare.Presentacion.Clientes
         private void CargarLista()
         {
             // Cargamos todos los clientes al abrir la ventana
-            listaClientes = new ClienteService().ObtenerTodos();
+            listaClientes = new ClienteService().ObtenerTodos()
+                                    .Where(m => m.Activo == true)
+                                    .ToList();
             dgClientes.ItemsSource = listaClientes;
         }
 

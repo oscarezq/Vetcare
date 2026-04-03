@@ -102,8 +102,8 @@
                     </Button>
                 </Grid>
 
-                <DataGrid x:Name="dgDetalles" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" 
-          RowHeight="60" HeadersVisibility="Column" GridLinesVisibility="None" 
+                <DataGrid x:Name="dgDetalles" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False"
+          RowHeight="60" HeadersVisibility="Column" GridLinesVisibility="None" CanUserResizeColumns="False" CanUserReorderColumns="False" 
           HorizontalGridLinesBrush="#EBEDEF" BorderThickness="0" Background="White" 
           SelectionMode="Single" RowHeaderWidth="0" FontSize="15">
                     <DataGrid.Resources>
@@ -253,21 +253,24 @@
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="OBSERVACIONES"
-                           FontSize="11"
-                           FontWeight="SemiBold"
-                           Foreground="#566573"/>
+               FontSize="11"
+               FontWeight="SemiBold"
+               Foreground="#566573"/>
 
                 <TextBox x:Name="txtObservaciones"
                          Grid.Row="1"
                          Margin="0,5,20,0"
+                         Height="155" 
                          TextWrapping="Wrap"
                          AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto" 
                          BorderBrush="#D5DBDB"
-                         Padding="5"/>
+                         Padding="5"
+                         VerticalContentAlignment="Top"/>
             </Grid>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Bottom">

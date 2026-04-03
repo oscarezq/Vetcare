@@ -141,6 +141,60 @@ namespace Vetcare.Datos
             return lista;
         }
 
+        public List<Factura> ObtenerPorCliente(int idCliente)
+        {
+            List<Factura> lista = new List<Factura>();
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                // JOIN con la tabla clientes para obtener nombre, apellidos y documento
+                string sql = @"SELECT f.*, 
+                               c.nombre AS nombre_cliente, 
+                               c.apellidos AS apellidos_cliente, 
+                               c.num_documento AS documento_cliente
+                        FROM facturas f 
+                        INNER JOIN clientes c ON f.id_cliente = c.id_cliente
+                        WHERE f.id_cliente = @idCliente
+                        ORDER BY f.fecha_emision DESC";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idCliente", idCliente);
+                con.Open();
+                using (MySqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        Factura f = MapearFactura(dr);
+                        // Datos extendidos del cliente para la UI
+                        f.NombreCliente = dr["nombre_cliente"].ToString();
+                        f.ApellidosCliente = dr["apellidos_cliente"].ToString();
+                        f.NumeroDocumentoCliente = dr["documento_cliente"].ToString();
+                        lista.Add(f);
+                    }
+                }
+            }
+            return lista;
+        }
+
+        public decimal CalcularDeudaCliente(int idCliente)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                // Sumamos el total de las facturas que están en estado 'Pendiente'
+                string sql = @"SELECT IFNULL(SUM(total), 0) 
+                       FROM facturas 
+                       WHERE id_cliente = @idCliente 
+                       AND estado = 'Pendiente'";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idCliente", idCliente);
+
+                con.Open();
+                object result = cmd.ExecuteScalar();
+
+                return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+            }
+        }
+
         public bool AnularFactura(int idFactura)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
@@ -193,15 +247,17 @@ namespace Vetcare.Datos
             }
         }
 
-        public decimal ObtenerIngresosHoy()
+        public decimal ObtenerIngresosMes()
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
 
+                // Modificamos el SQL para filtrar por el mes y año actuales
                 string sql = @"SELECT IFNULL(SUM(total), 0) 
                        FROM facturas 
-                       WHERE DATE(fecha_emision) = CURDATE()
+                       WHERE MONTH(fecha_emision) = MONTH(CURDATE()) 
+                       AND YEAR(fecha_emision) = YEAR(CURDATE())
                        AND estado = 'Pagada'";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
@@ -211,6 +267,8 @@ namespace Vetcare.Datos
                 return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
             }
         }
+
+
 
         private Factura MapearFactura(MySqlDataReader dr)
         {

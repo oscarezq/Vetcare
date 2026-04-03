@@ -51,8 +51,8 @@
         <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="5">
             <DataGrid x:Name="dgServicios" AutoGenerateColumns="False" IsReadOnly="True" 
                       CanUserAddRows="False" GridLinesVisibility="None" HeadersVisibility="Column"
-                      MouseDoubleClick="dgServicios_MouseDoubleClick" SelectionMode="Single"
-                      Background="White" BorderThickness="0" FontSize="13">
+                      MouseDoubleClick="dgServicios_MouseDoubleClick" SelectionMode="Single" CanUserResizeColumns="False"
+                      Background="White" BorderThickness="0" FontSize="13" CanUserSortColumns="False" CanUserReorderColumns="False">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="White"/>

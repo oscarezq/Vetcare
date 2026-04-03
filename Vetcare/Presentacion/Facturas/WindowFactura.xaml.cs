@@ -130,8 +130,37 @@ namespace Vetcare.Presentacion.Facturas
         {
             if ((sender as Button)?.DataContext is DetalleFactura detalle)
             {
-                detalle.Cantidad++;
-                ActualizarInterfaz();
+                // 1. Si es un Servicio, no suele haber restricción de stock, subimos libremente
+                if (detalle.Tipo == "Servicio")
+                {
+                    detalle.Cantidad++;
+                    ActualizarInterfaz();
+                }
+                // 2. Si es un Producto, debemos validar
+                else if (detalle.Tipo == "Producto")
+                {
+                    // Buscamos el concepto en la lógica de negocio para saber el stock real actual
+                    // Nota: conceptoService es una instancia de tu servicio de conceptos/productos
+                    var conceptoService = new ConceptoService();
+                    var conceptoReal = conceptoService.ObtenerPorId(detalle.IdConcepto);
+
+                    if (conceptoReal != null)
+                    {
+                        if (detalle.Cantidad + 1 <= conceptoReal.Stock)
+                        {
+                            detalle.Cantidad++;
+                            ActualizarInterfaz();
+                        }
+                        else
+                        {
+                            MessageBox.Show($"No hay más stock disponible para {detalle.NombreConcepto}. " +
+                                            $"Stock máximo: {conceptoReal.Stock}",
+                                            "Stock insuficiente",
+                                            MessageBoxButton.OK,
+                                            MessageBoxImage.Warning);
+                        }
+                    }
+                }
             }
         }
 
@@ -192,8 +221,14 @@ namespace Vetcare.Presentacion.Facturas
         // --- CÁLCULOS ---
         private void ActualizarInterfaz()
         {
+            // 1. Forzamos la salida del modo edición para evitar la excepción
+            dgDetalles.CommitEdit(DataGridEditingUnit.Row, true);
+            dgDetalles.CancelEdit();
+
+            // 2. Ahora sí podemos refrescar sin errores
             dgDetalles.Items.Refresh();
 
+            // 3. Recalcular totales
             decimal baseImp = listaDetalles.Sum(d => d.Subtotal);
             decimal ivaTotal = listaDetalles.Sum(d => d.IvaImporte);
             decimal total = listaDetalles.Sum(d => d.TotalLinea);

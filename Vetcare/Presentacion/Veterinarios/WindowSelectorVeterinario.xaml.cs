@@ -15,6 +15,7 @@ namespace Vetcare.Presentacion.Veterinarios
         private List<Veterinario> listaVeterinarios;
         public Veterinario VeterinarioSeleccionado { get; set; }
         private VeterinarioService veteService = new VeterinarioService();
+        private UsuarioService usuarioService = new UsuarioService();
 
         public WindowSelectorVeterinario()
         {
@@ -26,8 +27,15 @@ namespace Vetcare.Presentacion.Veterinarios
         {
             try
             {
-                // Importante: Este método debe devolver el JOIN de Veterinarios con Usuarios
-                listaVeterinarios = veteService.ObtenerTodos();
+                // Obtenemos todos los veterinarios
+                var todosLosVetes = veteService.ObtenerTodos();
+
+                // Filtramos: Solo el veterinario cuyo USUARIO asociado tenga Estado == 1
+                listaVeterinarios = todosLosVetes.Where(v => {
+                    var user = usuarioService.ObtenerPorId(v.IdUsuario);
+                    return user != null && user.Activo == true;
+                }).ToList();
+
                 dgVeterinarios.ItemsSource = listaVeterinarios;
             }
             catch (Exception ex)

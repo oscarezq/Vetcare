@@ -18,7 +18,7 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, telefono, email, 
+                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, activo, telefono, email, 
                                       calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta
                                FROM clientes";
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
@@ -39,7 +39,7 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, telefono, email, 
+                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, activo, telefono, email, 
                                       calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta
                                FROM clientes
                                WHERE id_cliente = @id";
@@ -107,12 +107,12 @@ namespace Vetcare.Datos
             }
         }
 
-        public bool Eliminar(int idCliente)
+        public bool Desactivar(int idCliente)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = "DELETE FROM clientes WHERE id_cliente = @id";
+                string sql = "UPDATE clientes SET activo = FALSE WHERE id_cliente = @id";
 
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
                 {
@@ -122,34 +122,18 @@ namespace Vetcare.Datos
             }
         }
 
-        public bool EliminarVarios(List<int> idsClientes)
+        public bool Reactivar(int idCliente)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                MySqlTransaction transaccion = con.BeginTransaction();
 
-                try
-                {
-                    string sql = "DELETE FROM clientes WHERE id_cliente = @id";
+                string sql = "UPDATE clientes SET activo = TRUE WHERE id_cliente = @id";
 
-                    foreach (int id in idsClientes)
-                    {
-                        using (MySqlCommand cmd = new MySqlCommand(sql, con, transaccion))
-                        {
-                            cmd.Parameters.AddWithValue("@id", id);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", idCliente);
 
-                    transaccion.Commit();
-                    return true;
-                }
-                catch
-                {
-                    transaccion.Rollback();
-                    return false;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 
@@ -177,6 +161,7 @@ namespace Vetcare.Datos
                 Apellidos = rdr["apellidos"].ToString(),
                 Telefono = rdr["telefono"].ToString(),
                 Email = rdr["email"].ToString(),
+                Activo = Convert.ToBoolean(rdr["activo"]),
                 // Mapeo de nuevos campos de dirección
                 CalleDireccion = rdr["calle"].ToString(),
                 NumeroDireccion = rdr["numero"].ToString(),

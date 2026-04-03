@@ -52,16 +52,6 @@ namespace Vetcare.Negocio
         }
 
         /// <summary>
-        /// Método para insertar varias mascotas
-        /// </summary>
-        /// <param name="mascotas">Lista de mascotas que se van a insertar</param>
-        /// <returns>Booleano que indica si se han insertado correctamente</returns>
-        public bool InsertarVarios(List<Mascota> mascotas)
-        {
-            return mascotaDAO.InsertarVarios(mascotas);
-        }
-
-        /// <summary>
         /// Método para actualizar una mascota
         /// </summary>
         /// <param name="mascota">Mascota con los datos actualizados</param>
@@ -72,23 +62,13 @@ namespace Vetcare.Negocio
         }
 
         /// <summary>
-        /// Método para actualizar varias mascotas
-        /// </summary>
-        /// <param name="mascotas">Lista de mascotas con los datos actualizados</param>
-        /// <returns>Booleano que indica si se han actualizado correctamente</returns>
-        public bool ActualizarVarios(List<Mascota> mascotas)
-        {
-            return mascotaDAO.ActualizarVarios(mascotas);
-        }
-
-        /// <summary>
         /// Método para eliminar una mascota
         /// </summary>
         /// <param name="idMascota">Identificador de la mascota</param>
         /// <returns>Booleano que indica si se ha eliminado correctamente</returns>
-        public bool Eliminar(int idMascota)
+        public bool Desactivar(int idMascota)
         {
-            return mascotaDAO.Eliminar(idMascota);
+            return mascotaDAO.Desactivar(idMascota);
         }
 
         /// <summary>
@@ -96,9 +76,14 @@ namespace Vetcare.Negocio
         /// </summary>
         /// <param name="idsMascotas">Lista de identificadores de las mascotas a eliminar</param>
         /// <returns>Booleano que indica si se han eliminado correctamente</returns>
-        public bool EliminarVarios(List<int> idsMascotas)
+        public bool DesactivarVarios(List<int> idsMascotas)
         {
-            return mascotaDAO.EliminarVarios(idsMascotas);
+            return mascotaDAO.DesactivarVarios(idsMascotas);
+        }
+
+        public bool Reactivar(int idMascota)
+        {
+            return mascotaDAO.Reactivar(idMascota);
         }
 
         public int ContarMascotas()

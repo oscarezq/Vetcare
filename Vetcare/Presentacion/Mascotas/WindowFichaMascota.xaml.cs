@@ -50,7 +50,13 @@ namespace Vetcare.Presentacion.Mascotas
 
         private void MostrarDatos()
         {
-            ContenedorPrincipal.Content = new UC_DatosMascota(mascotaActual);
+            var uc = new UC_DatosMascota(mascotaActual);
+
+            // Ocultar botón de editar si la mascota está inactiva
+            if (!mascotaActual.Activo)
+                uc.btnEditarInformacion.Visibility = Visibility.Collapsed;
+
+            ContenedorPrincipal.Content = uc;
         }
     }
 }

@@ -68,6 +68,8 @@ namespace Vetcare.Entidades
         /// Nombre + Apellidos + Número de identificación del cliente.
         /// </summary>
         public string ClienteCompleto => $"{Nombre} {Apellidos} ({NumDocumento})";
+
+        public bool Activo { get; set; } = true;
     }
 
 }

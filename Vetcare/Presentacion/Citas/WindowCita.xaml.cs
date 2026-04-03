@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -124,16 +125,21 @@ namespace Vetcare.Presentacion.Citas
             if (idMascotaSeleccionada == 0) return MostrarError("Seleccione una mascota.");
             if (idVeterinarioSeleccionado == 0) return MostrarError("Seleccione un veterinario.");
             if (!dtpFecha.SelectedDate.HasValue) return MostrarError("Seleccione una fecha.");
-            if (!TimeSpan.TryParse(txtHora.Text, out _)) return MostrarError("Formato de hora (HH:mm) inválido.");
+
+            // Expresión regular para formato 24h (00:00 a 23:59)
+            string patronHora = @"^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
+
+            if (string.IsNullOrWhiteSpace(txtHora.Text))
+                return MostrarError("La hora es obligatoria.");
+
+            if (!Regex.IsMatch(txtHora.Text, patronHora))
+                return MostrarError("Formato de hora inválido. Use el formato 24h (ej: 09:30 o 15:45).");
+
             if (string.IsNullOrWhiteSpace(txtMotivo.Text)) return MostrarError("El motivo es obligatorio.");
-            if (!int.TryParse(txtDuracion.Text.Trim(), out int duracion))
-            {
-                return MostrarError("La duración debe ser un número entero (minutos).");
-            }
-            if (duracion <= 0)
-            {
-                return MostrarError("La duración debe ser mayor a 0 minutos.");
-            }
+
+            if (!int.TryParse(txtDuracion.Text.Trim(), out int duracion) || duracion <= 0)
+                return MostrarError("La duración debe ser un número entero mayor a 0.");
+
             return true;
         }
 

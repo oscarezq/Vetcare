@@ -69,6 +69,7 @@ namespace Vetcare.Presentacion
             // Especie
             txtIdEspecie.Text = mascota.IdEspecie.ToString();
             txtNombreEspecie.Text = mascota.NombreEspecie;
+            this.mascota.IdEspecie = mascota.IdEspecie;
             txtNombreEspecie.Foreground = Brushes.Black;
             txtNombreEspecie.FontWeight = FontWeights.SemiBold;
 
@@ -77,7 +78,6 @@ namespace Vetcare.Presentacion
             txtNombreRaza.Text = mascota.NombreRaza;
             txtNombreRaza.Foreground = Brushes.Black;
             txtNombreRaza.FontWeight = FontWeights.SemiBold;
-
             btnSeleccionarRaza.IsEnabled = true;
 
             // Dueño
@@ -234,23 +234,24 @@ namespace Vetcare.Presentacion
 
         private void btnBuscarRaza_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtIdEspecie.Text))
+            // Intentar obtener el ID desde el TextBox oculto que llenamos en CargarDatos
+            if (int.TryParse(txtIdEspecie.Text, out int idEspecie))
             {
-                MessageBox.Show("Error: la especie no está cargada correctamente.");
-                return;
+                WindowSelectorRaza selector = new WindowSelectorRaza(idEspecie);
+                selector.Owner = this;
+
+                if (selector.ShowDialog() == true)
+                {
+                    var raza = selector.RazaSeleccionada;
+                    txtIdRaza.Text = raza.IdRaza.ToString();
+                    txtNombreRaza.Text = raza.NombreRaza;
+                    txtNombreRaza.Foreground = Brushes.Black;
+                    txtNombreRaza.FontWeight = FontWeights.SemiBold;
+                }
             }
-
-            int idEspecie = int.Parse(txtIdEspecie.Text);
-
-            WindowSelectorRaza selector = new WindowSelectorRaza(idEspecie);
-            selector.Owner = this;
-
-            if (selector.ShowDialog() == true)
+            else
             {
-                var raza = selector.RazaSeleccionada;
-                txtIdRaza.Text = raza.IdRaza.ToString();
-                txtNombreRaza.Text = raza.NombreRaza;
-                txtNombreRaza.Foreground = Brushes.Black;
+                MessageBox.Show("Por favor, seleccione una especie primero.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

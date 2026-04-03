@@ -44,7 +44,7 @@
             <DataGrid x:Name="dgProductos" AutoGenerateColumns="False" IsReadOnly="True" 
                       CanUserAddRows="False" GridLinesVisibility="None" HeadersVisibility="Column"
                       MouseDoubleClick="dgProductos_MouseDoubleClick" SelectionMode="Single"
-                      Background="White" BorderThickness="0" FontSize="13">
+                      Background="White" BorderThickness="0" FontSize="13" CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="White"/>

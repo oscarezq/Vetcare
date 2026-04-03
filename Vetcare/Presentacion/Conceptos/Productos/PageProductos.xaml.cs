@@ -139,7 +139,7 @@ namespace Vetcare.Presentacion.Servicios
             if (result == MessageBoxResult.Yes)
             {
                 // Lógica para eliminar mediante el servicio
-                // productoService.Eliminar(producto.IdProducto);
+                conceptoService.Eliminar(producto.IdConcepto);
                 CargarDatos();
             }
         }
@@ -183,6 +183,44 @@ namespace Vetcare.Presentacion.Servicios
             if (ventanaDetalle.ShowDialog() == true)
             {
                 CargarDatos();
+            }
+        }
+
+        private void btnReactivarProducto_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button botonPulsado = sender as Button;
+                Concepto productoDeLaFila = botonPulsado.DataContext as Concepto;
+
+                if (productoDeLaFila != null)
+                {
+                    MessageBoxResult confirmacion = MessageBox.Show(
+                        $"¿Deseas reactivar el producto {productoDeLaFila.Nombre}?",
+                        "Confirmar acción",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (confirmacion == MessageBoxResult.Yes)
+                    {
+                        if (conceptoService.Reactivar(productoDeLaFila.IdConcepto))
+                        {
+                            MessageBox.Show("Producto reactivado correctamente.", "Información",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            CargarDatos();
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se pudo reactivar el producto.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al reactivar producto: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

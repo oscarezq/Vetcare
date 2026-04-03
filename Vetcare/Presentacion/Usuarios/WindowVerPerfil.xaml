@@ -92,7 +92,6 @@
                 <Border x:Name="borderVeterinario" Background="#EFF6FF" CornerRadius="12" Padding="25" BorderBrush="#DBEAFE" BorderThickness="1" Visibility="Collapsed">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                            <TextBlock Text="🩺" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="PERFIL PROFESIONAL" FontSize="13" FontWeight="Bold" Foreground="#2563EB"/>
                         </StackPanel>
 

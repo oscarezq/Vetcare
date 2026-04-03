@@ -227,6 +227,21 @@ namespace Vetcare.Datos
             }
         }
 
+        public bool Reactivar(int idUsuario)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+
+                string sql = "UPDATE usuarios SET activo = TRUE WHERE id_usuario = @id";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", idUsuario);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
         public bool ExisteUsername(string username)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())

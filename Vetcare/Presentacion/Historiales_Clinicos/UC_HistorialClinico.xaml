@@ -24,11 +24,11 @@
 
             <DataGrid x:Name="dgHistorial" 
                       AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                      HeadersVisibility="Column" 
+                      HeadersVisibility="Column"  CanUserSortColumns="False"
                       GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F2F2F2"
                       Background="Transparent" BorderThickness="0"
-                      FontSize="15" RowHeight="55"
-                      SelectionMode="Single" SelectionUnit="FullRow">
+                      FontSize="15" RowHeight="55" CanUserReorderColumns="False"
+                      SelectionMode="Single" SelectionUnit="FullRow" CanUserResizeColumns="False">
 
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">

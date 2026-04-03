@@ -23,6 +23,9 @@ namespace Vetcare.Presentacion.Usuarios
             if (_usuarioActual == null) { MessageBox.Show("Usuario no encontrado."); this.Close(); return; }
             this.DataContext = _usuarioActual;
 
+            if (!_usuarioActual.Activo)
+                btnEditarUsuario.Visibility = Visibility.Collapsed;
+
             // Solo si es veterinario mostramos la sección y cargamos sus datos
             if (_usuarioActual.NombreRol == "Veterinario")
             {

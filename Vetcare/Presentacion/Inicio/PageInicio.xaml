@@ -82,7 +82,7 @@
                 <TextBlock Grid.Row="0" Text="Agenda del Día" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,15"/>
 
                 <Grid Grid.Row="1">
-                    <DataGrid x:Name="dgCitas" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
+                    <DataGrid x:Name="dgCitas" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column"  CanUserResizeColumns="False"
                               Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" SelectionMode="Single" SelectionUnit="FullRow" CanUserSortColumns="False" CanUserReorderColumns="False">
                         <DataGrid.Resources>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />

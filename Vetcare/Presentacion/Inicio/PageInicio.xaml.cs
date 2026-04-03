@@ -52,9 +52,9 @@ namespace Vetcare.Presentacion.Inicio
                 // --- Resto de tus conteos ---
                 txtTotalClientes.Text = _clienteService.ContarClientes().ToString();
                 txtTotalMascotas.Text = _mascotaService.ContarMascotas().ToString();
-                txtCitasHoy.Text = citasHoy.Count.ToString();
+                txtCitasHoy.Text = _citaService.ContarCitasHoy().ToString();
 
-                object ingresos = _facturaService.ObtenerIngresosHoy();
+                object ingresos = _facturaService.ObtenerIngresosMes();
                 decimal total = ingresos != DBNull.Value ? Convert.ToDecimal(ingresos) : 0;
                 txtIngresosHoy.Text = total.ToString("N2") + " €";
             }

@@ -25,6 +25,16 @@ namespace Vetcare.Negocio
             return facturaDAO.ObtenerTodas();
         }
 
+        public List<Factura> ObtenerPorCliente(int idCliente)
+        {
+            return facturaDAO.ObtenerPorCliente(idCliente);
+        }
+
+        public decimal CalcularDeudaCliente(int idCliente)
+        {
+            return facturaDAO.CalcularDeudaCliente(idCliente);
+        }
+
         public bool AnularFactura(int idFactura)
         {
             return facturaDAO.AnularFactura(idFactura);
@@ -40,9 +50,9 @@ namespace Vetcare.Negocio
             return facturaDAO.ActualizarEstadoFactura(idFactura, nuevoEstado);
         }
 
-        public decimal ObtenerIngresosHoy()
+        public decimal ObtenerIngresosMes()
         {
-            return facturaDAO.ObtenerIngresosHoy();
+            return facturaDAO.ObtenerIngresosMes();
         }
     }
 }

@@ -68,7 +68,7 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 // Filtramos por tipo y solo los activos para la venta
-                string sql = "SELECT * FROM conceptos WHERE tipo = 'Servicio' AND activo = 1 ORDER BY nombre ASC";
+                string sql = "SELECT * FROM conceptos WHERE tipo = 'Servicio' ORDER BY nombre ASC";
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 try
                 {
@@ -92,7 +92,7 @@ namespace Vetcare.Datos
             List<Concepto> lista = new List<Concepto>();
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
-                string sql = "SELECT * FROM conceptos WHERE tipo = 'Producto' AND activo = 1 ORDER BY nombre ASC";
+                string sql = "SELECT * FROM conceptos WHERE tipo = 'Producto' ORDER BY nombre ASC";
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 try
                 {
@@ -181,20 +181,14 @@ namespace Vetcare.Datos
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
-                string sql = "DELETE FROM conceptos WHERE id_concepto = @id";
+                con.Open();
+
+                string sql = "UPDATE conceptos SET activo = FALSE WHERE id_concepto = @id";
+
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@id", idConcepto);
-                try
-                {
-                    con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-                catch (Exception ex)
-                {
-                    // Nota: Si el concepto ya está en una factura, esto fallará por FK.
-                    // Podrías considerar un "Borrado Lógico" cambiando Activo = 0.
-                    throw new Exception("Error al eliminar: " + ex.Message);
-                }
+
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 
@@ -215,6 +209,21 @@ namespace Vetcare.Datos
                 {
                     throw new Exception("Error al actualizar stock: " + ex.Message);
                 }
+            }
+        }
+
+        public bool Reactivar(int idConcepto)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+
+                string sql = "UPDATE conceptos SET activo = TRUE WHERE id_concepto = @id";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", idConcepto);
+
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 

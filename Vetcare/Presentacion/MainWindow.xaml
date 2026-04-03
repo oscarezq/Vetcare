@@ -180,26 +180,6 @@
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnVeterinarios" Click="btnVeterinarios_Click">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource MenuButtonStyle}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/doctor.png" Width="18" Margin="0,0,10,0"/>
-                                <TextBlock Text="VETERINARIOS"/>
-                            </StackPanel>
-                        </Button>
-
                         <Button x:Name="btnServicios" Style="{StaticResource MenuButtonStyle}" Click="btnServicios_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/servicios.png" Width="18" Margin="0,0,10,0"/>

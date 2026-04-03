@@ -20,7 +20,9 @@ namespace Vetcare.Presentacion
 
         private void CargarLista()
         {
-            listaMascotas = new MascotaService().ObtenerTodas();
+            listaMascotas = new MascotaService().ObtenerTodas()
+                                    .Where(m => m.Activo == true)
+                                    .ToList();
             dgMascotas.ItemsSource = listaMascotas;
         }
 

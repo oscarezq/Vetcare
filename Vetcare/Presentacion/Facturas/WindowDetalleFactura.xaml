@@ -41,9 +41,9 @@
 
         <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="#D5DBDB" BorderThickness="1" Padding="10">
             <DataGrid x:Name="dgDetalles" AutoGenerateColumns="False" IsReadOnly="True"
-                      HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
+                      HeadersVisibility="Column" GridLinesVisibility="Horizontal" CanUserSortColumns="False"
                       HorizontalGridLinesBrush="#F2F4F4" Background="White" BorderThickness="0" 
-                      RowHeight="60" FontSize="16">
+                      RowHeight="60" FontSize="16" CanUserResizeColumns="False" CanUserReorderColumns="False">
 
                 <DataGrid.Resources>
                     <Style TargetType="DataGridColumnHeader">
@@ -138,22 +138,43 @@
                     </StackPanel>
                 </Border>
 
-                <UniformGrid Columns="2" Height="45">
-                    <Button Content="CERRAR" Click="btnCerrar_Click" Background="#BDC3C7" Margin="0,0,5,0" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="6"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button x:Name="btnMarcarPagada" Content="MARCAR PAGADA" Click="btnMarcarPagada_Click" Background="#2E86C1" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="6"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                </UniformGrid>
+                <Button x:Name="btnMarcarPagada"
+        Click="btnMarcarPagada_Click"
+        Cursor="Hand"
+        BorderThickness="0"
+        Padding="14,6"
+        FontWeight="SemiBold"
+        FontSize="13"
+        HorizontalAlignment="Right">
+
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#E8F8F5"/>
+                            <Setter Property="Foreground" Value="#16A085"/>
+                            <Setter Property="Content" Value="✔ Marcar como pagada"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Estado}" Value="Pagada">
+                                    <Setter Property="Background" Value="#EAFAF1"/>
+                                    <Setter Property="Foreground" Value="#27AE60"/>
+                                    <Setter Property="Content" Value="✔ Factura pagada"/>
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                    CornerRadius="20">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+
+                </Button>
             </StackPanel>
         </Grid>
     </Grid>

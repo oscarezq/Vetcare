@@ -93,16 +93,50 @@
                     </Button>
                 </DockPanel>
 
-                <DataGrid x:Name="dgFacturas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgFacturas_MouseDoubleClick"
-                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" Margin="0,10,0,0"
-                          SelectionMode="Single" SelectionUnit="FullRow" CanUserSortColumns="False" CanUserReorderColumns="False">
+                <DataGrid x:Name="dgFacturas"
+          Grid.Row="1"
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          IsReadOnly="True"
+          MouseDoubleClick="dgFacturas_MouseDoubleClick"
+          GridLinesVisibility="None"
+          BorderThickness="0"
+          HeadersVisibility="Column"
+          CanUserSortColumns="False"
+          CanUserReorderColumns="False"
+          Background="White"
+          FontSize="14"
+          RowHeight="50"
+          ColumnHeaderHeight="40"
+          SelectionMode="Single"
+          SelectionUnit="FullRow"
+          HorizontalScrollBarVisibility="Auto" CanUserResizeColumns="False">
 
                     <DataGrid.Resources>
+                        <!-- Selección limpia -->
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
 
-                        <Style TargetType="DataGridColumnHeader">
+                        <!-- CELDAS -->
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="10,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+
+                        <!-- HEADERS -->
+                        <Style x:Key="HeaderStyleComun" TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -112,29 +146,21 @@
                             <Setter Property="BorderBrush" Value="#E67E22"/>
                         </Style>
 
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="10,0"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="DataGridCell">
-                                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter VerticalAlignment="Center" />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}"/>
                     </DataGrid.Resources>
 
+                    <!-- FILAS -->
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="Transparent"/>
                             <Setter Property="BorderBrush" Value="#EBEDEF"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
+
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="#F4F6F7"/>
                                 </Trigger>
+
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="#EBF5FB"/>
                                     <Setter Property="Foreground" Value="#2E86C1"/>
@@ -143,50 +169,34 @@
                         </Style>
                     </DataGrid.RowStyle>
 
+                    <!-- COLUMNAS -->
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nº FACTURA" Binding="{Binding NumeroFactura}" Width="160" FontWeight="Bold"/>
 
-                        <DataGridTextColumn Header="FECHA" Binding="{Binding FechaEmision, StringFormat=\{0:dd/MM/yyyy\}}" Width="160"/>
+                        <!-- ESTADO -->
+                        <DataGridTemplateColumn Header="ESTADO" Width="120">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
 
-                        <DataGridTemplateColumn Header="CLIENTE" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock VerticalAlignment="Center">
-                                            <Run Text="{Binding NombreCliente}" FontWeight="SemiBold" Foreground="#2C3E50"/>
-                                            <Run Text=" " />
-                                            <Run Text="{Binding ApellidosCliente}" FontWeight="SemiBold" Foreground="#2C3E50"/>
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding NumeroDocumentoCliente, StringFormat=' ({0})'}" 
-                                                   Foreground="#7F8C8D" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Header="TOTAL" Width="140">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Total, StringFormat={}{0:N2} €}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2C3E50"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Header="ESTADO" Width="130">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left">
+                                    <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center">
                                         <TextBlock x:Name="txtEstado" Text="{Binding Estado}" FontSize="11" FontWeight="Bold"/>
                                     </Border>
+
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Estado}" Value="Pagada">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
                                         </DataTrigger>
+
                                         <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#FEF9E7"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#F1C40F"/>
                                         </DataTrigger>
+
                                         <DataTrigger Binding="{Binding Estado}" Value="Anulada">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#E74C3C"/>
@@ -196,18 +206,87 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                        <!-- Nº FACTURA -->
+                        <DataGridTextColumn Header="Nº FACTURA"
+                            Binding="{Binding NumeroFactura}"
+                            Width="*"
+                            Foreground="#2E86C1"
+                            FontWeight="SemiBold"/>
+
+                        <!-- FECHA -->
+                        <DataGridTextColumn Header="FECHA"
+                            Binding="{Binding FechaEmision, StringFormat=\{0:dd/MM/yyyy\}}"
+                            Width="*"/>
+
+                        <!-- CLIENTE -->
+                        <DataGridTemplateColumn Header="CLIENTE" Width="1.2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding NombreApellidosCliente}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- TOTAL -->
+                        <DataGridTextColumn Header="TOTAL"
+                            Binding="{Binding Total, StringFormat={}{0:N2} €}"
+                            Width="130"
+                            Foreground="#27AE60"
+                            FontWeight="Bold"/>
+
+                        <!-- ACCIONES -->
+                        <!-- ACCIONES -->
+                        <DataGridTemplateColumn Header="ACCIONES" Width="180">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
+
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" 
-                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="🗑" ToolTip="Anular" Click="btnAnular_Click" Margin="2,0" 
-                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
+
+                                        <!-- VER DETALLE -->
+                                        <Button Content="👁"
+                                                ToolTip="Ver Detalle"
+                                                Click="btnVerDetalle_Click"
+                                                Margin="2,0"
+                                                Background="#EBF5FB"
+                                                Foreground="#2E86C1"
+                                                Width="35"
+                                                Height="30"
+                                                BorderBrush="#AED6F1"
+                                                Cursor="Hand"/>
+
+                                        <!-- ANULAR: solo visible si está pendiente -->
+                                        <Button Content="❌"
+                                                ToolTip="Anular Factura"
+                                                Click="btnAnular_Click"
+                                                Margin="2,0"
+                                                Background="#FDEDEC"
+                                                Foreground="#CB4335"
+                                                Width="35"
+                                                Height="30"
+                                                BorderBrush="#FADBD8"
+                                                Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

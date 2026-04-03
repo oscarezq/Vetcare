@@ -123,5 +123,28 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <Border x:Name="pnlSinMascotas" 
+        Grid.Row="1" 
+        Background="#F9FAFB" 
+        CornerRadius="10" 
+        Margin="0,10,0,0"
+        Visibility="Collapsed">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="🐾" FontSize="50" HorizontalAlignment="Center" Margin="0,0,0,10" Opacity="0.7"/>
+
+                <TextBlock Text="No hay mascotas registradas" 
+                   FontSize="18" 
+                   FontWeight="SemiBold" 
+                   Foreground="#2C3E50" 
+                   HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Este cliente aún no tiene mascotas vinculadas." 
+                   FontSize="13" 
+                   Foreground="#7F8C8D" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,5,0,20"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

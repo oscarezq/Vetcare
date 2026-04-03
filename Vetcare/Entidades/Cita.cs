@@ -76,5 +76,7 @@ namespace Vetcare.Entidades
 
         // PROPIEDAD PARA LA INTERFAZ
         public string InfoVeterinario => $"{NombreVeterinario} ({NumeroColegiado})";
+
+        public bool EsMia { get; set; }
     }
 }

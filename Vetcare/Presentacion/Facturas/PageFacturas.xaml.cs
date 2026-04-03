@@ -129,10 +129,26 @@ namespace Vetcare.Presentacion.Facturas
 
         private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
         {
-            if (dgFacturas.SelectedItem is Factura facturaSeleccionada)
+            // 1. Obtenemos el botón que disparó el evento
+            Button btn = sender as Button;
+
+            // 2. El DataContext de ese botón es automáticamente el objeto 'Factura' de esa fila
+            if (btn != null && btn.DataContext is Factura facturaSeleccionada)
             {
-                WindowDetalleFactura detalleWin = new WindowDetalleFactura(facturaSeleccionada);
-                detalleWin.ShowDialog();
+                try
+                {
+                    // 3. Cargamos los detalles (Igual que haces en el DoubleClick)
+                    DetalleFacturaDAO detalleDAO = new DetalleFacturaDAO();
+                    facturaSeleccionada.Detalles = detalleDAO.ObtenerDetallesPorFactura(facturaSeleccionada.IdFactura);
+
+                    // 4. Abrimos la ventana
+                    WindowDetalleFactura detalleWin = new WindowDetalleFactura(facturaSeleccionada);
+                    detalleWin.ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar los detalles: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

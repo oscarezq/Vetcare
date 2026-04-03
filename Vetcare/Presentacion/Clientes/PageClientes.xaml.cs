@@ -35,10 +35,13 @@ namespace Vetcare.Presentacion.Clientes
 
         private void ActualizarTabla()
         {
-            if (dgClientes == null || rbAsc == null) return;
+            // 1. Verificaciones de seguridad
+            if (dgClientes == null || rbAsc == null || cbBuscaEstado == null) return;
 
+            // 2. Iniciamos el filtrado sobre la lista completa
             var filtrado = listaCompleta.AsEnumerable();
 
+            // --- Filtros de Texto ---
             if (!string.IsNullOrWhiteSpace(txtBuscaNumDocumento.Text))
                 filtrado = filtrado.Where(c => c.NumDocumento.ToLower().Contains(txtBuscaNumDocumento.Text.ToLower()));
 
@@ -51,26 +54,57 @@ namespace Vetcare.Presentacion.Clientes
             if (!string.IsNullOrWhiteSpace(txtBuscaEmail.Text))
                 filtrado = filtrado.Where(c => c.Email.ToLower().Contains(txtBuscaEmail.Text.ToLower()));
 
+            // --- Filtros de Fecha ---
             if (dtpBuscaFechaDesde.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaAlta.Date >= dtpBuscaFechaDesde.SelectedDate.Value.Date);
 
             if (dtpBuscaFechaHasta.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaAlta.Date <= dtpBuscaFechaHasta.SelectedDate.Value.Date);
 
+            // --- Filtro de ESTADO (Corregido) ---
+            if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado)
+            {
+                string estadoBusca = itemEstado.Content.ToString();
+                if (estadoBusca == "Activo")
+                {
+                    filtrado = filtrado.Where(c => c.Activo == true);
+                }
+                else if (estadoBusca == "Inactivo")
+                {
+                    filtrado = filtrado.Where(c => c.Activo == false);
+                }
+            }
+
+            // 3. Convertimos a lista para ordenar
             List<Cliente> listaFinal = filtrado.ToList();
+
+            // 4. Ordenación
             string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString();
             bool asc = rbAsc.IsChecked == true;
 
             switch (criterio)
             {
-                case "DNI": listaFinal = asc ? listaFinal.OrderBy(x => x.NumDocumento).ToList() : listaFinal.OrderByDescending(x => x.NumDocumento).ToList(); break;
-                case "Nombre": listaFinal = asc ? listaFinal.OrderBy(x => x.Nombre).ToList() : listaFinal.OrderByDescending(x => x.Nombre).ToList(); break;
-                case "Apellidos": listaFinal = asc ? listaFinal.OrderBy(x => x.Apellidos).ToList() : listaFinal.OrderByDescending(x => x.Apellidos).ToList(); break;
-                case "Teléfono": listaFinal = asc ? listaFinal.OrderBy(x => x.Telefono).ToList() : listaFinal.OrderByDescending(x => x.Telefono).ToList(); break;
-                case "Email": listaFinal = asc ? listaFinal.OrderBy(x => x.Email).ToList() : listaFinal.OrderByDescending(x => x.Email).ToList(); break;
-                case "Fecha de Alta": listaFinal = asc ? listaFinal.OrderBy(x => x.FechaAlta).ToList() : listaFinal.OrderByDescending(x => x.FechaAlta).ToList(); break;
+                case "DNI":
+                    listaFinal = asc ? listaFinal.OrderBy(x => x.NumDocumento).ToList() : listaFinal.OrderByDescending(x => x.NumDocumento).ToList();
+                    break;
+                case "Nombre":
+                    listaFinal = asc ? listaFinal.OrderBy(x => x.Nombre).ToList() : listaFinal.OrderByDescending(x => x.Nombre).ToList();
+                    break;
+                case "Apellidos":
+                    listaFinal = asc ? listaFinal.OrderBy(x => x.Apellidos).ToList() : listaFinal.OrderByDescending(x => x.Apellidos).ToList();
+                    break;
+                case "Teléfono":
+                    listaFinal = asc ? listaFinal.OrderBy(x => x.Telefono).ToList() : listaFinal.OrderByDescending(x => x.Telefono).ToList();
+                    break;
+                case "Email":
+                    listaFinal = asc ? listaFinal.OrderBy(x => x.Email).ToList() : listaFinal.OrderByDescending(x => x.Email).ToList();
+                    break;
+                case "Fecha de Alta":
+                    listaFinal = asc ? listaFinal.OrderBy(x => x.FechaAlta).ToList() : listaFinal.OrderByDescending(x => x.FechaAlta).ToList();
+                    break;
             }
 
+            // 5. Asignar al DataGrid
             dgClientes.ItemsSource = listaFinal;
         }
 
@@ -78,6 +112,7 @@ namespace Vetcare.Presentacion.Clientes
         private void dtpBuscaFecha_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
         private void cbOrdenarPor_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
         private void OrdenDirection_Checked(object sender, RoutedEventArgs e) => ActualizarTabla();
+        private void cbBuscaEstado_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
 
         private void btnLimpiar_Click(object sender, RoutedEventArgs e)
         {
@@ -88,6 +123,7 @@ namespace Vetcare.Presentacion.Clientes
             dtpBuscaFechaDesde.SelectedDate = null;
             dtpBuscaFechaHasta.SelectedDate = null;
             cbOrdenarPor.SelectedIndex = 0;
+            cbBuscaEstado.SelectedIndex = 0;
             rbAsc.IsChecked = true;
             ActualizarTabla();
         }
@@ -111,24 +147,18 @@ namespace Vetcare.Presentacion.Clientes
         {
             if (sender is Button b && b.DataContext is Cliente c)
             {
-                if (MessageBox.Show($"¿Eliminar a {c.NombreCompleto}?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show($"¿Dar de baja a {c.NombreCompleto}?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    if (cs.Eliminar(c.IdCliente)) CargarDatos();
+                    if (cs.Desactivar(c.IdCliente)) CargarDatos();
                 }
-            }
-        }
-
-        private void btnEliminarVarios_Click(object sender, RoutedEventArgs e)
-        {
-            var seleccion = dgClientes.SelectedItems.Cast<Cliente>().ToList();
-            if (MessageBox.Show($"¿Eliminar {seleccion.Count} clientes?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            {
-                if (cs.EliminarVarias(seleccion.Select(x => x.IdCliente).ToList())) CargarDatos();
             }
         }
 
         private void btnVerFichaCliente_Click(object sender, RoutedEventArgs e)
         {
+            Button botonPulsado = sender as Button;
+            Cliente clienteDeLaFila = botonPulsado.DataContext as Cliente;
+
             if (sender is Hyperlink hl && hl.DataContext is Cliente c) AbrirFicha(c.IdCliente);
         }
 
@@ -155,10 +185,42 @@ namespace Vetcare.Presentacion.Clientes
             CargarDatos();
         }
 
-        private void dgClientes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void btnReactivar_Click(object sender, RoutedEventArgs e)
         {
-            bool esAdmin = Sesion.UsuarioActual?.IdRol != 2;
-            btnEliminarVarios.Visibility = (esAdmin && dgClientes.SelectedItems.Count > 1) ? Visibility.Visible : Visibility.Collapsed;
+            try
+            {
+                Button botonPulsado = sender as Button;
+                Cliente clienteDeLaFila = botonPulsado.DataContext as Cliente;
+
+                if (clienteDeLaFila != null)
+                {
+                    MessageBoxResult confirmacion = MessageBox.Show(
+                        $"¿Deseas reactivar a {clienteDeLaFila.Nombre}?",
+                        "Confirmar acción",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (confirmacion == MessageBoxResult.Yes)
+                    {
+                        if (cs.Reactivar(clienteDeLaFila.IdCliente))
+                        {
+                            MessageBox.Show("Mascota reactivada correctamente.", "Información",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            CargarDatos();
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se pudo reactivar la mascota.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al reactivar mascota: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

@@ -1,0 +1,224 @@
+﻿<UserControl x:Class="Vetcare.Presentacion.Clientes.UC_FacturasCliente"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White" FontFamily="Segoe UI">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,30">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Facturación" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
+                <TextBlock Text="Historial de cargos y pagos del cliente" Foreground="#7F8C8D" FontSize="14"/>
+            </StackPanel>
+
+            <!-- (Opcional futuro botón) -->
+            <!--<Button DockPanel.Dock="Right"
+                    Content="+ Nueva Factura"
+                    Background="#27AE60" Foreground="White"
+                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand"/>-->
+        </DockPanel>
+
+        <!-- RESUMEN -->
+        <Border Grid.Row="1"
+                Background="#FEF9E7"
+                CornerRadius="10"
+                Padding="20"
+                Margin="0,0,0,20"
+                BorderBrush="#F9E79F"
+                BorderThickness="1">
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="💰" FontSize="24" VerticalAlignment="Center" Margin="0,0,15,0"/>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="TOTAL PENDIENTE"
+                               FontSize="11"
+                               FontWeight="Bold"
+                               Foreground="#9A7D0A"/>
+
+                    <TextBlock x:Name="lblDeuda"
+                               Text="0,00 €"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Foreground="#D35400"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- TABLA -->
+        <DataGrid x:Name="dgFacturas"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  HorizontalGridLinesBrush="#F2F2F2"
+                  Background="Transparent"
+                  BorderThickness="0"
+                  FontSize="16"
+                  RowHeight="55">
+
+            <DataGrid.Resources>
+
+                <!-- CELDAS -->
+                <Style TargetType="DataGridCell">
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="10,0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridCell">
+                                <Border Background="{TemplateBinding Background}" BorderThickness="0">
+                                    <ContentPresenter VerticalAlignment="Center" Margin="10,0"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#EBF5FB"/>
+                            <Setter Property="Foreground" Value="#2C3E50"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <!-- HEADERS -->
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="10,0,10,10"/>
+                    <Setter Property="Foreground" Value="#95A5A6"/>
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="BorderBrush" Value="#F2F2F2"/>
+                </Style>
+
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="Nº FACTURA"
+                                    Binding="{Binding NumeroFactura}"
+                                    Width="*"
+                                    FontWeight="Bold"/>
+
+                <DataGridTextColumn Header="FECHA"
+                                    Binding="{Binding FechaEmision, StringFormat=\{0:dd/MM/yyyy\}}"
+                                    Width="*"/>
+
+                <!-- ESTADO -->
+                <DataGridTemplateColumn Header="ESTADO" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border x:Name="brdEstado"
+                                    CornerRadius="12"
+                                    Padding="10,3"
+                                    HorizontalAlignment="Left">
+
+                                <TextBlock x:Name="txtEstado"
+                                           Text="{Binding Estado}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </Border>
+
+                            <DataTemplate.Triggers>
+
+                                <DataTrigger Binding="{Binding Estado}" Value="Pagada">
+                                    <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
+                                    <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                    <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
+                                    <Setter TargetName="txtEstado" Property="Foreground" Value="#E74C3C"/>
+                                </DataTrigger>
+
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- TOTAL -->
+                <DataGridTextColumn Header="TOTAL"
+                                    Binding="{Binding Total, StringFormat={}{0:N2} €}"
+                                    Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="Margin" Value="0,0,20,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <!-- BOTÓN -->
+                <DataGridTemplateColumn Width="130">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Ver factura"
+                                    Click="btnVerFactura_Click"
+                                    Background="#1ABC9C"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Height="30"
+                                    Width="110"
+                                    Cursor="Hand"
+                                    FontWeight="SemiBold"
+                                    FontSize="13">
+
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- SIN FACTURAS -->
+        <Border x:Name="pnlSinFacturas"
+                Grid.Row="2"
+                Background="#F9FAFB"
+                CornerRadius="10"
+                Margin="0,10,0,0"
+                Visibility="Collapsed">
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <TextBlock Text="📄"
+                           FontSize="50"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"
+                           Opacity="0.7"/>
+
+                <TextBlock Text="No hay facturas"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="#2C3E50"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Este cliente aún no tiene movimientos registrados."
+                           FontSize="13"
+                           Foreground="#7F8C8D"
+                           HorizontalAlignment="Center"
+                           Margin="0,5,0,20"/>
+
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</UserControl>

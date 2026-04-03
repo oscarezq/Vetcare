@@ -84,24 +84,40 @@ namespace Vetcare.Presentacion.Usuarios
                 _usuario.Salt = nuevoSalt;
                 _usuario.DebeCambiarContrasena = false;
 
-                if (_usuarioService.Actualizar(_usuario))
+                // Guardamos en BD
+                bool actualizado = _usuarioService.Actualizar(_usuario);
+
+                if (actualizado)
                 {
-                    MessageBox.Show("Contraseña actualizada.", "VetCare", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Contraseña actualizada correctamente.", "VetCare", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     if (esPrimerLogin)
                     {
-                        // Si venimos del login, lanzamos la app
+                        // Creamos la ventana principal
                         MainWindow main = new MainWindow(_usuario);
                         main.Show();
-                    }
 
-                    this.DialogResult = true;
-                    this.Close();
+                        // IMPORTANTE: Marcamos la ventana actual para cerrar sin error de DialogResult
+                        Application.Current.MainWindow = main; // Cambiamos la referencia principal de la app
+                        this.Close();
+                    }
+                    else
+                    {
+                        // Si es cambio voluntario desde el menú
+                        this.DialogResult = true;
+                        this.Close();
+                    }
+                }
+                else
+                {
+                    MostrarError("No se pudo actualizar en la base de datos.");
                 }
             }
             catch (Exception ex)
             {
-                MostrarError("Error de conexión con la base de datos.");
+                // Loguea el error real en la consola de depuración para saber qué pasó exactamente
+                System.Diagnostics.Debug.WriteLine("Error: " + ex.Message);
+                MostrarError("Error al procesar la solicitud: " + ex.Message);
             }
         }
 

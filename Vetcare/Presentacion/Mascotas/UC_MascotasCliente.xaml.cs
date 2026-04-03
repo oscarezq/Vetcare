@@ -30,9 +30,19 @@ namespace Vetcare.Presentacion.Clientes
                 List<Mascota> mascotas = mascotaService.ObtenerPorCliente(_clienteActual.IdCliente);
                 dgMascotas.ItemsSource = mascotas;
 
-                // Lógica de visibilidad
+                // Lógica de visibilidad mejorada
                 bool tieneMascotas = mascotas != null && mascotas.Count > 0;
-                dgMascotas.Visibility = tieneMascotas ? Visibility.Visible : Visibility.Collapsed;
+
+                if (tieneMascotas)
+                {
+                    dgMascotas.Visibility = Visibility.Visible;
+                    pnlSinMascotas.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    dgMascotas.Visibility = Visibility.Collapsed;
+                    pnlSinMascotas.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception ex)
             {

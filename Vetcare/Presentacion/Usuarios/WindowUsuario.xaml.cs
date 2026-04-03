@@ -50,15 +50,22 @@ namespace Vetcare.Presentacion.Usuarios
         {
             try
             {
-                var roles = _rolService.ListarRoles()
-                       .Where(r => r.NombreRol != "Administrador")
-                       .ToList();
+                var roles = _rolService.ListarRoles();
+
+                // Solo filtramos si NO es edición
+                if (!_esEdicion)
+                {
+                    roles = roles
+                        .Where(r => r.NombreRol != "Administrador")
+                        .ToList();
+                }
 
                 cbRol.ItemsSource = roles;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar roles: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Error al cargar roles: " + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

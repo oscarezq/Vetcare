@@ -20,6 +20,7 @@ namespace Vetcare.Entidades
         public string Observaciones { get; set; }
         public string NombreCliente { get; set; }
         public string ApellidosCliente { get; set; }
+        public string NombreApellidosCliente => $"{NombreCliente} {ApellidosCliente}".Trim();
         public string NumeroDocumentoCliente { get; set; }
         public List<DetalleFactura> Detalles { get; set; } = new List<DetalleFactura>();
 

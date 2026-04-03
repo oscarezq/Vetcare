@@ -2,7 +2,8 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:util="clr-namespace:Vetcare.Entidades"
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="1100"
       Title="PageUsuarios">
@@ -108,21 +109,24 @@
                 </DockPanel>
 
                 <DataGrid x:Name="dgUsuarios" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
-                          MouseDoubleClick="DataGridRow_MouseDoubleClick" GridLinesVisibility="None" BorderThickness="0" 
+                          MouseDoubleClick="DataGridRow_MouseDoubleClick" GridLinesVisibility="None" BorderThickness="0" CanUserResizeColumns="False"
                           HeadersVisibility="Column" Background="White" FontSize="14" RowHeight="45" ColumnHeaderHeight="40" 
                           SelectionMode="Extended" SelectionUnit="FullRow" CanUserSortColumns="False" CanUserReorderColumns="False">
 
                     <DataGrid.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
 
                         <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="15,0"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
-                                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
                                             <ContentPresenter VerticalAlignment="Center" />
                                         </Border>
                                     </ControlTemplate>
@@ -130,15 +134,16 @@
                             </Setter>
                         </Style>
 
-                        <Style TargetType="DataGridColumnHeader">
+                        <Style x:Key="HeaderStyleComun" TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="FontSize" Value="12"/>
-                            <Setter Property="Padding" Value="15,0"/>
+                            <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0,0,0,2"/>
                             <Setter Property="BorderBrush" Value="#E67E22"/>
                         </Style>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}"/>
                     </DataGrid.Resources>
 
                     <DataGrid.RowStyle>
@@ -159,6 +164,36 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="ESTADO" Width="100">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center">
+                                        <TextBlock x:Name="txtEstado" FontSize="11" FontWeight="Bold" TextAlignment="Center"/>
+                                    </Border>
+
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Activo}" Value="True">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
+                                            <Setter TargetName="txtEstado" Property="Text" Value="Activo"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Activo}" Value="False">
+                                            <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
+                                            <Setter TargetName="txtEstado" Property="Foreground" Value="#CB4335"/>
+                                            <Setter TargetName="txtEstado" Property="Text" Value="Inactivo"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+
                         <DataGridTemplateColumn Header="USERNAME" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -176,35 +211,68 @@
                         <DataGridTextColumn Header="ROL" Binding="{Binding NombreRol}" Width="*"/>
                         <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="*"/>
 
-                        <DataGridTemplateColumn Header="ESTADO" Width="100">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Border x:Name="EstadoBorder" CornerRadius="10" Padding="8,2" HorizontalAlignment="Center" Background="#EBEDEF">
-                                        <TextBlock x:Name="EstadoTexto" Text="Inactivo" FontSize="11" FontWeight="Bold" Foreground="#7F8C8D"/>
-                                    </Border>
-                                    <DataTemplate.Triggers>
-                                        <DataTrigger Binding="{Binding Activo}" Value="True">
-                                            <Setter TargetName="EstadoBorder" Property="Background" Value="#D4EFDF"/>
-                                            <Setter TargetName="EstadoTexto" Property="Text" Value="ACTIVO"/>
-                                            <Setter TargetName="EstadoTexto" Property="Foreground" Value="#1E8449"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Activo}" Value="False">
-                                            <Setter TargetName="EstadoBorder" Property="Background" Value="#FADBD8"/>
-                                            <Setter TargetName="EstadoTexto" Property="Text" Value="INACTIVO"/>
-                                            <Setter TargetName="EstadoTexto" Property="Foreground" Value="#943126"/>
-                                        </DataTrigger>
-                                    </DataTemplate.Triggers>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
                         <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="👁" Click="btnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="✎" Click="btnEditarUsuario_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button Content="🗑" Click="btnEliminarUsuario_Click" Margin="2,0" Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+
+                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="btnEditar_Click" Margin="2,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Activo}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Dar de baja" Click="btnEliminar_Click" Margin="2,0" 
+                                                Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Activo}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <Button x:Name="btnReactivar" Content="✔" ToolTip="Reactivar" Click="btnReactivar_Click" Margin="2,0" 
+                                                Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Activo}" Value="False">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

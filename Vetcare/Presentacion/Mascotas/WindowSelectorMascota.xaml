@@ -127,7 +127,10 @@
                       SelectionMode="Single"
                       MouseDoubleClick="dgMascotas_MouseDoubleClick"
                       HorizontalScrollBarVisibility="Disabled"      
-                      ColumnWidth="*">
+                      ColumnWidth="*"
+                      CanUserResizeColumns="False"
+                      CanUserReorderColumns="False"
+                      CanUserSortColumns="False">
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="Transparent"/>
