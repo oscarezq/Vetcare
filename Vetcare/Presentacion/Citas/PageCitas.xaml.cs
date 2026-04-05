@@ -18,15 +18,17 @@ namespace Vetcare.Presentacion.Citas
         {
             InitializeComponent();
 
+            dtpFechaDesde.SelectedDate = DateTime.Today;
+
             // Ocultar selector si es Admin
-            if (Sesion.UsuarioActual.IdRol == 1)
+            if (Sesion.UsuarioActual.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3)
             {
                 brdSelectorVista.Visibility = Visibility.Collapsed;
-                rbTodasCitas.IsChecked = true; // El admin siempre ve todas
+                rbTodasCitas.IsChecked = true; // Siempre ven todas
             }
             else
             {
-                rbMisCitas.IsChecked = true; // El veterinario empieza viendo las suyas
+                rbMisCitas.IsChecked = true; // Veterinario
             }
 
             CargarDatos();
@@ -97,9 +99,17 @@ namespace Vetcare.Presentacion.Citas
         {
             if (sender is Button btn && btn.DataContext is Cita c)
             {
-                // Admin (1) edita todo. Veterinario solo lo suyo.
-                btn.Visibility = (Sesion.UsuarioActual.IdRol == 1 || c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario)
-                                 ? Visibility.Visible : Visibility.Collapsed;
+                bool esAdminORecepcionista = Sesion.UsuarioActual.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3;
+                bool esSuPropiaCita = c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario;
+
+                if (esAdminORecepcionista || esSuPropiaCita)
+                {
+                    btn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    btn.Visibility = Visibility.Collapsed;
+                }
             }
         }
 

@@ -18,7 +18,7 @@
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
-                <UniformGrid Columns="5" Margin="0,0,0,15">
+                <UniformGrid Columns="4" Margin="0,0,0,15">
                     <UniformGrid.Resources>
                         <Style TargetType="TextBox">
                             <Setter Property="Height" Value="28"/>
@@ -46,14 +46,10 @@
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Sexo" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbBuscaSexo" Height="28" VerticalContentAlignment="Center" SelectionChanged="cbSexo_SelectionChanged">
-                            <ComboBoxItem Content="" IsSelected="True"/>
+                            <ComboBoxItem Content="Todos" IsSelected="True"/>
                             <ComboBoxItem Content="Macho"/>
                             <ComboBoxItem Content="Hembra"/>
                         </ComboBox>
-                    </StackPanel>
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Dueño" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaDueno" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nacimiento - Desde" FontSize="10" Foreground="#7F8C8D"/>
@@ -273,7 +269,7 @@
                                             </Button.Style>
                                         </Button>
 
-                                        <Button x:Name="btnReactivar" Content="✔" ToolTip="Reactivar" Click="btnReactivar_Click" Margin="2,0" 
+                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="btnReactivar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">

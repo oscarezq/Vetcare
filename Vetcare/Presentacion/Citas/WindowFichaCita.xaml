@@ -15,21 +15,40 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Background="White" CornerRadius="10" Padding="25,20" BorderBrush="#D5DBDB" BorderThickness="1">
+        <Border Background="White" CornerRadius="10" Padding="25,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="Cita Médica:" FontSize="14" Foreground="#7F8C8D" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding FechaHora, StringFormat=dd/MM/yyyy HH:mm:ss}" 
-                           FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
+                <!-- Bloque de Información Izquierda -->
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Cita Médica:" FontSize="13" Foreground="#7F8C8D" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding FechaHora, StringFormat=dd/MM/yyyy HH:mm}" 
+                           FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,7,0,0">
+                        <TextBlock Text="Duración estimada:" FontSize="12" Foreground="#95A5A6" Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding DuracionEstimada}" FontSize="12" FontWeight="SemiBold" Foreground="#34495E"/>
+                        <TextBlock Text=" minutos" FontSize="12" Foreground="#34495E"/>
+                    </StackPanel>
                 </StackPanel>
 
-                <Border x:Name="borderEstado" Grid.Column="1" Padding="15,6" CornerRadius="15" Background="#3498DB">
-                    <TextBlock Text="{Binding Estado}" Foreground="White" FontWeight="SemiBold"/>
+                <!-- Botón de Estado (Altura Reducida) -->
+                <Border x:Name="borderEstado" 
+                Grid.Column="1" 
+                VerticalAlignment="Center"
+                Padding="12,3" 
+                CornerRadius="12" 
+                Background="#3498DB">
+                    <TextBlock Text="{Binding Estado}" 
+                       Foreground="White" 
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
                 </Border>
             </Grid>
         </Border>

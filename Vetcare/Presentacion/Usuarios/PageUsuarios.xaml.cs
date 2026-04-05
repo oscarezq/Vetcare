@@ -45,14 +45,18 @@ namespace Vetcare.Presentacion.Usuarios
                 filtrados = filtrados.Where(u => u.Username.ToLower().Contains(txtBuscaUsername.Text.ToLower()));
 
             if (!string.IsNullOrWhiteSpace(txtBuscaNombre.Text))
-                filtrados = filtrados.Where(u => u.Nombre.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
-
-            if (!string.IsNullOrWhiteSpace(txtBuscaEmail.Text))
-                filtrados = filtrados.Where(u => u.Email.ToLower().Contains(txtBuscaEmail.Text.ToLower()));
+                filtrados = filtrados.Where(u => u.NombreCompleto.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
 
             // Filtro por Rol
-            if (cbBuscaRol.SelectedItem is ComboBoxItem itemRol && !string.IsNullOrEmpty(itemRol.Content.ToString()))
-                filtrados = filtrados.Where(u => u.NombreRol == itemRol.Content.ToString());
+            if (cbBuscaRol.SelectedItem is ComboBoxItem itemRol)
+            {
+                string rolSeleccionado = itemRol.Content.ToString();
+                // Si NO es "Todos", aplicamos el filtro. Si ES "Todos", no hacemos nada (pasan todos).
+                if (rolSeleccionado != "Todos")
+                {
+                    filtrados = filtrados.Where(u => u.NombreRol == rolSeleccionado);
+                }
+            }
 
             // Filtro por Estado
             if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado && !string.IsNullOrEmpty(itemEstado.Content.ToString()))
@@ -91,7 +95,6 @@ namespace Vetcare.Presentacion.Usuarios
         {
             txtBuscaUsername.Clear();
             txtBuscaNombre.Clear();
-            txtBuscaEmail.Clear();
             dpBuscaFechaDesde.SelectedDate = null;
             dpBuscaFechaHasta.SelectedDate = null;
             cbBuscaRol.SelectedIndex = 0;

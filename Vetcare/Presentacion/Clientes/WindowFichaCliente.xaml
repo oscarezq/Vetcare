@@ -49,7 +49,10 @@
 
                 <Button Content="Datos Personales" Style="{StaticResource MenuButtonStyle}" Click="btnDatos_Click"/>
                 <Button Content="Mascotas" Style="{StaticResource MenuButtonStyle}" Click="btnMascotas_Click"/>
-                <Button Content="Facturación" Style="{StaticResource MenuButtonStyle}" Click="btnFacturas_Click"/>
+                <Button x:Name="btnFacturacionMenu" 
+                        Content="Facturación" 
+                        Style="{StaticResource MenuButtonStyle}" 
+                        Click="btnFacturas_Click"/>
             </StackPanel>
         </Border>
 

@@ -76,6 +76,20 @@ namespace Vetcare.Presentacion.Servicios
                 filtrados = filtrados.Where(p => p.Stock <= sMax);
             }
 
+            if (cbBuscaEstado != null && cbBuscaEstado.SelectedItem is ComboBoxItem selectedEstado)
+            {
+                string estado = selectedEstado.Content.ToString();
+                if (estado == "Activo")
+                {
+                    filtrados = filtrados.Where(p => p.Activo == true);
+                }
+                else if (estado == "Inactivo")
+                {
+                    filtrados = filtrados.Where(p => p.Activo == false);
+                }
+                // Si es "Todos", no filtramos nada (se queda la lista como está)
+            }
+
             // 6. Ordenación
             string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString();
             bool ascendente = rbAsc.IsChecked == true;

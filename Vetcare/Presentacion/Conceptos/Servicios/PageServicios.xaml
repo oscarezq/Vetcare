@@ -14,40 +14,43 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- FILTROS -->
+        <!-- SECCIÓN DE FILTROS -->
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
                 <UniformGrid Columns="4" Margin="0,0,0,15">
                     <UniformGrid.Resources>
-                        <Style TargetType="TextBox">
+                        <Style TargetType="Control" x:Key="ControlBaseStyle">
                             <Setter Property="Height" Value="28"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource ControlBaseStyle}">
                             <Setter Property="Padding" Value="5,0"/>
                         </Style>
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource ControlBaseStyle}"/>
                     </UniformGrid.Resources>
 
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Nombre del Servicio" FontSize="10" Foreground="#7F8C8D"/>
+                    <StackPanel Margin="5,2">
+                        <TextBlock Text="Nombre del Servicio" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroServicio_Changed"/>
                     </StackPanel>
 
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Precio Mínimo (€)" FontSize="10" Foreground="#7F8C8D"/>
+                    <StackPanel Margin="5,2">
+                        <TextBlock FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"><Run Text="Precio Mín"/><Run Language="es-es" Text="."/><Run Text=" (€)"/></TextBlock>
                         <TextBox x:Name="txtPrecioMin" TextChanged="FiltroServicio_Changed"/>
                     </StackPanel>
 
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Precio Máximo (€)" FontSize="10" Foreground="#7F8C8D"/>
+                    <StackPanel Margin="5,2">
+                        <TextBlock FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"><Run Text="Precio Máx"/><Run Language="es-es" Text="."/><Run Text=" (€)"/></TextBlock>
                         <TextBox x:Name="txtPrecioMax" TextChanged="FiltroServicio_Changed"/>
                     </StackPanel>
 
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
-                        <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroServicio_Changed">
-                            <ComboBoxItem Content="Todos" IsSelected="True"/>
-                            <ComboBoxItem Content="Activo"/>
+                    <StackPanel Margin="5,2">
+                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
+                        <ComboBox x:Name="cbBuscaEstado" SelectionChanged="FiltroServicio_Changed">
+                            <ComboBoxItem Content="Todos"/>
+                            <ComboBoxItem Content="Activo" IsSelected="True"/>
                             <ComboBoxItem Content="Inactivo"/>
                         </ComboBox>
                     </StackPanel>
@@ -67,13 +70,12 @@
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroServicio_Changed"/>
                     </StackPanel>
 
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click"
-                            Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
-        <!-- DATAGRID -->
+        <!-- SECCIÓN DE LISTADO -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
@@ -84,18 +86,14 @@
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Catálogo de Servicios" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
+                    <!-- MODIFICADO: Eliminado el trigger que ocultaba el botón al Recepcionista -->
                     <Button DockPanel.Dock="Right" x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Click="btnNuevoServicio_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Visibility" Value="Visible"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
                             </Style>
-                        </Button.Style>
+                        </Button.Resources>
                     </Button>
                 </DockPanel>
 
@@ -108,20 +106,6 @@
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
 
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="10,0"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="DataGridCell">
-                                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter VerticalAlignment="Center" />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-
                         <Style x:Key="HeaderStyleComun" TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
@@ -131,6 +115,20 @@
                             <Setter Property="BorderThickness" Value="0,0,0,2"/>
                             <Setter Property="BorderBrush" Value="#E67E22"/>
                         </Style>
+
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="10,0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter VerticalAlignment="Center" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+
                         <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}"/>
                     </DataGrid.Resources>
 
@@ -154,6 +152,11 @@
                     <DataGrid.Columns>
                         <!-- ESTADO -->
                         <DataGridTemplateColumn Header="ESTADO" Width="100">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center">
@@ -189,7 +192,7 @@
 
                         <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion}" Width="1.5*" />
                         <DataGridTextColumn Header="PRECIO SIN IVA" Binding="{Binding PrecioSinIva, StringFormat=\{0:N2\} €}" Width="150" />
-                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaPorcentaje, StringFormat=\{0\}%}" Width="150" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaPorcentaje, StringFormat=\{0\}%}" Width="100" />
 
                         <DataGridTemplateColumn Header="PRECIO CON IVA" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
@@ -201,11 +204,19 @@
 
                         <!-- ACCIONES -->
                         <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button x:Name="btnDetalles" Content="👁" Click="btnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1"/>
-                                        <Button x:Name="btnEditar" Content="✎" Click="btnEditarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1">
+                                        <!-- BOTÓN DETALLE: Siempre visible -->
+                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+
+                                        <!-- BOTÓN EDITAR: Modificado para acceso de Recepcionista -->
+                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="btnEditarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -213,14 +224,13 @@
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
                                         </Button>
-                                        <Button x:Name="btnEliminar" Content="❌" Click="btnEliminarServicio_Click" Margin="2,0" Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8">
+
+                                        <!-- BOTÓN ELIMINAR: Modificado para acceso de Recepcionista -->
+                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Eliminar" Click="btnEliminarServicio_Click" Margin="2,0" Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -228,23 +238,19 @@
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
                                         </Button>
-                                        <Button x:Name="btnReactivar" Content="✔" Click="btnReactivarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF">
+
+                                        <!-- BOTÓN REACTIVAR: Modificado para acceso de Recepcionista -->
+                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="btnReactivarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -254,7 +260,6 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

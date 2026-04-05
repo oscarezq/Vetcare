@@ -18,7 +18,7 @@
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
-                <UniformGrid Columns="5" Margin="0,0,0,15">
+                <UniformGrid Columns="4" Margin="0,0,0,15">
                     <UniformGrid.Resources>
                         <Style TargetType="TextBox">
                             <Setter Property="Height" Value="28"/>
@@ -32,21 +32,17 @@
                     </UniformGrid.Resources>
 
                     <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroUsuario_Changed"/>
+                    </StackPanel>
+                    <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Username" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaUsername" TextChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Nombre" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroUsuario_Changed"/>
-                    </StackPanel>
-                    <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Email" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaEmail" TextChanged="FiltroUsuario_Changed"/>
-                    </StackPanel>
-                    <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Rol" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbBuscaRol" SelectionChanged="FiltroUsuario_Changed">
-                            <ComboBoxItem Content="" IsSelected="True"/>
+                            <ComboBoxItem Content="Todos" IsSelected="True"/>
                             <ComboBoxItem Content="Administrador"/>
                             <ComboBoxItem Content="Veterinario"/>
                             <ComboBoxItem Content="Recepcionista"/>
@@ -55,18 +51,18 @@
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbBuscaEstado" SelectionChanged="FiltroUsuario_Changed">
-                            <ComboBoxItem Content="" IsSelected="True"/>
-                            <ComboBoxItem Content="Activo"/>
+                            <ComboBoxItem Content="Todos"/>
+                            <ComboBoxItem Content="Activo" IsSelected="True"/>
                             <ComboBoxItem Content="Inactivo"/>
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dpBuscaFechaDesde" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
+                        <DatePicker x:Name="dpBuscaFechaDesde" VerticalContentAlignment="Center" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dpBuscaFechaHasta" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
+                        <DatePicker x:Name="dpBuscaFechaHasta" VerticalContentAlignment="Center" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
                 </UniformGrid>
 
@@ -74,7 +70,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
-                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" SelectionChanged="FiltroUsuario_Changed">
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" SelectionChanged="FiltroUsuario_Changed" VerticalContentAlignment="Center">
                         <ComboBoxItem Content="Username" IsSelected="True"/>
                         <ComboBoxItem Content="Nombre"/>
                         <ComboBoxItem Content="Rol"/>
@@ -257,7 +253,7 @@
                                             </Button.Style>
                                         </Button>
 
-                                        <Button x:Name="btnReactivar" Content="✔" ToolTip="Reactivar" Click="btnReactivar_Click" Margin="2,0" 
+                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="btnReactivar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">

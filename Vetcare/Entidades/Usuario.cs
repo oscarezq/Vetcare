@@ -47,6 +47,8 @@ namespace Vetcare.Entidades
         /// </summary>
         public string Apellidos { get; set; }
 
+        public string NombreCompleto => $"{Nombre} {Apellidos}";
+
         /// <summary>
         /// Email del usuario.
         /// </summary>

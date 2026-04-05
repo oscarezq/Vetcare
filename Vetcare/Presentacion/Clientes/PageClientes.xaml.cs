@@ -147,9 +147,31 @@ namespace Vetcare.Presentacion.Clientes
         {
             if (sender is Button b && b.DataContext is Cliente c)
             {
-                if (MessageBox.Show($"¿Dar de baja a {c.NombreCompleto}?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                // Construimos un mensaje más informativo y visual
+                string mensaje = $"¿Está seguro de que desea dar de baja a {c.NombreCompleto}?\n\n" +
+                                 "IMPORTANTE: Esta acción también dará de baja automáticamente " +
+                                 "a todas las mascotas asociadas a este cliente.";
+
+                var resultado = MessageBox.Show(mensaje, "Confirmar Baja de Cliente",
+                                               MessageBoxButton.YesNo,
+                                               MessageBoxImage.Warning);
+
+                if (resultado == MessageBoxResult.Yes)
                 {
-                    if (cs.Desactivar(c.IdCliente)) CargarDatos();
+                    try
+                    {
+                        if (cs.Desactivar(c.IdCliente))
+                        {
+                            CargarDatos();
+                            MessageBox.Show("Cliente y mascotas desactivados correctamente.", "Éxito",
+                                           MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al procesar la baja: {ex.Message}", "Error",
+                                       MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
@@ -204,14 +226,14 @@ namespace Vetcare.Presentacion.Clientes
                     {
                         if (cs.Reactivar(clienteDeLaFila.IdCliente))
                         {
-                            MessageBox.Show("Mascota reactivada correctamente.", "Información",
+                            MessageBox.Show("Cliente reactivado correctamente.", "Información",
                                 MessageBoxButton.OK, MessageBoxImage.Information);
 
                             CargarDatos();
                         }
                         else
                         {
-                            MessageBox.Show("No se pudo reactivar la mascota.", "Error",
+                            MessageBox.Show("No se pudo reactivar el cliente.", "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
@@ -219,7 +241,7 @@ namespace Vetcare.Presentacion.Clientes
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al reactivar mascota: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al reactivar cliente: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

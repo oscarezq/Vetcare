@@ -84,7 +84,6 @@ namespace Vetcare.Presentacion
                     string numeroChipBusca = txtBuscaNumeroChip.Text.ToLower();
                     string especieBusca = txtBuscaEspecie.Text.ToLower();
                     string razaBusca = txtBuscaRaza.Text.ToLower();
-                    string duenoBusca = txtBuscaDueno.Text.ToLower();
                     string sexoBusca = "";
                     ComboBoxItem itemSexo = (ComboBoxItem)cbBuscaSexo.SelectedItem;
                     if (itemSexo != null && itemSexo.Content != null)
@@ -97,7 +96,6 @@ namespace Vetcare.Presentacion
                     if (!string.IsNullOrEmpty(numeroChipBusca) && !m.NumeroChip.ToLower().Contains(numeroChipBusca)) continue;
                     if (!string.IsNullOrEmpty(especieBusca) && !m.NombreEspecie.ToLower().Contains(especieBusca)) continue;
                     if (!string.IsNullOrEmpty(razaBusca) && !m.NombreRaza.ToLower().Contains(razaBusca)) continue;
-                    if (!string.IsNullOrEmpty(duenoBusca) && !m.Dueno.ToLower().Contains(duenoBusca)) continue;
                     if (sexoBusca != "" && sexoBusca != "todos")
                     {
                         if (m.Sexo == null || !m.Sexo.ToLower().Contains(sexoBusca)) continue;
@@ -177,7 +175,6 @@ namespace Vetcare.Presentacion
             txtBuscaEspecie.Clear();
             txtBuscaRaza.Clear();
             cbBuscaSexo.SelectedIndex = 0;
-            txtBuscaDueno.Clear();
             dtpBuscaFechaDesde.SelectedDate = null;
             dtpBuscaFechaHasta.SelectedDate = null;
             cbOrdenarPor.SelectedIndex = 0;
@@ -361,36 +358,69 @@ namespace Vetcare.Presentacion
             try
             {
                 Button botonPulsado = sender as Button;
-                Mascota mascotaDeLaFila = botonPulsado.DataContext as Mascota;
+                Mascota mascota = botonPulsado.DataContext as Mascota;
 
-                if (mascotaDeLaFila != null)
+                if (mascota == null) return;
+
+                ClienteService cs = new ClienteService();
+
+                Cliente cliente = cs.ObtenerPorId(mascota.IdCliente);
+                bool clienteActivo = cliente.Activo;
+
+                // 🔴 CASO: Cliente inactivo
+                if (!clienteActivo)
                 {
-                    MessageBoxResult confirmacion = MessageBox.Show(
-                        $"¿Deseas reactivar a {mascotaDeLaFila.Nombre}?",
-                        "Confirmar acción",
+                    MessageBoxResult resultado = MessageBox.Show(
+                        $"El dueño de {mascota.Nombre} está inactivo.\n\n" +
+                        "¿Deseas activarlo también?",
+                        "Dueño inactivo",
                         MessageBoxButton.YesNo,
-                        MessageBoxImage.Question);
+                        MessageBoxImage.Warning);
 
-                    if (confirmacion == MessageBoxResult.Yes)
+                    if (resultado == MessageBoxResult.Yes)
                     {
-                        if (ms.Reactivar(mascotaDeLaFila.IdMascota))
+                        // Activar cliente
+                        if (!cs.Reactivar(mascota.IdCliente))
                         {
-                            MessageBox.Show("Mascota reactivada correctamente.", "Información",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show("No se pudo reactivar el dueño.",
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                    }
+                    else if (resultado == MessageBoxResult.No)
+                    {
+                        // Solo cancelar operación
+                        return;
+                    }
+                }
 
-                            CargarDatos();
-                        }
-                        else
-                        {
-                            MessageBox.Show("No se pudo reactivar la mascota.", "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
+                // ✅ Reactivar mascota
+                MessageBoxResult confirmacion = MessageBox.Show(
+                    $"¿Deseas reactivar a {mascota.Nombre}?",
+                    "Confirmar acción",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (confirmacion == MessageBoxResult.Yes)
+                {
+                    if (ms.Reactivar(mascota.IdMascota))
+                    {
+                        MessageBox.Show("Mascota reactivada correctamente.",
+                            "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        CargarDatos();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo reactivar la mascota.",
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al reactivar mascota: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al reactivar mascota: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

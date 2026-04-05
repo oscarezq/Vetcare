@@ -17,6 +17,12 @@ namespace Vetcare.Presentacion.Clientes
             facturaService = new FacturaService();
             CargarCliente(idCliente);
 
+            if (Sesion.UsuarioActual != null && Sesion.UsuarioActual.IdRol == 2)
+            {
+                // Ocultamos el botón completamente para que no pueda hacer clic
+                btnFacturacionMenu.Visibility = Visibility.Collapsed;
+            }
+
             // Mostrar por defecto los datos personales al abrir
             MostrarDatosPersonales();
         }

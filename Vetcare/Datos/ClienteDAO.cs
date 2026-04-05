@@ -112,12 +112,37 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = "UPDATE clientes SET activo = FALSE WHERE id_cliente = @id";
-
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                // Iniciamos una transacción para asegurar la integridad de los datos
+                using (MySqlTransaction trans = con.BeginTransaction())
                 {
-                    cmd.Parameters.AddWithValue("@id", idCliente);
-                    return cmd.ExecuteNonQuery() > 0;
+                    try
+                    {
+                        // 1. Desactivar al Cliente
+                        string sqlCliente = "UPDATE clientes SET activo = FALSE WHERE id_cliente = @id";
+                        using (MySqlCommand cmdCliente = new MySqlCommand(sqlCliente, con, trans))
+                        {
+                            cmdCliente.Parameters.AddWithValue("@id", idCliente);
+                            cmdCliente.ExecuteNonQuery();
+                        }
+
+                        // 2. Desactivar todas sus Mascotas
+                        string sqlMascotas = "UPDATE mascotas SET activo = FALSE WHERE id_cliente = @id";
+                        using (MySqlCommand cmdMascotas = new MySqlCommand(sqlMascotas, con, trans))
+                        {
+                            cmdMascotas.Parameters.AddWithValue("@id", idCliente);
+                            cmdMascotas.ExecuteNonQuery();
+                        }
+
+                        // Si todo ha ido bien, confirmamos los cambios
+                        trans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        // Si algo falla, deshacemos cualquier cambio pendiente
+                        trans.Rollback();
+                        throw; // Re-lanzamos la excepción para que el Service/UI la capture
+                    }
                 }
             }
         }

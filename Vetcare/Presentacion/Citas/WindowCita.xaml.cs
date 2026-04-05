@@ -25,6 +25,8 @@ namespace Vetcare.Presentacion.Citas
             InitializeComponent();
             cita = new Cita();
             dtpFecha.SelectedDate = DateTime.Now;
+
+            AplicarRestriccionVeterinario();
         }
 
         public WindowCita(Cita citaExistente)
@@ -37,6 +39,24 @@ namespace Vetcare.Presentacion.Citas
             CargarDatos();
         }
 
+        private void AplicarRestriccionVeterinario()
+        {
+            // Verificamos si existe sesión y si el rol es Veterinario (IdRol == 2 según tu lógica anterior)
+            if (Sesion.UsuarioActual != null && Sesion.UsuarioActual.IdRol == 2)
+            {
+                // 1. Asignamos su ID de veterinario (usando su IdUsuario o IdVeterinario según tu DB)
+                if (Sesion.UsuarioActual.IdVeterinario != null)
+                    idVeterinarioSeleccionado = (int) Sesion.UsuarioActual.IdVeterinario;
+
+                // 2. Actualizamos el texto visual con su nombre
+                ActualizarVisualSelector(txtNombreVeterinario,
+                    $"{Sesion.UsuarioActual.Nombre} {Sesion.UsuarioActual.Apellidos}");
+
+                // 3. Deshabilitamos el botón para que no pueda cambiarlo
+                btnSeleccionarVeterinario.IsEnabled = false;
+            }
+        }
+
         private void CargarDatos()
         {
             // Cargar Mascota y aplicar estilo visual
@@ -45,7 +65,7 @@ namespace Vetcare.Presentacion.Citas
             if (mascota != null) ActualizarVisualSelector(txtNombreMascota, mascota.Nombre);
 
             // Cargar Veterinario y aplicar estilo visual
-            idVeterinarioSeleccionado = cita.IdVeterinario;
+            idVeterinarioSeleccionado = cita.IdUsuarioVeterinario;
             var vete = usuarioService.ObtenerPorId(idVeterinarioSeleccionado);
             if (vete != null) ActualizarVisualSelector(txtNombreVeterinario, $"{vete.Nombre} {vete.Apellidos}");
 

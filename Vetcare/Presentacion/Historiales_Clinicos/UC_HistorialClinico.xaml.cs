@@ -77,5 +77,25 @@ namespace Vetcare.Presentacion.Mascotas
                 MessageBox.Show($"No se pudo cargar el detalle: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
+        private void btnNuevoRegistro_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Abrimos la ventana SIN cita
+                WindowConsulta ventana = new WindowConsulta(null);
+
+                ventana.Owner = Window.GetWindow(this);
+                ventana.ShowDialog();
+
+                // Recargar historial tras cerrar
+                CargarHistorial();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al crear registro: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }

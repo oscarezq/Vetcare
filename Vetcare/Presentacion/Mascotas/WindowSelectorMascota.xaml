@@ -81,11 +81,12 @@
                 <TextBlock Text="Buscador de Mascotas" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
             </StackPanel>
 
-            <Button DockPanel.Dock="Right" 
-                    Content="+ NUEVA MASCOTA" 
-                    Click="btnNuevo_Click" 
-                    Background="#1ABC9C" Foreground="White" 
-                    Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+            <Button x:Name="btnNuevaMascota"
+        DockPanel.Dock="Right" 
+        Content="+ NUEVA MASCOTA" 
+        Click="btnNuevo_Click" 
+        Background="#1ABC9C" Foreground="White" 
+        Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">

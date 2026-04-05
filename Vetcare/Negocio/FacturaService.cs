@@ -35,6 +35,11 @@ namespace Vetcare.Negocio
             return facturaDAO.CalcularDeudaCliente(idCliente);
         }
 
+        public List<Factura> ObtenerFacturasPendientes()
+        {
+            return facturaDAO.ObtenerFacturasPendientes();
+        }
+
         public bool AnularFactura(int idFactura)
         {
             return facturaDAO.AnularFactura(idFactura);

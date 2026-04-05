@@ -65,7 +65,7 @@ namespace Vetcare.Presentacion.Usuarios
 
             if (nueva.Length < 8 || !ValidarSeguridad(nueva))
             {
-                MostrarError("Mínimo 8 caracteres, una mayúscula y un número.");
+                MostrarError("Mínimo 8 caracteres, una mayúscula, una minúscula y un número.");
                 return;
             }
 
@@ -130,11 +130,6 @@ namespace Vetcare.Presentacion.Usuarios
         {
             lblError.Text = mensaje;
             brdError.Visibility = Visibility.Visible;
-        }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            brdError.Visibility = Visibility.Collapsed;
         }
     }
 }

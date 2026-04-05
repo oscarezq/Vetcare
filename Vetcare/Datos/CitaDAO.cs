@@ -91,6 +91,46 @@ namespace Vetcare.Datos
             return cita;
         }
 
+        public List<Cita> ObtenerCitasHoyPorVeterinario(int idVeterinario)
+        {
+            List<Cita> lista = new List<Cita>();
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                string sql = @"
+            SELECT 
+                c.id_cita, c.id_mascota, c.id_veterinario, c.fecha_hora,
+                c.duracion_estimada, c.motivo, c.estado, c.observaciones,
+                m.nombre AS nombre_mascota,
+                CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno,
+                cli.id_cliente AS id_cliente_dueno,
+                CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario,
+                v.numero_colegiado,
+                v.id_usuario AS id_usuario_veterinario
+            FROM citas c
+            INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
+            INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente
+            INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
+            INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario
+            WHERE c.id_veterinario = @idVeterinario -- Asegúrate que pasas el ID del Veterinario, no del Usuario
+              AND DATE(c.fecha_hora) = CURDATE() 
+              AND c.estado <> 'Cancelada'
+            ORDER BY c.fecha_hora ASC";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idVeterinario", idVeterinario);
+
+                using (MySqlDataReader rdr = cmd.ExecuteReader())
+                {
+                    while (rdr.Read())
+                    {
+                        lista.Add(MappingCita(rdr));
+                    }
+                }
+            }
+            return lista;
+        }
+
         public bool Insertar(Cita cita)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
@@ -207,47 +247,65 @@ namespace Vetcare.Datos
             }
         }
 
-        // Próximas citas
-        public List<Cita> ObtenerProximasCitas()
+        public int ContarCitasHoyPorVeterinario(int idUsuarioVeterinario)
         {
-            List<Cita> lista = new List<Cita>();
-
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
 
+                // Filtramos por el id_usuario de la tabla veterinarios
+                // y que la fecha coincida con el día de hoy
                 string sql = @"
-                SELECT c.id_cita,
-                       c.fecha_hora,
-                       c.motivo,
-                       c.estado,
-                       m.nombre AS mascota,
-                       CONCAT(cl.nombre, ' ', cl.apellidos) AS cliente
-                FROM citas c
-                INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
-                INNER JOIN clientes cl ON m.id_cliente = cl.id_cliente
-                WHERE DATE(fecha_hora) = CURDATE() AND estado <> 'Cancelada'
-                ORDER BY c.fecha_hora";
+                    SELECT COUNT(*) 
+                    FROM citas c
+                    INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
+                    WHERE c.id_veterinario = @idVeterinario 
+                      AND DATE(c.fecha_hora) = CURDATE() 
+                      AND c.estado <> 'Cancelada'";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idVeterinario", idUsuarioVeterinario);
 
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        // Próximas citas
+        public List<Cita> ObtenerProximasCitas()
+        {
+            List<Cita> lista = new List<Cita>();
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                // Usamos la misma consulta completa que los demás métodos para no romper el Mapping
+                string sql = @"
+            SELECT 
+                c.id_cita, c.id_mascota, c.id_veterinario, c.fecha_hora,
+                c.duracion_estimada, c.motivo, c.estado, c.observaciones,
+                m.nombre AS nombre_mascota,
+                CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno,
+                cli.id_cliente AS id_cliente_dueno,
+                CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario,
+                v.numero_colegiado,
+                v.id_usuario AS id_usuario_veterinario
+            FROM citas c
+            INNER JOIN mascotas m ON c.id_mascota = m.id_mascota
+            INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente
+            INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario
+            INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario
+            WHERE DATE(c.fecha_hora) = CURDATE() AND c.estado <> 'Cancelada'
+            ORDER BY c.fecha_hora ASC";
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
                 using (MySqlDataReader rdr = cmd.ExecuteReader())
                 {
                     while (rdr.Read())
                     {
-                        lista.Add(new Cita
-                        {
-                            IdCita = Convert.ToInt32(rdr["id_cita"]),
-                            FechaHora = Convert.ToDateTime(rdr["fecha_hora"]),
-                            Motivo = rdr["motivo"].ToString(),
-                            NombreMascota = rdr["mascota"].ToString(),
-                            NombreDueno = rdr["cliente"].ToString(),
-                            Estado = rdr["estado"].ToString()
-                        });
+                        // USAR SIEMPRE EL MAPPING PARA EVITAR ERRORES DE NOMBRES
+                        lista.Add(MappingCita(rdr));
                     }
                 }
             }
-
             return lista;
         }
 

@@ -19,6 +19,11 @@ namespace Vetcare.Negocio
             return citaDAO.ObtenerPorId(id);
         }
 
+        public List<Cita> ObtenerCitasHoyPorVeterinario(int id)
+        {
+            return citaDAO.ObtenerCitasHoyPorVeterinario(id);
+        }
+
         public bool Insertar(Cita cita)
         {
             return citaDAO.Insertar(cita);
@@ -47,6 +52,11 @@ namespace Vetcare.Negocio
         public int ContarCitasHoy()
         {
             return citaDAO.ContarCitasHoy();
+        }
+
+        public int ContarCitasHoyPorVeterinario(int idVeterinario)
+        {
+            return citaDAO.ContarCitasHoyPorVeterinario(idVeterinario);
         }
 
         public List<Cita> ObtenerProximasCitas()

@@ -16,6 +16,11 @@ namespace Vetcare.Presentacion
         {
             InitializeComponent();
             CargarLista();
+
+            if (Sesion.UsuarioActual.IdRol == 2)
+            {
+                btnNuevaMascota.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void CargarLista()

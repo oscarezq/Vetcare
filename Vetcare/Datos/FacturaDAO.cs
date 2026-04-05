@@ -175,6 +175,48 @@ namespace Vetcare.Datos
             return lista;
         }
 
+        public List<Factura> ObtenerFacturasPendientes()
+        {
+            List<Factura> lista = new List<Factura>();
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                // Traemos las facturas pendientes con el nombre del cliente para el Dashboard
+                string sql = @"SELECT f.*, 
+                               c.nombre AS nombre_cliente, 
+                               c.apellidos AS apellidos_cliente
+                        FROM facturas f 
+                        INNER JOIN clientes c ON f.id_cliente = c.id_cliente
+                        WHERE f.estado = 'Pendiente'
+                        ORDER BY f.fecha_emision ASC"; // ASC para ver las más antiguas primero
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+
+                try
+                {
+                    con.Open();
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            // Usamos tu mapeador existente
+                            Factura f = MapearFactura(dr);
+
+                            // Asignamos los nombres para que se vean en el DataGrid
+                            f.NombreCliente = dr["nombre_cliente"].ToString();
+                            f.ApellidosCliente = dr["apellidos_cliente"].ToString();
+
+                            lista.Add(f);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al obtener facturas pendientes: " + ex.Message);
+                }
+            }
+            return lista;
+        }
+
         public decimal CalcularDeudaCliente(int idCliente)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())

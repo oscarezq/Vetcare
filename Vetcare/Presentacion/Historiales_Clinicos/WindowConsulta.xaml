@@ -2,11 +2,61 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Detalle de Consulta"
-        Height="700" Width="1000"
+        Height="780" Width="1100"
         WindowStartupLocation="CenterScreen"
-        Background="#F4F7F6">
+        Background="#F0F3F5">
 
-    <Grid Margin="30">
+    <Window.Resources>
+        <!-- Estilo base para TextBox con Scroll -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D5DBDB"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </Style.Resources>
+
+            <Style.Triggers>
+                <!-- Solo mantenemos el efecto de azul al pasar el mouse si NO es lectura -->
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver" Value="True"/>
+                        <Condition Property="IsReadOnly" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="BorderBrush" Value="#3498DB"/>
+                </MultiTrigger>
+
+                <!-- Si quieres que cuando sea lectura el cursor no parezca de escritura -->
+                <Trigger Property="IsReadOnly" Value="True">
+                    <Setter Property="Cursor" Value="Arrow"/>
+                    <!-- Opcional: un borde un poquito más suave pero sin ser gris feo -->
+                    <Setter Property="BorderBrush" Value="#E5E8E8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- PESO corregido para que no se corte el texto -->
+        <Style x:Key="WeightTextBox" TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+            <Setter Property="AcceptsReturn" Value="False"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="Height" Value="45"/>
+            <!-- Altura suficiente para el texto y padding -->
+        </Style>
+
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="15" ShadowDepth="2" Color="#D0D0D0" Opacity="0.4"/>
+    </Window.Resources>
+
+    <Grid Margin="40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -14,91 +64,96 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,25">
-            <TextBlock x:Name="lblTitulo" Text="REGISTRAR CONSULTA" 
-                       FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
-            <Rectangle Height="4" Fill="#27AE60" HorizontalAlignment="Left" Width="40" RadiusX="2" RadiusY="2" Margin="0,8,0,0"/>
+        <!-- ENCABEZADO -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,30">
+            <TextBlock x:Name="lblTitulo" Text="REGISTRAR CONSULTA" FontSize="26" FontWeight="Bold" Foreground="#2C3E50"/>
+            <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
         </StackPanel>
 
-        <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,30">
-            <Border Background="White" CornerRadius="10" Padding="15" Margin="0,0,10,0" BorderBrush="#D5DBDB" BorderThickness="1">
+        <!-- INFO CARDS (Mascota, Vet, Fecha) -->
+        <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,25">
+            <Border Background="White" CornerRadius="12" Padding="20" Effect="{StaticResource CardShadow}">
                 <StackPanel>
-                    <TextBlock Text="MASCOTA" FontSize="10" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,5"/>
-                    <TextBlock x:Name="txtMascotaDisplay" FontSize="16" Foreground="#2C3E50" FontWeight="SemiBold" Text="Nombre Mascota"/>
+                    <TextBlock Text="MASCOTA" FontSize="10" FontWeight="Normal" Foreground="#95A5A6"/>
+                    <TextBlock x:Name="txtMascotaDisplay" FontSize="17" FontWeight="Bold" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
-            <Border Background="White" CornerRadius="10" Padding="15" Margin="5,0,5,0" BorderBrush="#D5DBDB" BorderThickness="1">
+            <Border Background="White" CornerRadius="12" Padding="20" Margin="20,0" Effect="{StaticResource CardShadow}">
                 <StackPanel>
-                    <TextBlock Text="VETERINARIO" FontSize="10" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,5"/>
-                    <TextBlock x:Name="txtVeterinarioDisplay" FontSize="16" Foreground="#2C3E50" FontWeight="SemiBold" Text="Nombre Vet"/>
+                    <TextBlock Text="VETERINARIO" FontSize="10" FontWeight="Bold" Foreground="#95A5A6"/>
+                    <TextBlock x:Name="txtVeterinarioDisplay" FontSize="17" FontWeight="Bold" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
-            <Border Background="White" CornerRadius="10" Padding="15" Margin="10,0,0,0" BorderBrush="#D5DBDB" BorderThickness="1">
+            <Border Background="White" CornerRadius="12" Padding="20" Effect="{StaticResource CardShadow}">
                 <StackPanel>
-                    <TextBlock Text="FECHA DE CITA" FontSize="10" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,5"/>
-                    <TextBlock x:Name="txtFechaDisplay" FontSize="16" Foreground="#2C3E50" FontWeight="SemiBold" Text="01/01/2024"/>
+                    <TextBlock Text="FECHA" FontSize="10" FontWeight="Bold" Foreground="#95A5A6"/>
+                    <TextBlock x:Name="txtFechaDisplay" FontSize="17" FontWeight="Bold" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="12" Padding="25" BorderBrush="#D5DBDB" BorderThickness="1">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <!-- FORMULARIO CON SCROLL SEPARADO -->
+        <Border Grid.Row="2" Background="White" CornerRadius="15" Effect="{StaticResource CardShadow}">
+            <!-- El Padding se lo damos al ScrollViewer para que la barra no toque el borde -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="30,30,40,30">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,25" VerticalAlignment="Bottom">
-                        <StackPanel Width="150">
-                            <TextBlock Text="Peso (kg)" FontSize="12" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,8"/>
-                            <TextBox x:Name="txtPeso" Height="35" VerticalContentAlignment="Center" Padding="10,0" 
-                             BorderBrush="#BDC3C7" BorderThickness="1"/>
+                    <!-- PESO: Sin Enter, Solo números -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,25">
+                        <StackPanel Width="180">
+                            <TextBlock Text="Peso (kg)" FontWeight="SemiBold" Foreground="#34495E" Margin="0,0,0,8"/>
+                            <TextBox x:Name="txtPeso" 
+                                     Style="{StaticResource WeightTextBox}" 
+                                     Height="40" 
+                                     VerticalContentAlignment="Center"
+                                     PreviewTextInput="NumericTextBox_PreviewTextInput"/>
                         </StackPanel>
 
-                        <CheckBox x:Name="chkNoPesado" 
-                          Content="No se ha podido pesar" 
-                          Margin="20,0,0,8" 
-                          VerticalAlignment="Bottom"
-                          FontSize="12" Foreground="#7F8C8D"
-                          Checked="chkNoPesado_Checked" 
-                          Unchecked="chkNoPesado_Unchecked"/>
+                        <CheckBox x:Name="chkNoPesado" Content="No se pudo pesar" Margin="25,0,0,10" VerticalAlignment="Bottom" Checked="chkNoPesado_Checked" Unchecked="chkNoPesado_Unchecked"/>
                     </StackPanel>
 
-                    <StackPanel>
-                        <TextBlock Text="Diagnóstico Clínico" FontSize="12" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,8"/>
-                        <TextBox x:Name="txtDiagnostico" 
-                         MinHeight="60" MaxHeight="200" 
-                         AcceptsReturn="True" TextWrapping="Wrap" 
-                         VerticalContentAlignment="Top"
-                         Padding="10" BorderBrush="#BDC3C7" Margin="0,0,0,20"/>
+                    <!-- DIAGNOSTICO -->
+                    <TextBlock Text="Diagnóstico *" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <TextBox x:Name="txtDiagnostico" Style="{StaticResource ModernTextBox}" MinHeight="20" MaxHeight="180" Margin="0,0,0,25"/>
 
-                        <TextBlock Text="Tratamiento" FontSize="12" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,8"/>
-                        <TextBox x:Name="txtTratamiento" 
-                         MinHeight="60" MaxHeight="200" 
-                         AcceptsReturn="True" TextWrapping="Wrap" 
-                         VerticalContentAlignment="Top"
-                         Padding="10" BorderBrush="#BDC3C7" Margin="0,0,0,20"/>
+                    <!-- TRATAMIENTO -->
+                    <TextBlock Text="Tratamiento *" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <TextBox x:Name="txtTratamiento" Style="{StaticResource ModernTextBox}" MinHeight="20" MaxHeight="180" Margin="0,0,0,25"/>
 
-                        <TextBlock Text="Observaciones Adicionales" FontSize="12" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,8"/>
-                        <TextBox x:Name="txtObservaciones" 
-                         MinHeight="50" MaxHeight="150" 
-                         AcceptsReturn="True" TextWrapping="Wrap" 
-                         VerticalContentAlignment="Top"
-                         Padding="10" BorderBrush="#BDC3C7"/>
-                    </StackPanel>
+                    <!-- OBSERVACIONES -->
+                    <TextBlock Text="Observaciones" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <TextBox x:Name="txtObservaciones" Style="{StaticResource ModernTextBox}" MinHeight="20" MaxHeight="120"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
-            <Button x:Name="btnCancelar" Content="Cancelar" Width="110" Height="40" Background="Transparent" 
-                    BorderBrush="#BDC3C7" BorderThickness="1" Foreground="#7F8C8D" Margin="0,0,15,0"
-                    Cursor="Hand" Click="btnCancelar_Click"/>
-
-            <Button x:Name="btnGuardar" Content="GUARDAR CONSULTA" Width="200" Height="40" IsDefault="True"
-                    Background="#27AE60" Foreground="White" FontWeight="Bold" BorderThickness="0"
-                    Cursor="Hand" Click="btnGuardar_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="20"/>
-                    </Style>
-                </Button.Resources>
+        <!-- BOTONES -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+            <Button x:Name="btnEditar" Content="EDITAR" Width="140" Height="40" Background="#3498DB" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="btnEditar_Click" Visibility="Collapsed">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button x:Name="btnGuardar" Content="GUARDAR" Width="160" Height="40" Background="#27AE60" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="btnGuardar_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Content="CERRAR" Width="140" Height="40" Background="#95A5A6" Foreground="White" FontWeight="Bold" Click="btnCancelar_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
         </StackPanel>
     </Grid>

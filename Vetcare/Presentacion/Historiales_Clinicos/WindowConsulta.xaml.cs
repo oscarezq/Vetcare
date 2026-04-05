@@ -15,30 +15,28 @@ namespace Vetcare.Presentacion.HistorialesClinicos
         private CitaService citaService;
         private bool esModoEdicion = false;
 
-        // CONSTRUCTOR PARA CREAR (Recibe la cita de la que proviene)
         public WindowConsulta(Cita cita)
         {
             InitializeComponent();
             citaService = new CitaService();
             historialService = new HistorialClinicoService();
 
-            this.citaActual = cita;
-            this.esModoEdicion = false;
+            citaActual = cita;
+            esModoEdicion = false;
 
             ConfigurarInterfaz();
             CargarDatosCita();
         }
 
-        // CONSTRUCTOR PARA EDITAR (Recibe el registro histórico ya existente)
         public WindowConsulta(HistorialClinico historial, Cita citaAsociada)
         {
             InitializeComponent();
             citaService = new CitaService();
             historialService = new HistorialClinicoService();
 
-            this.historialEdicion = historial;
-            this.citaActual = citaAsociada;
-            this.esModoEdicion = true;
+            historialEdicion = historial;
+            citaActual = citaAsociada;
+            esModoEdicion = true;
 
             ConfigurarInterfaz();
             CargarDatosEdicion();
@@ -48,132 +46,140 @@ namespace Vetcare.Presentacion.HistorialesClinicos
         {
             if (esModoEdicion)
             {
-                this.Title = "Detalle de la Consulta";
                 lblTitulo.Text = "CONSULTA REGISTRADA";
                 btnGuardar.Visibility = Visibility.Collapsed;
-                btnCancelar.Content = "Cerrar"; // Más natural para modo lectura
+                btnEditar.Visibility = Visibility.Visible;
 
-                // 1. Bloquear el CheckBox
                 chkNoPesado.IsEnabled = false;
 
-                // 2. Bloquear y "limpiar" visualmente los campos
-                ConfigurarCampoLectura(txtPeso);
-                ConfigurarCampoLectura(txtDiagnostico);
-                ConfigurarCampoLectura(txtTratamiento);
-                ConfigurarCampoLectura(txtObservaciones);
-            }
-            else
-            {
-                this.Title = "Registrar Consulta";
-                lblTitulo.Text = "REGISTRAR NUEVA CONSULTA";
-                btnGuardar.Visibility = Visibility.Visible;
+                BloquearCampos();
             }
         }
 
-        // Método auxiliar para que no se vean "raros" (gris feo) en edición
-        private void ConfigurarCampoLectura(TextBox tb)
+        private void BloquearCampos()
+        {
+            SetReadOnly(txtPeso);
+            SetReadOnly(txtDiagnostico);
+            SetReadOnly(txtTratamiento);
+            SetReadOnly(txtObservaciones);
+        }
+
+        private void ActivarCampos()
+        {
+            SetEditable(txtPeso);
+            SetEditable(txtDiagnostico);
+            SetEditable(txtTratamiento);
+            SetEditable(txtObservaciones);
+        }
+
+        private void SetReadOnly(TextBox tb)
         {
             tb.IsReadOnly = true;
-            tb.Focusable = false; // Evita que aparezca el cursor parpadeando
-            tb.Background = System.Windows.Media.Brushes.Transparent;
-            tb.BorderThickness = new Thickness(0, 0, 0, 1); // Solo una línea sutil abajo
-            tb.BorderBrush = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#ECF0F1");
-            tb.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#2C3E50");
+        }
+
+        private void SetEditable(TextBox tb)
+        {
+            tb.IsReadOnly = false;
         }
 
         private void CargarDatosCita()
         {
             txtMascotaDisplay.Text = citaActual.NombreMascota;
             txtVeterinarioDisplay.Text = citaActual.NombreVeterinario;
-            txtFechaDisplay.Text = citaActual.FechaHora.ToString("dd/MM/yyyy HH:mm");
+            txtFechaDisplay.Text = citaActual.FechaHora.ToString("dd/MM/yyyy");
         }
 
         private void CargarDatosEdicion()
         {
-            CargarDatosCita(); // Muestra los datos de la cita arriba
+            CargarDatosCita();
+
             txtPeso.Text = historialEdicion.Peso?.ToString();
             txtDiagnostico.Text = historialEdicion.Diagnostico;
             txtTratamiento.Text = historialEdicion.Tratamiento;
             txtObservaciones.Text = historialEdicion.Observaciones;
         }
 
+        private void btnEditar_Click(object sender, RoutedEventArgs e)
+        {
+            btnGuardar.Visibility = Visibility.Visible;
+            btnEditar.Visibility = Visibility.Collapsed;
+
+            chkNoPesado.IsEnabled = true;
+
+            ActivarCampos();
+        }
+
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidarCampos()) return;
+            if (string.IsNullOrWhiteSpace(txtDiagnostico.Text))
+            {
+                MessageBox.Show("El diagnóstico es obligatorio");
+                return;
+            }
 
-            // Mapeo de datos (Nuevo o Existente)
+            if (string.IsNullOrWhiteSpace(txtTratamiento.Text))
+            {
+                MessageBox.Show("El tratamiento es obligatorio");
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(txtPeso.Text) && !decimal.TryParse(txtPeso.Text, out _))
+            {
+                MessageBox.Show("Peso inválido");
+                return;
+            }
+
             HistorialClinico historial = esModoEdicion ? historialEdicion : new HistorialClinico();
 
             historial.IdMascota = citaActual.IdMascota;
             historial.IdVeterinario = citaActual.IdVeterinario;
             historial.IdCita = citaActual.IdCita;
-            historial.Diagnostico = txtDiagnostico.Text.Trim();
-            historial.Tratamiento = txtTratamiento.Text.Trim();
-            historial.Observaciones = txtObservaciones.Text.Trim();
+            historial.Diagnostico = txtDiagnostico.Text;
+            historial.Tratamiento = txtTratamiento.Text;
+            historial.Observaciones = txtObservaciones.Text;
 
-            if (!string.IsNullOrWhiteSpace(txtPeso.Text))
-                historial.Peso = Convert.ToDecimal(txtPeso.Text);
+            historial.Peso = string.IsNullOrWhiteSpace(txtPeso.Text) ? null : Convert.ToDecimal(txtPeso.Text);
+
+            if (!esModoEdicion)
+            {
+                historial.FechaHora = DateTime.Now;
+                historialService.Insertar(historial);
+                citaService.ActualizarEstado(citaActual.IdCita, "Completada");
+            }
             else
-                historial.Peso = null;
-
-            try
             {
-                bool resultado;
-                if (esModoEdicion)
-                {
-                    resultado = historialService.Actualizar(historial);
-                }
-                else
-                {
-                    historial.FechaHora = DateTime.Now;
-                    resultado = historialService.Insertar(historial);
-                    if (resultado) citaService.ActualizarEstado(citaActual.IdCita, "Completada");
-                }
-
-                if (resultado)
-                {
-                    MessageBox.Show("Operación realizada con éxito", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.DialogResult = true;
-                    this.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
-
-        private bool ValidarCampos()
-        {
-            if (string.IsNullOrWhiteSpace(txtDiagnostico.Text))
-            {
-                MessageBox.Show("El diagnóstico es obligatorio");
-                return false;
+                historialService.Actualizar(historial);
             }
 
-            if (!string.IsNullOrWhiteSpace(txtPeso.Text) && !decimal.TryParse(txtPeso.Text, out _))
-            {
-                MessageBox.Show("El peso debe ser un número válido");
-                return false;
-            }
-
-            return true;
+            MessageBox.Show("Guardado correctamente");
+            this.Close();
         }
 
         private void chkNoPesado_Checked(object sender, RoutedEventArgs e)
         {
-            txtPeso.Text = "0";
-            txtPeso.IsEnabled = false; // Bloquea el cuadro para que no lo editen por error
-            txtPeso.Background = System.Windows.Media.Brushes.GhostWhite;
+            txtPeso.Text = "";
+            txtPeso.IsEnabled = false;
         }
 
         private void chkNoPesado_Unchecked(object sender, RoutedEventArgs e)
         {
             txtPeso.IsEnabled = true;
-            txtPeso.Background = System.Windows.Media.Brushes.White;
-            if (txtPeso.Text == "0") txtPeso.Clear(); // Limpia el 0 para que pongan el peso real
         }
 
-        private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
+        private void btnCancelar_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void NumericTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Permite números y una sola coma o punto decimal
+            var textBox = sender as TextBox;
+            var fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
+
+            // Expresión regular: solo números y un separador decimal opcional
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("^[0-9]*[,.]?[0-9]*$");
+            e.Handled = !regex.IsMatch(fullText);
+        }
     }
 }

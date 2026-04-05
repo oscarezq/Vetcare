@@ -23,10 +23,17 @@ namespace Vetcare.Presentacion.Usuarios
             if (_usuarioActual == null) { MessageBox.Show("Usuario no encontrado."); this.Close(); return; }
             this.DataContext = _usuarioActual;
 
-            if (!_usuarioActual.Activo)
+            // --- LÓGICA DE RESTRICCIÓN MODIFICADA ---
+            if (!_usuarioActual.Activo || (Sesion.UsuarioActual != null && Sesion.UsuarioActual.IdRol == 2))
+            {
                 btnEditarUsuario.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                btnEditarUsuario.Visibility = Visibility.Visible;
+            }
 
-            // Solo si es veterinario mostramos la sección y cargamos sus datos
+            // Solo si es veterinario mostramos la sección profesional
             if (_usuarioActual.NombreRol == "Veterinario")
             {
                 var vet = _veteService.ObtenerPorIdUsuario(_usuarioActual.IdUsuario);
