@@ -68,12 +68,8 @@ namespace Vetcare.Presentacion.Clientes
 
         private void btnFacturas_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Obtener los datos del servicio
-            var listaFacturas = facturaService.ObtenerPorCliente(clienteActual.IdCliente);
-            decimal deudaTotal = facturaService.CalcularDeudaCliente(clienteActual.IdCliente);
-
             // 2. Crear el UC pasándole los datos
-            var uc = new UC_FacturasCliente(listaFacturas, deudaTotal);
+            var uc = new UC_FacturasCliente(clienteActual);
 
             // 3. Inyectar en el contenedor principal
             ContenedorPrincipal.Content = uc;

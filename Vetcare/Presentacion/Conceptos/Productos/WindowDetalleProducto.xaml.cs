@@ -33,7 +33,20 @@ namespace Vetcare.Presentacion.Conceptos.Productos
                                             ? productoActual.Descripcion
                                             : "Sin descripción registrada.";
 
-                    // --- Lógica de Precios Invertida ---
+                    if (productoActual.Activo == false)
+                    {
+                        btnAjustarStock.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        btnAjustarStock.Visibility = Visibility.Visible;
+
+                        // Mantener tu lógica visual de stock existente
+                        if (productoActual.Stock <= 5)
+                            txtStock.Foreground = System.Windows.Media.Brushes.Red;
+                        else
+                            txtStock.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#15803D");
+                    }
 
                     // 1. El total es directamente el precio que viene de la BD (ya tiene IVA)
                     txtTotal.Text = productoActual.Precio.ToString("N2") + " €";

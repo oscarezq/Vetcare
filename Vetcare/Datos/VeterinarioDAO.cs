@@ -12,6 +12,8 @@ namespace Vetcare.Datos
     /// </summary>
     public class VeterinarioDAO
     {
+        Conexion conexion = new Conexion();
+
         /// <summary>
         /// Cadena de conexión a la base de datos.
         /// (Idealmente debería centralizarse en una clase Conexion).
@@ -32,7 +34,7 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection con = conexion.ObtenerConexion())
                 {
                     con.Open();
                     MySqlCommand cmd = new MySqlCommand(sql, con);
@@ -80,7 +82,7 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection con = conexion.ObtenerConexion())
                 {
                     con.Open();
                     MySqlCommand cmd = new MySqlCommand(sql, con);
@@ -127,7 +129,7 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection con = conexion.ObtenerConexion())
                 {
                     con.Open();
                     MySqlCommand cmd = new MySqlCommand(sql, con);
@@ -170,7 +172,7 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection con = conexion.ObtenerConexion())
                 {
                     con.Open();
                     MySqlCommand cmd = new MySqlCommand(sql, con);
@@ -195,7 +197,7 @@ namespace Vetcare.Datos
         /// <returns>True si todos se insertaron correctamente.</returns>
         public bool InsertarVarios(List<Veterinario> lista)
         {
-            using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+            using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
                 MySqlTransaction trans = con.BeginTransaction();
@@ -240,7 +242,7 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection con = conexion.ObtenerConexion())
                 {
                     con.Open();
                     MySqlCommand cmd = new MySqlCommand(sql, con);
@@ -265,7 +267,7 @@ namespace Vetcare.Datos
         /// <returns>True si todas las actualizaciones fueron exitosas.</returns>
         public bool ActualizarVarios(List<Veterinario> lista)
         {
-            using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+            using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
                 MySqlTransaction trans = con.BeginTransaction();
@@ -312,7 +314,7 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection con = conexion.ObtenerConexion())
                 {
                     con.Open();
                     MySqlCommand cmd = new MySqlCommand(sql, con);
@@ -334,7 +336,7 @@ namespace Vetcare.Datos
         /// <returns>True si todos fueron desactivados correctamente.</returns>
         public bool BorradoLogicoVarios(List<int> ids)
         {
-            using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+            using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
                 MySqlTransaction trans = con.BeginTransaction();
@@ -377,7 +379,7 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection con = conexion.ObtenerConexion())
                 {
                     con.Open();
                     using (MySqlCommand cmd = new MySqlCommand(sql, con))

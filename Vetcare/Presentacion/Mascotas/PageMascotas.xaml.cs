@@ -371,11 +371,12 @@ namespace Vetcare.Presentacion
                 if (!clienteActivo)
                 {
                     MessageBoxResult resultado = MessageBox.Show(
-                        $"El dueño de {mascota.Nombre} está inactivo.\n\n" +
-                        "¿Deseas activarlo también?",
-                        "Dueño inactivo",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
+                                    $"No se puede reactivar a {mascota.Nombre} porque su dueño ({cliente.NombreCompleto}) está inactivo.\n\n" +
+                                    $"Para continuar, es obligatorio reactivar primero al dueño.\n" +
+                                    $"¿Deseas reactivar a {cliente.NombreCompleto} ahora mismo?",
+                                    "Requisito de Dueño Activo",
+                                    MessageBoxButton.YesNo,
+                                    MessageBoxImage.Warning);
 
                     if (resultado == MessageBoxResult.Yes)
                     {

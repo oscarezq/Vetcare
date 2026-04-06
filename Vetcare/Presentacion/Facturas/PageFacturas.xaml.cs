@@ -40,30 +40,36 @@ namespace Vetcare.Presentacion.Facturas
             var filtrados = listaFacturas.AsEnumerable();
 
             // 1. Filtro por Texto (Cliente o Número de Factura)
-            if (!string.IsNullOrWhiteSpace(txtBuscaGeneral.Text))
+            if (!string.IsNullOrWhiteSpace(txtBuscaCliente.Text))
             {
-                string busqueda = txtBuscaGeneral.Text.ToLower().Trim();
+                string busquedaCliente = txtBuscaCliente.Text.ToLower().Trim();
                 filtrados = filtrados.Where(f =>
-                    (f.NombreCliente != null && f.NombreCliente.ToLower().Contains(busqueda)) ||
-                    (f.NumeroFactura != null && f.NumeroFactura.ToLower().Contains(busqueda))
-                );
+                    f.NombreCliente != null && f.NombreApellidosCliente.ToLower().Contains(busquedaCliente));
             }
 
-            // 2. Filtro por Rango de Fechas
+            // 2. Filtro por Número de Factura
+            if (!string.IsNullOrWhiteSpace(txtBuscaNumero.Text))
+            {
+                string busquedaNum = txtBuscaNumero.Text.ToLower().Trim();
+                filtrados = filtrados.Where(f =>
+                    f.NumeroFactura != null && f.NumeroFactura.ToLower().Contains(busquedaNum));
+            }
+
+            // 3. Filtro por Rango de Fechas
             if (dpDesde.SelectedDate.HasValue)
                 filtrados = filtrados.Where(f => f.FechaEmision >= dpDesde.SelectedDate.Value);
 
             if (dpHasta.SelectedDate.HasValue)
                 filtrados = filtrados.Where(f => f.FechaEmision <= dpHasta.SelectedDate.Value);
 
-            // 3. Filtro por Estado (¡Añadido!)
+            // 4. Filtro por Estado 
             if (cbEstado.SelectedIndex > 0) // El índice 0 es "Todos"
             {
                 string estadoSeleccionado = (cbEstado.SelectedItem as ComboBoxItem).Content.ToString();
                 filtrados = filtrados.Where(f => f.Estado == estadoSeleccionado);
             }
 
-            // 4. Lógica de Ordenación
+            // 5. Lógica de Ordenación
             string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem).Content.ToString();
             bool descendente = rbDesc.IsChecked ?? true;
 
@@ -87,7 +93,8 @@ namespace Vetcare.Presentacion.Facturas
 
         private void btnLimpiar_Click(object sender, RoutedEventArgs e)
         {
-            txtBuscaGeneral.Clear();
+            txtBuscaCliente.Clear();
+            txtBuscaNumero.Clear();
             dpDesde.SelectedDate = null;
             dpHasta.SelectedDate = null;
             cbEstado.SelectedIndex = 0;

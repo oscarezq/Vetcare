@@ -11,7 +11,7 @@ namespace Vetcare.Datos
         /// <summary>
         /// Cadena de conexión que contiene los parámetros del servidor, base de datos y credenciales.
         /// </summary>
-        private string cadena = "Server=localhost; Database=vetcare; Uid=root; Pwd=;";
+        private string cadena = "Server=localhost; Database=vetcare; Uid=root; Pwd=1234;";
 
         /// <summary>
         /// Crea y devuelve un objeto de conexión a la base de datos.

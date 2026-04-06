@@ -17,11 +17,12 @@
                 <TextBlock Text="Historial de cargos y pagos del cliente" Foreground="#7F8C8D" FontSize="14"/>
             </StackPanel>
 
-            <!-- (Opcional futuro botón) -->
-            <!--<Button DockPanel.Dock="Right"
+            <Button x:Name="btnNuevaFactura" 
+                    DockPanel.Dock="Right"
                     Content="+ Nueva Factura"
+                    Click="btnNuevaFactura_Click" 
                     Background="#27AE60" Foreground="White"
-                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand"/>-->
+                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand"/>
         </DockPanel>
 
         <!-- RESUMEN -->
@@ -129,17 +130,18 @@
                             </Border>
 
                             <DataTemplate.Triggers>
-
+                                <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                    <Setter TargetName="brdEstado" Property="Background" Value="#FEF9E7"/>
+                                    <Setter TargetName="txtEstado" Property="Foreground" Value="#F1C40F"/>
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding Estado}" Value="Pagada">
                                     <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
                                     <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
                                 </DataTrigger>
-
-                                <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                <DataTrigger Binding="{Binding Estado}" Value="Anulada">
                                     <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
                                     <Setter TargetName="txtEstado" Property="Foreground" Value="#E74C3C"/>
                                 </DataTrigger>
-
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

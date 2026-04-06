@@ -123,6 +123,7 @@ namespace Vetcare.Presentacion.Servicios
             txtStockMin.Text = "";
             txtStockMax.Text = "";
             cbOrdenarPor.SelectedIndex = 0;
+            cbBuscaEstado.SelectedIndex = 0;
             rbAsc.IsChecked = true;
             AplicarFiltros();
         }

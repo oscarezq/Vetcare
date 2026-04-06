@@ -17,6 +17,7 @@
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
+                <!-- Cambia Columns de 4 a 5 para que quepa el nuevo campo -->
                 <UniformGrid Columns="4" Margin="0,0,0,15">
                     <UniformGrid.Resources>
                         <Style TargetType="TextBox">
@@ -26,9 +27,16 @@
                         </Style>
                     </UniformGrid.Resources>
 
+                    <!-- CAMPO 1: Cliente -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Cliente / Nº Factura" FontSize="10" Foreground="#7F8C8D"/>
-                        <TextBox x:Name="txtBuscaGeneral" TextChanged="FiltroFactura_Changed"/>
+                        <TextBlock Text="Cliente" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaCliente" TextChanged="FiltroFactura_Changed"/>
+                    </StackPanel>
+
+                    <!-- CAMPO 2: Nº Factura -->
+                    <StackPanel Margin="5,5,5,0">
+                        <TextBlock Text="Nº Factura" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBox x:Name="txtBuscaNumero" TextChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
                     <StackPanel Margin="5,5,5,0">

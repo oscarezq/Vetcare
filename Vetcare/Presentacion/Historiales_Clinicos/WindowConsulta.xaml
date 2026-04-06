@@ -4,7 +4,9 @@
         Title="Detalle de Consulta"
         Height="780" Width="1100"
         WindowStartupLocation="CenterScreen"
-        Background="#F0F3F5">
+        Background="#F0F3F5"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
 
     <Window.Resources>
         <!-- Estilo base para TextBox con Scroll -->
@@ -128,7 +130,7 @@
 
         <!-- BOTONES -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
-            <Button x:Name="btnEditar" Content="EDITAR" Width="140" Height="40" Background="#3498DB" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="btnEditar_Click" Visibility="Collapsed">
+            <Button x:Name="btnEditar" Content="EDITAR" Width="140" Height="40" Background="#3498DB" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="btnEditar_Click" Visibility="Collapsed" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10">
@@ -137,7 +139,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button x:Name="btnGuardar" Content="GUARDAR" Width="160" Height="40" Background="#27AE60" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="btnGuardar_Click">
+            <Button x:Name="btnGuardar" Content="GUARDAR" Width="160" Height="40" Background="#27AE60" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="btnGuardar_Click" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10">
@@ -146,7 +148,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button Content="CERRAR" Width="140" Height="40" Background="#95A5A6" Foreground="White" FontWeight="Bold" Click="btnCancelar_Click">
+            <Button Content="CERRAR" Width="140" Height="40" Background="#95A5A6" Foreground="White" FontWeight="Bold" Click="btnCancelar_Click" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10">

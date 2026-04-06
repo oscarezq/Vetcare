@@ -25,6 +25,27 @@ namespace Vetcare.Presentacion.Facturas
             lblTotal.Text = "0,00 €";
         }
 
+        public WindowFactura(Cliente cliente) : this()
+        {
+            if (cliente != null)
+            {
+                // 1. Asignar datos a los campos de texto
+                txtIdCliente.Text = cliente.IdCliente.ToString();
+                txtNombreCliente.Text = $"{cliente.Nombre} {cliente.Apellidos}";
+
+                // 2. Estilo visual de "seleccionado"
+                txtNombreCliente.Foreground = Brushes.Black;
+                txtNombreCliente.FontWeight = FontWeights.Bold;
+
+                // 3. BLOQUEAR MODIFICACIÓN
+                // Deshabilitamos el botón para que no puedan abrir el selector
+                btnSeleccionarCliente.IsEnabled = false;
+
+                // Opcional: Cambiar el cursor o ToolTip para indicar que está bloqueado
+                btnSeleccionarCliente.ToolTip = "El cliente no se puede modificar para esta operación.";
+            }
+        }
+
         public string ObtenerSiguienteNumeroFactura()
         {
             int anioActual = DateTime.Now.Year;

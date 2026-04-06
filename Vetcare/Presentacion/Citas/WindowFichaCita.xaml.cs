@@ -209,21 +209,28 @@ namespace Vetcare.Presentacion.Citas
             if (citaActual == null) return;
             var bc = new System.Windows.Media.BrushConverter();
 
+            // Verificamos si el usuario tiene permiso (Admin o el Veterinario de la cita)
+            bool tienePermiso = ValidarPermisosAccion();
+
             switch (citaActual.Estado)
             {
                 case "Pendiente":
-                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#F1C40F"); // Amarillo
-                    btnRegistrarConsulta.Visibility = Visibility.Visible;
+                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#F1C40F");
+
+                    // Solo se muestra si está pendiente Y tiene permiso
+                    btnRegistrarConsulta.Visibility = tienePermiso ? Visibility.Visible : Visibility.Collapsed;
+                    btnCancelarCita.Visibility = tienePermiso ? Visibility.Visible : Visibility.Collapsed;
+
                     btnRegistrarConsulta.Content = "Registrar consulta";
                     btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#27AE60");
-
-                    // Mostrar botón cancelar solo si está pendiente
-                    btnCancelarCita.Visibility = Visibility.Visible;
                     break;
 
                 case "Atendida":
                 case "Completada":
-                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#2ecc71"); // Verde
+                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#2ecc71");
+
+                    // "Ver consulta" lo dejamos visible para todos (lectura), 
+                    // pero podrías restringirlo también con 'tienePermiso' si quisieras.
                     btnRegistrarConsulta.Visibility = Visibility.Visible;
                     btnRegistrarConsulta.Content = "Ver consulta";
                     btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#3498DB");
@@ -232,7 +239,7 @@ namespace Vetcare.Presentacion.Citas
                     break;
 
                 case "Cancelada":
-                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#E74C3C"); // Rojo
+                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#E74C3C");
                     btnRegistrarConsulta.Visibility = Visibility.Collapsed;
                     btnCancelarCita.Visibility = Visibility.Collapsed;
                     break;
@@ -242,6 +249,29 @@ namespace Vetcare.Presentacion.Citas
                     btnCancelarCita.Visibility = Visibility.Collapsed;
                     break;
             }
+        }
+
+        private bool ValidarPermisosAccion()
+        {
+            // 1. Obtener el usuario de la sesión global
+            var usuarioLogueado = Sesion.UsuarioActual;
+
+            if (usuarioLogueado == null) return false;
+
+            // 2. Si es Administrador, tiene permiso total para gestionar cualquier cita
+            if (usuarioLogueado.IdRol == 1)
+            {
+                return true;
+            }
+
+            // 3. Si es Veterinario, solo puede gestionar si es el veterinario asignado a esta cita específica
+            if (usuarioLogueado.IdRol == 2)
+            {
+                // Comparamos el ID del usuario logueado con el ID del veterinario en la cita
+                return usuarioLogueado.IdUsuario == citaActual.IdUsuarioVeterinario;
+            }
+
+            return false;
         }
 
         private void btnCancelarCita_Click(object sender, RoutedEventArgs e)

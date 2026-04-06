@@ -18,8 +18,6 @@ namespace Vetcare.Presentacion.Citas
         {
             InitializeComponent();
 
-            dtpFechaDesde.SelectedDate = DateTime.Today;
-
             // Ocultar selector si es Admin
             if (Sesion.UsuarioActual.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3)
             {

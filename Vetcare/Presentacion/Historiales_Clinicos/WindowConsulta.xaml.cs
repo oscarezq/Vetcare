@@ -48,12 +48,44 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             {
                 lblTitulo.Text = "CONSULTA REGISTRADA";
                 btnGuardar.Visibility = Visibility.Collapsed;
-                btnEditar.Visibility = Visibility.Visible;
+
+                // Solo mostramos el botón editar si cumple los requisitos
+                if (ValidarPermisosEdicion())
+                {
+                    btnEditar.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    btnEditar.Visibility = Visibility.Collapsed;
+                }
 
                 chkNoPesado.IsEnabled = false;
-
                 BloquearCampos();
             }
+        }
+
+        private bool ValidarPermisosEdicion()
+        {
+            // 1. Obtener el usuario de la sesión global de tu App
+            var usuarioLogueado = Sesion.UsuarioActual;
+
+            if (usuarioLogueado == null) return false;
+
+            // 2. Si es Administrador, tiene permiso total
+            if (usuarioLogueado.IdRol == 1)
+            {
+                return true;
+            }
+
+            // 3. Si es Veterinario, comprobar si es el autor de la consulta o el asignado a la cita
+            if (usuarioLogueado.IdRol == 2)
+            {
+                // Comparamos el ID del veterinario logueado con el de la cita
+                // Nota: Asegúrate de que los IDs sean del mismo tipo (int, etc.)
+                return usuarioLogueado.IdVeterinario == citaActual.IdVeterinario;
+            }
+
+            return false;
         }
 
         private void BloquearCampos()

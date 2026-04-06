@@ -132,9 +132,33 @@
         </Grid>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
-            <Button x:Name="btnCancelarCita" Content="Cancelar Cita" Width="140" Height="42" Background="#E74C3C" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Visibility="Collapsed" Click="btnCancelarCita_Click"/>
-            <Button x:Name="btnRegistrarConsulta" Content="Registrar Consulta" Width="180" Height="42" Background="#27AE60" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Click="btnRegistrarConsulta_Click"/>
-            <Button Content="Cerrar" Width="120" Height="42" Background="#BDC3C7" Foreground="White" BorderBrush="Transparent" Click="btnCerrar_Click"/>
+            <Button x:Name="btnCancelarCita" Content="Cancelar Cita" Width="140" Height="42" Background="#E74C3C" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Visibility="Collapsed" Click="btnCancelarCita_Click" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button x:Name="btnRegistrarConsulta" Content="Registrar Consulta" Width="180" Height="42" Background="#27AE60" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Click="btnRegistrarConsulta_Click" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Content="Cerrar" Width="120" Height="42" Background="#BDC3C7" Foreground="White" BorderBrush="Transparent" Click="btnCerrar_Click" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

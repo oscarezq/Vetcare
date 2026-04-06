@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using MySqlX.XDevAPI;
 using Vetcare.Datos;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
@@ -12,14 +13,22 @@ namespace Vetcare.Presentacion.Clientes
 {
     public partial class UC_FacturasCliente : UserControl
     {
-        public UC_FacturasCliente(List<Factura> facturas, decimal deudaTotal)
+        private Cliente _clienteActual;
+        private FacturaService _facturaService = new FacturaService();
+
+        public UC_FacturasCliente(Cliente clienteActual)
         {
             InitializeComponent();
-            CargarDatos(facturas, deudaTotal);
+            _clienteActual = clienteActual;
+
+            CargarDatos();
         }
 
-        private void CargarDatos(List<Factura> facturas, decimal deudaTotal)
+        private void CargarDatos()
         {
+            var facturas = _facturaService.ObtenerPorCliente(_clienteActual.IdCliente);
+            decimal deudaTotal = _facturaService.CalcularDeudaCliente(_clienteActual.IdCliente);
+
             if (facturas == null || facturas.Count == 0)
             {
                 dgFacturas.Visibility = Visibility.Collapsed;
@@ -65,9 +74,18 @@ namespace Vetcare.Presentacion.Clientes
             }
         }
 
-        private void btnImprimirEstado_Click(object sender, RoutedEventArgs e)
+        private void btnNuevaFactura_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Generando extracto de cuenta...");
+            // Aquí abrimos la ventana de creación de factura
+            // Pasamos el cliente para que la factura ya esté asociada a él
+            WindowFactura win = new WindowFactura(_clienteActual);
+            win.Owner = Window.GetWindow(this);
+
+            if (win.ShowDialog() == true)
+            {
+                CargarDatos();
+            }
         }
+
     }
 }

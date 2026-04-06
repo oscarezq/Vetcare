@@ -36,44 +36,48 @@ namespace Vetcare.Presentacion.Usuarios
 
         private void ActualizarTabla()
         {
-            if (dgUsuarios == null || rbAsc == null) return;
+            if (dgUsuarios == null || rbAsc == null || cbBuscaRol == null || cbBuscaEstado == null) return;
 
             var filtrados = listaCompleta.AsEnumerable();
 
-            // Filtros de texto
+            // 1. Filtros de texto
             if (!string.IsNullOrWhiteSpace(txtBuscaUsername.Text))
                 filtrados = filtrados.Where(u => u.Username.ToLower().Contains(txtBuscaUsername.Text.ToLower()));
 
             if (!string.IsNullOrWhiteSpace(txtBuscaNombre.Text))
                 filtrados = filtrados.Where(u => u.NombreCompleto.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
 
-            // Filtro por Rol
+            // 2. Filtro por Rol (Corregido)
             if (cbBuscaRol.SelectedItem is ComboBoxItem itemRol)
             {
                 string rolSeleccionado = itemRol.Content.ToString();
-                // Si NO es "Todos", aplicamos el filtro. Si ES "Todos", no hacemos nada (pasan todos).
                 if (rolSeleccionado != "Todos")
                 {
                     filtrados = filtrados.Where(u => u.NombreRol == rolSeleccionado);
                 }
             }
 
-            // Filtro por Estado
-            if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado && !string.IsNullOrEmpty(itemEstado.Content.ToString()))
+            // 3. Filtro por Estado (Corregido)
+            if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado)
             {
-                bool buscarActivo = itemEstado.Content.ToString() == "Activo";
-                filtrados = filtrados.Where(u => u.Activo == buscarActivo);
+                string estadoSeleccionado = itemEstado.Content.ToString();
+                if (estadoSeleccionado == "Activo")
+                    filtrados = filtrados.Where(u => u.Activo == true);
+                else if (estadoSeleccionado == "Inactivo")
+                    filtrados = filtrados.Where(u => u.Activo == false);
+                // Si es "Todos", no añadimos ninguna restricción Where
             }
 
-            // Filtro por Fechas
+            // 4. Filtro por Fechas
             if (dpBuscaFechaDesde.SelectedDate.HasValue)
                 filtrados = filtrados.Where(u => u.FechaAlta.Date >= dpBuscaFechaDesde.SelectedDate.Value.Date);
 
             if (dpBuscaFechaHasta.SelectedDate.HasValue)
                 filtrados = filtrados.Where(u => u.FechaAlta.Date <= dpBuscaFechaHasta.SelectedDate.Value.Date);
 
-            // Ordenación
+            // 5. Ordenación
             List<Usuario> listaFinal = filtrados.ToList();
+            // ... (resto de tu código de ordenación igual)
             string campoOrden = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString();
             bool esAsc = rbAsc.IsChecked == true;
 
