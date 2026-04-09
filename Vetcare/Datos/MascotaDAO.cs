@@ -123,7 +123,7 @@ namespace Vetcare.Datos
                 INNER JOIN clientes c ON m.id_cliente = c.id_cliente
                 INNER JOIN razas r ON m.id_raza = r.id_raza
                 INNER JOIN especies e ON r.id_especie = e.id_especie
-                WHERE m.id_cliente = @idCliente AND m.activo = TRUE";
+                WHERE m.id_cliente = @idCliente";
 
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@idCliente", idCliente);

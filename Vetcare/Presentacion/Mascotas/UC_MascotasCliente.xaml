@@ -81,6 +81,35 @@
             </DataGrid.Resources>
 
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="ESTADO" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left">
+                                <TextBlock x:Name="txtEstado"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           TextAlignment="Center"/>
+                            </Border>
+
+                            <DataTemplate.Triggers>
+                                <!-- ACTIVO -->
+                                <DataTrigger Binding="{Binding Activo}" Value="True">
+                                    <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
+                                    <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
+                                    <Setter TargetName="txtEstado" Property="Text" Value="Activo"/>
+                                </DataTrigger>
+
+                                <!-- INACTIVO -->
+                                <DataTrigger Binding="{Binding Activo}" Value="False">
+                                    <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
+                                    <Setter TargetName="txtEstado" Property="Foreground" Value="#CB4335"/>
+                                    <Setter TargetName="txtEstado" Property="Text" Value="Inactivo"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
                 <DataGridTemplateColumn Header="NOMBRE" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
