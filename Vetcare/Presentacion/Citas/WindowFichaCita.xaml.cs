@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Windows;
+using Microsoft.Win32;
+using QuestPDF.Companion;
+using QuestPDF.Fluent;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Presentacion.Clientes;
@@ -223,9 +226,10 @@ namespace Vetcare.Presentacion.Citas
 
                     btnRegistrarConsulta.Content = "Registrar consulta";
                     btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#27AE60");
-                    break;
 
-                case "Atendida":
+                    btnDescargarDocumento.Visibility = Visibility.Visible;
+                    btnDescargarDocumento.Content = "Descargar recordatorio";
+                    break;
                 case "Completada":
                     borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#2ecc71");
 
@@ -236,12 +240,17 @@ namespace Vetcare.Presentacion.Citas
                     btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#3498DB");
 
                     btnCancelarCita.Visibility = Visibility.Collapsed;
+
+                    btnDescargarDocumento.Visibility = Visibility.Visible;
+                    btnDescargarDocumento.Content = "Descargar justificante";
                     break;
 
                 case "Cancelada":
                     borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#E74C3C");
                     btnRegistrarConsulta.Visibility = Visibility.Collapsed;
                     btnCancelarCita.Visibility = Visibility.Collapsed;
+
+                    btnDescargarDocumento.Visibility = Visibility.Collapsed;
                     break;
 
                 default:
@@ -298,6 +307,94 @@ namespace Vetcare.Presentacion.Citas
                 {
                     MessageBox.Show("Error al cancelar: " + ex.Message);
                 }
+            }
+        }
+
+        private void btnDescargarDocumento_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (citaActual == null) return;
+
+                if (citaActual.Estado == "Pendiente")
+                {
+                    GenerarRecordatorio();
+                }
+                else if (citaActual.Estado == "Completada" || citaActual.Estado == "Atendida")
+                {
+                    GenerarJustificante();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al generar el documento:\n" + ex.Message,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void GenerarRecordatorio()
+        {
+            try
+            {
+                if (citaActual == null) return;
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    FileName = $"Recordatorio_{citaActual.NombreMascota}_{citaActual.FechaHora:yyyyMMdd}.pdf",
+                    Title = "Guardar Recordatorio"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var documento = new RecordatorioDocumento(citaActual);
+                    documento.GeneratePdf(saveFileDialog.FileName);
+
+                    MessageBox.Show("¡Recordatorio generado con éxito!",
+                                    "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    System.Diagnostics.Process.Start(
+                        new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName)
+                        { UseShellExecute = true });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al generar el recordatorio: " + ex.Message,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void GenerarJustificante()
+        {
+            try
+            {
+                if (citaActual == null) return;
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    FileName = $"Justificante_{citaActual.NombreMascota}_{DateTime.Now:yyyyMMdd}.pdf",
+                    Title = "Guardar Justificante"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var documento = new JustificanteDocumento(citaActual);
+                    documento.GeneratePdf(saveFileDialog.FileName);
+
+                    MessageBox.Show("¡Justificante generado con éxito!",
+                                    "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    System.Diagnostics.Process.Start(
+                        new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName)
+                        { UseShellExecute = true });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al generar el justificante: " + ex.Message,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

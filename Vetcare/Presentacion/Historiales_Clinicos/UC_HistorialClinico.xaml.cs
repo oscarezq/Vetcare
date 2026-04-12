@@ -6,6 +6,8 @@ using Vetcare.Entidades;
 using System.Collections.Generic;
 using Vetcare.Service;
 using Vetcare.Presentacion.HistorialesClinicos;
+using Microsoft.Win32;
+using QuestPDF.Fluent;
 
 namespace Vetcare.Presentacion.Mascotas
 {
@@ -95,6 +97,50 @@ namespace Vetcare.Presentacion.Mascotas
             {
                 MessageBox.Show($"Error al crear registro: {ex.Message}",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void btnImprimir_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // 1. Obtener los datos necesarios
+                List<HistorialClinico> lista = historialService.ObtenerPorMascota(idMascotaActual);
+
+                // Necesitamos el objeto Mascota completo para el PDF
+                // Asumo que tienes un MascotaService o DAO para traerlo por ID
+                MascotaService mascotaService = new MascotaService();
+                Mascota mascota = mascotaService.ObtenerPorId(idMascotaActual);
+
+                if (mascota == null)
+                {
+                    MessageBox.Show("No se pudo obtener la información de la mascota.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // 2. Configurar el diálogo para guardar archivo
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    FileName = $"Historial_{mascota.Nombre}_{DateTime.Now:yyyyMMdd}.pdf",
+                    Title = "Guardar Historial Clínico"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // 3. Generar el documento usando QuestPDF
+                    var documento = new HistorialDocumento(mascota, lista);
+                    documento.GeneratePdf(saveFileDialog.FileName);
+
+                    MessageBox.Show("¡Historial exportado con éxito!", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Opcional: Abrir el PDF automáticamente
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName) { UseShellExecute = true });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al generar el PDF: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

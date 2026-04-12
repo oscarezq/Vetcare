@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using QuestPDF.Infrastructure;
 
 namespace Vetcare
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            // 1. Configurar la licencia de QuestPDF antes de que se abra cualquier ventana
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            // 2. Ejecutar el arranque normal de la aplicación
+            base.OnStartup(e);
+        }
     }
 }

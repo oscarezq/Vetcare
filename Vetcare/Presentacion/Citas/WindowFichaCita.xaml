@@ -132,6 +132,26 @@
         </Grid>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+            <Button x:Name="btnDescargarDocumento"
+        Content="Descargar"
+        Width="200"
+        Height="42"
+        Background="#8E44AD"
+        Foreground="White"
+        BorderBrush="Transparent"
+        FontWeight="SemiBold"
+        Margin="0,0,12,0"
+        Visibility="Collapsed"
+        Click="btnDescargarDocumento_Click"
+        Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
             <Button x:Name="btnCancelarCita" Content="Cancelar Cita" Width="140" Height="42" Background="#E74C3C" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Visibility="Collapsed" Click="btnCancelarCita_Click" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">

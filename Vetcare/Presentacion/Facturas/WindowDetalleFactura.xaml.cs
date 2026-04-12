@@ -4,6 +4,11 @@ using System.Windows;
 using System.Windows.Media;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using System.Diagnostics;
+using System.IO;
+using QuestPDF.Fluent;
+using QuestPDF.Previewer;
+using QuestPDF.Companion;
 
 namespace Vetcare.Presentacion.Facturas
 {
@@ -11,6 +16,7 @@ namespace Vetcare.Presentacion.Facturas
     {
         private Factura factura;
         private FacturaService facturaService = new FacturaService();
+        private ClienteService clienteService = new ClienteService();
 
         public WindowDetalleFactura(Factura factura)
         {
@@ -83,6 +89,28 @@ namespace Vetcare.Presentacion.Facturas
             }
         }
 
-        private void btnCerrar_Click(object sender, RoutedEventArgs e) => this.Close();
+        private void btnImprimir_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // 1. Instanciar el documento con la factura actual
+                var cliente = clienteService.ObtenerPorId(factura.IdCliente);
+
+                var documento = new FacturaDocumento(this.factura, cliente);
+
+                // 2. Definir ruta temporal
+                string rutaPdf = Path.Combine(Path.GetTempPath(), $"Factura_{factura.NumeroFactura}.pdf");
+
+                // 3. Generar el PDF
+                documento.GeneratePdf(rutaPdf);
+
+                // 4. Abrirlo automáticamente
+                Process.Start(new ProcessStartInfo(rutaPdf) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al generar PDF: " + ex.Message);
+            }
+        }
     }
 }

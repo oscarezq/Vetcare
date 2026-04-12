@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.6.0" />
+    <PackageReference Include="QuestPDF" Version="2026.2.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,7 +41,9 @@
     <Resource Include="Resources\historial.png" />
     <Resource Include="Resources\home.png" />
     <Resource Include="Resources\icono.ico" />
-    <Resource Include="Resources\icono.png" />
+    <Content Include="Resources\icono.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\logo1-transparente.png" />
     <Resource Include="Resources\logo1.png" />
     <Resource Include="Resources\logo2-transparente.png" />
