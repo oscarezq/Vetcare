@@ -45,6 +45,8 @@ public class FacturaDocumento : IDocument
                         c.Item().Text($"Fecha: {_factura.FechaEmision:dd/MM/yyyy}");
                     });
                 });
+
+                col.Item().PaddingTop(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
             });
 
             // 👤 SECCIÓN CLIENTE Y DIRECCIÓN (Separados y limpios)

@@ -34,15 +34,20 @@ public class RecordatorioDocumento : IDocument
     {
         container.Row(row =>
         {
-            row.RelativeItem().Column(col =>
+            row.RelativeItem().Row(r =>
             {
-                col.Item().Text("VETCARE").FontSize(28).ExtraBold().FontColor(ColorPrimario);
-                col.Item().Text("Cuidado profesional para tu mascota").FontSize(10).Italic().FontColor(Colors.Grey.Medium);
+                r.ConstantItem(60).Height(60).Image("Resources/icono.png");
+
+                r.RelativeItem().PaddingLeft(10).Column(c =>
+                {
+                    c.Item().Text("VETCARE").FontSize(24).ExtraBold().FontColor(Colors.Orange.Darken4);
+                    c.Item().Text("Clínica Veterinaria").FontSize(10).Italic().FontColor(Colors.Grey.Medium);
+                });
             });
 
             row.RelativeItem().AlignRight().Column(col =>
             {
-                col.Item().Text("RECORDATORIO DE CITA").FontSize(14).SemiBold().FontColor(ColorPrimario);
+                col.Item().Text("RECORDATORIO DE CITA").FontSize(14).Bold().FontColor(ColorPrimario);
                 col.Item().Text($"Fecha de emisión: {DateTime.Now:dd/MM/yyyy}").FontSize(9).FontColor(Colors.Grey.Medium);
             });
         });
@@ -68,6 +73,12 @@ public class RecordatorioDocumento : IDocument
                     c.Item().Text("Hora").FontSize(10).FontColor(ColorPrimario).Bold();
                     c.Item().Text($"{_cita.FechaHora:HH:mm}").FontSize(16).Medium();
                 });
+            });
+
+            col.Item().AlignRight().Text(t =>
+            {
+                t.Span("Duración estimada: ").FontSize(10).SemiBold();
+                t.Span($"{_cita.DuracionEstimada} min").FontSize(10);
             });
 
             // --- SECCIÓN: DETALLES ---
@@ -96,7 +107,6 @@ public class RecordatorioDocumento : IDocument
                     c.Item().BorderBottom(1).BorderColor(ColorPrimario).PaddingBottom(5).Text("PROFESIONAL").Bold();
                     c.Spacing(5);
                     c.Item().PaddingTop(5).Text($"Dr. {_cita.NombreVeterinario}");
-                    c.Item().Text($"Duración: {_cita.DuracionEstimada} min").FontSize(10).FontColor(Colors.Grey.Medium);
                 });
             });
 
@@ -120,15 +130,15 @@ public class RecordatorioDocumento : IDocument
     {
         container.Column(c =>
         {
-            c.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
-            c.Item().PaddingTop(10).Row(row =>
+            c.Item().LineHorizontal(1);
+            c.Item().PaddingTop(5).Row(row =>
             {
-                row.RelativeItem().Text("Calle Veterinaria 123, Ciudad").FontSize(9);
-                row.RelativeItem().AlignCenter().Text("Tlf: +34 900 000 000").FontSize(9);
                 row.RelativeItem().AlignRight().Text(x =>
                 {
-                    x.Span("Página ").FontSize(9);
-                    x.CurrentPageNumber().FontSize(9);
+                    x.Span("Página ");
+                    x.CurrentPageNumber();
+                    x.Span(" de ");
+                    x.TotalPages();
                 });
             });
         });

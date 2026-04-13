@@ -46,6 +46,7 @@ public class HistorialDocumento : IDocument
                         c.Item().Text($"Fecha de Reporte: {DateTime.Now:dd/MM/yyyy}");
                     });
                 });
+
                 col.Item().PaddingTop(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
             });
 
@@ -75,7 +76,6 @@ public class HistorialDocumento : IDocument
 
                 // 📋 SECCIÓN 2: ENTRADAS DEL HISTORIAL
                 col.Item().Text("DETALLES CLÍNICOS").FontSize(14).Bold().FontColor(Colors.Black);
-                col.Item().PaddingTop(5).PaddingBottom(10).LineHorizontal(0.5f).LineColor(Colors.Black);
 
                 if (_historiales == null || _historiales.Count == 0)
                 {
@@ -90,12 +90,12 @@ public class HistorialDocumento : IDocument
                             // Encabezado de la consulta
                             c.Item().Row(r =>
                             {
-                                r.RelativeItem().Text($"Fecha: {h.FechaHora:dd/MM/yyyy HH:mm}").Bold().FontColor(Colors.Orange.Darken4);
+                                r.RelativeItem().Text($"Fecha: {h.FechaHora:dd/MM/yyyy HH:mm}").Bold().FontColor(Colors.Blue.Darken4);
                                 r.RelativeItem().AlignRight().Text($"Veterinario: {h.NombreVeterinario}").Italic().FontSize(9);
                             });
 
                             if (!string.IsNullOrEmpty(h.Motivo))
-                                c.Item().PaddingTop(5).Text(t => { t.Span("Motivo: ").Bold(); t.Span(h.Motivo); });
+                                c.Item().PaddingTop(5).Text(t => { t.Span("Motivo de la cita: ").Bold(); t.Span(h.Motivo); });
 
                             c.Item().PaddingTop(5).Row(r => {
                                 r.ConstantItem(80).Text("Diagnóstico:").Bold();
@@ -128,11 +128,6 @@ public class HistorialDocumento : IDocument
                 c.Item().LineHorizontal(1);
                 c.Item().PaddingTop(5).Row(row =>
                 {
-                    row.RelativeItem().Text(x =>
-                    {
-                        x.Span("Documento oficial de VetCare - ").FontSize(9);
-                        x.Span(DateTime.Now.ToString("yyyy")).FontSize(9);
-                    });
                     row.RelativeItem().AlignRight().Text(x =>
                     {
                         x.Span("Página ");

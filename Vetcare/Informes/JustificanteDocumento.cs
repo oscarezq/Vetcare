@@ -7,6 +7,8 @@ using Vetcare.Entidades;
 public class JustificanteDocumento : IDocument
 {
     private readonly Cita _cita;
+    private readonly string ColorPrimario = "#27AE60";
+    private readonly string ColorFondoGris = "#F8F9FA";
 
     public JustificanteDocumento(Cita cita)
     {
@@ -17,52 +19,78 @@ public class JustificanteDocumento : IDocument
     {
         container.Page(page =>
         {
-            page.Margin(40);
+            page.Margin(50);
             page.PageColor(Colors.White);
-            page.DefaultTextStyle(x => x.FontSize(11));
+            page.DefaultTextStyle(x => x.FontSize(11).FontFamily(Fonts.SegoeUI).LineHeight(1.5f));
 
-            page.Header().Column(col =>
+            page.Header().Element(ComposeHeader);
+            page.Content().Element(ComposeContent);
+        });
+    }
+
+    private void ComposeHeader(IContainer container)
+    {
+        container.Row(row =>
+        {
+            row.ConstantItem(60).Height(60).Image("Resources/icono.png");
+
+            row.RelativeItem().PaddingLeft(10).Column(c =>
             {
-                col.Item().Text("JUSTIFICANTE DE CONSULTA")
-                    .FontSize(20)
-                    .Bold()
-                    .FontColor("#27AE60");
-
-                col.Item().LineHorizontal(1);
+                c.Item().Text("VETCARE").FontSize(24).ExtraBold().FontColor(Colors.Orange.Darken4);
+                c.Item().Text("Clínica Veterinaria").FontSize(10).Italic().FontColor(Colors.Grey.Medium);
             });
 
-            page.Content().Column(col =>
+            row.RelativeItem().AlignRight().Column(col =>
             {
-                col.Spacing(12);
+                col.Item().Text("CERTIFICADO DE ASISTENCIA").FontSize(14).Bold().FontColor(Colors.Blue.Darken4);
+            });
+        });
+    }
 
-                col.Item().Text($"Fecha de atención: {_cita.FechaHora:dd/MM/yyyy HH:mm}");
-                col.Item().Text($"Cliente: {_cita.NombreDueno}");
-                col.Item().Text($"Mascota: {_cita.NombreMascota}");
-                col.Item().Text($"Veterinario: {_cita.NombreVeterinario}");
-                col.Item().Text($"Nº Colegiado: {_cita.NumeroColegiado}");
+    private void ComposeContent(IContainer container)
+    {
+        container.PaddingVertical(40).Column(col =>
+        {
+            col.Spacing(20);
 
-                col.Item().PaddingTop(10).Text("Motivo de la consulta:")
-                    .Bold();
+            // --- CUERPO DEL TEXTO JUSTIFICATIVO ---
+            col.Item().Text(t =>
+            {
+                t.Span("D./Dña. ");
+                t.Span($"{_cita.NombreVeterinario}").Bold();
+                t.Span(", facultativo colegiado número ");
+                t.Span($"{_cita.NumeroColegiado}").Bold();
+                t.Span(", en representación de la clínica VETCARE,");
+            });
 
-                col.Item().Text(_cita.Motivo);
+            col.Item().Text("CERTIFICA:").Bold().FontSize(12);
 
-                if (!string.IsNullOrWhiteSpace(_cita.Observaciones))
+            col.Item().Background(ColorFondoGris).Padding(20).Text(t =>
+            {
+                t.Span("Que el cliente ");
+                t.Span($"{_cita.NombreDueno}").Bold();
+                t.Span(", responsable del paciente (mascota) ");
+                t.Span($"{_cita.NombreMascota}").Bold();
+                t.Span(", ha permanecido en nuestras instalaciones para consulta veterinaria el día ");
+                t.Span($"{_cita.FechaHora:dd/MM/yyyy}").Bold();
+                t.Span(", desde las ");
+                t.Span($"{_cita.FechaHora:HH:mm}").Bold();
+                t.Span(" horas hasta las ");
+                t.Span($"{DateTime.Now:HH:mm}").Bold();
+                t.Span(" horas (hora de emisión del presente documento).");
+            });
+
+            // --- SECCIÓN DE FIRMA ---
+            col.Item().PaddingTop(50).Row(row =>
+            {
+                row.RelativeItem(); // Espacio a la izquierda
+
+                row.ConstantItem(200).Column(c =>
                 {
-                    col.Item().PaddingTop(10).Text("Observaciones médicas:")
-                        .Bold();
-
-                    col.Item().Text(_cita.Observaciones);
-                }
-
-                col.Item().PaddingTop(20).Text("Documento emitido como justificante de asistencia.")
-                    .Italic()
-                    .FontColor("#7F8C8D");
-            });
-
-            page.Footer().AlignRight().Text(x =>
-            {
-                x.Span("Fecha emisión: ");
-                x.Span(DateTime.Now.ToString("dd/MM/yyyy"));
+                    c.Item().AlignCenter().Text("Firma y sello del centro:").FontSize(10);
+                    c.Item().PaddingVertical(10).Height(60).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1);
+                    c.Item().AlignCenter().Text($"Dr. {_cita.NombreVeterinario}").FontSize(9);
+                });
             });
         });
     }
