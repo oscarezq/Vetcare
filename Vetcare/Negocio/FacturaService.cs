@@ -10,11 +10,8 @@ namespace Vetcare.Negocio
 {
     public class FacturaService
     {
-        private FacturaDAO facturaDAO = new FacturaDAO();
+        private readonly FacturaDAO facturaDAO = new();
 
-        /// <summary>
-        /// Crea una factura completa con sus líneas de detalle en una sola operación.
-        /// </summary>
         public bool InsertarFacturaCompleta(Factura factura)
         {
             return facturaDAO.InsertarFacturaCompleta(factura);
@@ -45,7 +42,7 @@ namespace Vetcare.Negocio
             return facturaDAO.AnularFactura(idFactura);
         }
 
-        public string ObtenerUltimoNumeroPorAnio(int anioActual)
+        public string? ObtenerUltimoNumeroPorAnio(int anioActual)
         {
             return facturaDAO.ObtenerUltimoNumeroPorAnio(anioActual);
         }

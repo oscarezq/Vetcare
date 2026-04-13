@@ -20,36 +20,26 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Número de colegiado del veterinario
         /// </summary>
-        public string NumeroColegiado { get; set; }
+        public string? NumeroColegiado { get; set; }
 
         /// <summary>
         /// Especialidad del veterinario.
         /// </summary>
-        public string Especialidad { get; set; }
+        public string? Especialidad { get; set; }
 
         /// <summary>
         /// Username del usuario asignado al veterinario.
         /// </summary>
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         /// <summary>
         /// Nombre del usuario asignado al veterinario.
         /// </summary>
-        public string Nombre { get; set; }
+        public string? Nombre { get; set; }
 
         /// <summary>
         /// Apellidos del usuario asignado al veterinario.
         /// </summary>
-        public string Apellidos { get; set; }
-
-        /// <summary>
-        /// Email del usuario asignado al veterinario.
-        /// </summary>
-        public string Email { get; set; }
-
-        /// <summary>
-        /// Teléfono del usuario asignado al veterinario.
-        /// </summary>
-        public string Telefono { get; set; }
+        public string? Apellidos { get; set; }
     }
 }

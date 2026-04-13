@@ -25,39 +25,42 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Username del usuario.
         /// </summary>
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         /// <summary>
         /// Hash de la contraseña del usuario.
         /// </summary>
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
 
         /// <summary>
         /// Salt de la contraseña del usuario.
         /// </summary>
-        public string Salt { get; set; }
+        public string? Salt { get; set; }
 
         /// <summary>
         /// Nombre del usuario.
         /// </summary>
-        public string Nombre { get; set; }
+        public string? Nombre { get; set; }
 
         /// <summary>
         /// Apellidos del usuario.
         /// </summary>
-        public string Apellidos { get; set; }
+        public string? Apellidos { get; set; }
 
-        public string NombreCompleto => $"{Nombre} {Apellidos}";
+        /// <summary>
+        /// Nombre + Apellidos del usuario.
+        /// </summary>
+        public string? NombreCompleto => $"{Nombre} {Apellidos}";
 
         /// <summary>
         /// Email del usuario.
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// Teléfono del usuario.
         /// </summary>
-        public string Telefono { get; set; }
+        public string? Telefono { get; set; }
 
         /// <summary>
         /// Booleano que indica si el usuario está activo o no.
@@ -77,10 +80,6 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Nombre del rol del usuario.
         /// </summary>
-        public string NombreRol { get; set; }
-
-        public string Especialidad { get; set; }
-
-        public string NumeroColegiado { get; set; }
+        public string? NombreRol { get; set; }
     }
 }

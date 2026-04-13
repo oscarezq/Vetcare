@@ -12,10 +12,13 @@ namespace Vetcare.Entidades
         /// </summary>
         public int IdCliente { get; set; }
 
+        /// <summary>
+        /// Tipo del documento de identificación del cliente ('DNI', 'NIE', 'Pasaporte').
+        /// </summary>
         public string? TipoDocumento { get; set; }
 
         /// <summary>
-        /// Número de identificación del cliente (DNI, NIE, NIF...).
+        /// Número de identificación del cliente.
         /// </summary>
         public string? NumDocumento { get; set; }
 
@@ -40,18 +43,33 @@ namespace Vetcare.Entidades
         public string? Email { get; set; }
 
         /// <summary>
-        /// Dirección del cliente.
+        /// Calle de la dirección del cliente.
         /// </summary>
         public string? CalleDireccion { get; set; }
 
+        /// <summary>
+        /// Número de la dirección del cliente.
+        /// </summary>
         public string? NumeroDireccion { get; set; }
 
+        /// <summary>
+        /// Piso y puerta de la dirección del cliente.
+        /// </summary>
         public string? PisoPuertaDireccion { get; set; }
 
+        /// <summary>
+        /// Código postal de la dirección del cliente.
+        /// </summary>
         public string? CodigoPostalDireccion { get; set; }
 
+        /// <summary>
+        /// Localidad de la dirección del cliente.
+        /// </summary>
         public string? LocalidadDireccion { get; set; }
 
+        /// <summary>
+        /// Provincia de la dirección del cliente.
+        /// </summary>
         public string? ProvinciaDireccion { get; set; }
 
         /// <summary>
@@ -62,13 +80,11 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Nombre + Apellidos del cliente.
         /// </summary>
-        public string NombreCompleto => $"{Nombre} {Apellidos}";
+        public string? NombreCompleto => $"{Nombre} {Apellidos}";
 
         /// <summary>
-        /// Nombre + Apellidos + Número de identificación del cliente.
+        /// Indica si el cliente está activo en el sistema.
         /// </summary>
-        public string ClienteCompleto => $"{Nombre} {Apellidos} ({NumDocumento})";
-
         public bool Activo { get; set; } = true;
     }
 

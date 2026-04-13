@@ -42,11 +42,6 @@ namespace Vetcare.Negocio
             return servicioDAO.Actualizar(servicio);
         }
 
-        public bool ActualizarStock(int id, int nuevoStock)
-        {
-            return servicioDAO.ActualizarStock(id, nuevoStock);
-        }
-
         public bool Eliminar(int idConcepto)
         {
             return servicioDAO.Eliminar(idConcepto);

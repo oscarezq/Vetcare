@@ -1,331 +1,364 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MySql.Data.MySqlClient;
 using Vetcare.Entidades;
 
 namespace Vetcare.Datos
 {
+    /// <summary>
+    /// Objeto de acceso a datos (DAO) para la entidad Factura.
+    /// Gestiona las operaciones de creación, consulta, actualización y anulación
+    /// de facturas en la base de datos.
+    /// </summary>
     public class FacturaDAO
     {
-        private Conexion conexion = new Conexion();
+        /// <summary>
+        /// Objeto encargado de proporcionar la conexión a la base de datos.
+        /// </summary>
+        readonly Conexion conexion = new();
 
+        /// <summary>
+        /// Inserta una factura completa junto con sus líneas de detalle
+        /// y actualiza el stock de productos si procede.
+        /// </summary>
+        /// <param name="f">Factura completa con sus detalles.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool InsertarFacturaCompleta(Factura f)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            using MySqlTransaction tra = con.BeginTransaction();
+
+            try
             {
-                con.Open();
-                using (MySqlTransaction tra = con.BeginTransaction())
+                f.BaseImponible = f.Detalles.Sum(d => d.Subtotal);
+                f.IvaTotal = f.Detalles.Sum(d => d.IvaImporte);
+                f.Total = f.Detalles.Sum(d => d.TotalLinea);
+
+                string sqlFactura = @"INSERT INTO facturas (id_cliente, numero_factura, 
+                        estado, base_imponible, iva_total, total, metodo_pago, fecha_emision, observaciones)
+                    VALUES (@idCliente, @numeroFactura, @estado, @baseImponible, @ivaTotal, @total, @metodoPago, 
+                        @fechaEmision, @observaciones)";
+
+                MySqlCommand cmdF = new(sqlFactura, con, tra);
+                CargarParametrosFactura(cmdF, f);
+                cmdF.ExecuteNonQuery();
+
+                int idFacturaGenerada = Convert.ToInt32(cmdF.LastInsertedId);
+
+                string sqlDetalle = @"INSERT INTO detalles_factura (id_factura, id_concepto, 
+                                        nombre_concepto, tipo, cantidad, precio_unitario, iva_porcentaje, 
+                                        subtotal, iva_importe, total_linea)
+                                    VALUES (@idFactura, @idConcepto, @nombreConcepto, @tipo, @cantidad, 
+                                        @precioUnitario, @ivaPorcentaje, @subtotal, @ivaImporte, @totalLinea)";
+
+                MySqlCommand cmdD = new(sqlDetalle, con, tra);
+                CargarParametrosDetalle(cmdD);
+
+                foreach (var det in f.Detalles)
                 {
-                    try
+                    cmdD.Parameters["@idFactura"].Value = idFacturaGenerada;
+                    cmdD.Parameters["@idConcepto"].Value = (object)det.IdConcepto ?? DBNull.Value;
+                    cmdD.Parameters["@nombreConcepto"].Value = det.NombreConcepto;
+                    cmdD.Parameters["@tipo"].Value = det.Tipo;
+                    cmdD.Parameters["@cantidad"].Value = det.Cantidad;
+                    cmdD.Parameters["@precioUnitario"].Value = det.PrecioUnitario;
+                    cmdD.Parameters["@ivaPorcentaje"].Value = det.IvaPorcentaje;
+                    cmdD.Parameters["@subtotal"].Value = det.Subtotal;
+                    cmdD.Parameters["@ivaImporte"].Value = det.IvaImporte;
+                    cmdD.Parameters["@totalLinea"].Value = det.TotalLinea;
+
+                    cmdD.ExecuteNonQuery();
+
+                    if (det.Tipo == "Producto" && det.IdConcepto > 0)
                     {
-                        // 1. Cálculo de totales
-                        f.BaseImponible = f.Detalles.Sum(d => d.Subtotal);
-                        f.IvaTotal = f.Detalles.Sum(d => d.IvaImporte);
-                        f.Total = f.Detalles.Sum(d => d.TotalLinea);
+                        string sqlStock = @"UPDATE conceptos 
+                                            SET stock = stock - @cantidad 
+                                            WHERE id_concepto = @idConcepto AND stock IS NOT NULL";
 
-                        // 2. Insertar Cabecera (Siguiendo tu esquema SQL exacto)
-                        string sqlFactura = @"INSERT INTO facturas 
-                            (id_cliente, numero_factura, estado, base_imponible, iva_total, total, metodo_pago, fecha_emision, observaciones) 
-                            VALUES (@cli, @num, @est, @base, @iva, @total, @met, @fec, @obs)";
-
-                        int idFacturaGenerada;
-                        using (MySqlCommand cmdF = new MySqlCommand(sqlFactura, con, tra))
-                        {
-                            cmdF.Parameters.AddWithValue("@cli", f.IdCliente);
-                            cmdF.Parameters.AddWithValue("@num", f.NumeroFactura);
-                            cmdF.Parameters.AddWithValue("@est", f.Estado ?? "Pendiente");
-                            cmdF.Parameters.AddWithValue("@base", f.BaseImponible);
-                            cmdF.Parameters.AddWithValue("@iva", f.IvaTotal);
-                            cmdF.Parameters.AddWithValue("@total", f.Total);
-                            cmdF.Parameters.AddWithValue("@met", f.MetodoPago);
-                            cmdF.Parameters.AddWithValue("@fec", DateTime.Now);
-                            cmdF.Parameters.AddWithValue("@obs", (object)f.Observaciones ?? DBNull.Value);
-
-                            cmdF.ExecuteNonQuery();
-                            idFacturaGenerada = Convert.ToInt32(cmdF.LastInsertedId);
-                        }
-
-                        // 3. Insertar Detalles
-                        string sqlDetalle = @"INSERT INTO detalles_factura 
-                            (id_factura, id_concepto, nombre_concepto, tipo, cantidad, precio_unitario, iva_porcentaje, subtotal, iva_importe, total_linea) 
-                            VALUES (@idF, @idC, @nom, @tipo, @cant, @pre, @ivaP, @sub, @ivaI, @totL)";
-
-                        using (MySqlCommand cmdD = new MySqlCommand(sqlDetalle, con, tra))
-                        {
-                            cmdD.Parameters.Add("@idF", MySqlDbType.Int32);
-                            cmdD.Parameters.Add("@idC", MySqlDbType.Int32);
-                            cmdD.Parameters.Add("@nom", MySqlDbType.VarChar);
-                            cmdD.Parameters.Add("@tipo", MySqlDbType.VarChar);
-                            cmdD.Parameters.Add("@cant", MySqlDbType.Int32);
-                            cmdD.Parameters.Add("@pre", MySqlDbType.Decimal);
-                            cmdD.Parameters.Add("@ivaP", MySqlDbType.Decimal);
-                            cmdD.Parameters.Add("@sub", MySqlDbType.Decimal);
-                            cmdD.Parameters.Add("@ivaI", MySqlDbType.Decimal);
-                            cmdD.Parameters.Add("@totL", MySqlDbType.Decimal);
-
-                            foreach (var det in f.Detalles)
-                            {
-                                decimal subtotal = det.Subtotal;
-                                decimal ivaImporte = det.IvaImporte;
-                                decimal totalLinea = det.TotalLinea;
-
-                                cmdD.Parameters["@idF"].Value = idFacturaGenerada;
-                                cmdD.Parameters["@idC"].Value = (object)det.IdConcepto ?? DBNull.Value;
-                                cmdD.Parameters["@nom"].Value = det.NombreConcepto;
-                                cmdD.Parameters["@tipo"].Value = det.Tipo;
-                                cmdD.Parameters["@cant"].Value = det.Cantidad;
-                                cmdD.Parameters["@pre"].Value = det.PrecioUnitario;
-                                cmdD.Parameters["@ivaP"].Value = det.IvaPorcentaje;
-                                cmdD.Parameters["@sub"].Value = subtotal;
-                                cmdD.Parameters["@ivaI"].Value = ivaImporte;
-                                cmdD.Parameters["@totL"].Value = totalLinea;
-
-                                cmdD.ExecuteNonQuery();
-
-                                // 4. Descontar stock si es Producto (Tabla conceptos)
-                                if (det.Tipo == "Producto" && det.IdConcepto > 0)
-                                {
-                                    string sqlStock = "UPDATE conceptos SET stock = stock - @c WHERE id_concepto = @id AND stock IS NOT NULL";
-                                    using (MySqlCommand cmdS = new MySqlCommand(sqlStock, con, tra))
-                                    {
-                                        cmdS.Parameters.AddWithValue("@c", det.Cantidad);
-                                        cmdS.Parameters.AddWithValue("@id", det.IdConcepto);
-                                        cmdS.ExecuteNonQuery();
-                                    }
-                                }
-                            }
-                        }
-
-                        tra.Commit();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        tra.Rollback();
-                        throw new Exception("Error al procesar la factura: " + ex.Message);
+                        MySqlCommand cmdS = new(sqlStock, con, tra);
+                        cmdS.Parameters.AddWithValue("@cantidad", det.Cantidad);
+                        cmdS.Parameters.AddWithValue("@idConcepto", det.IdConcepto);
+                        cmdS.ExecuteNonQuery();
                     }
                 }
+
+                tra.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                tra.Rollback();
+                throw new Exception("Error al insertar factura: " + ex.Message);
             }
         }
 
+        /// <summary>
+        /// Obtiene todas las facturas registradas en el sistema.
+        /// </summary>
+        /// <returns>Lista de facturas.</returns>
         public List<Factura> ObtenerTodas()
         {
-            List<Factura> lista = new List<Factura>();
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                // JOIN con la tabla clientes para obtener nombre, apellidos y documento
-                string sql = @"SELECT f.*, 
-                               c.nombre AS nombre_cliente, 
-                               c.apellidos AS apellidos_cliente, 
-                               c.num_documento AS documento_cliente
-                        FROM facturas f 
-                        INNER JOIN clientes c ON f.id_cliente = c.id_cliente
-                        ORDER BY f.fecha_emision DESC";
+            List<Factura> lista = new();
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                con.Open();
-                using (MySqlDataReader dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        Factura f = MapearFactura(dr);
-                        // Datos extendidos del cliente para la UI
-                        f.NombreCliente = dr["nombre_cliente"].ToString();
-                        f.ApellidosCliente = dr["apellidos_cliente"].ToString();
-                        f.NumeroDocumentoCliente = dr["documento_cliente"].ToString();
-                        lista.Add(f);
-                    }
-                }
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            string sql = @"SELECT f.*, c.nombre AS nombre_cliente, c.apellidos AS apellidos_cliente, 
+                            c.num_documento AS documento_cliente
+                           FROM facturas f
+                           INNER JOIN clientes c ON f.id_cliente = c.id_cliente
+                           ORDER BY f.fecha_emision DESC";
+
+            MySqlCommand cmd = new(sql, con);
+
+            using MySqlDataReader dr = cmd.ExecuteReader();
+            while (dr.Read())
+            {
+                Factura f = MappingFactura(dr);
+                f.NombreCliente = dr["nombre_cliente"].ToString();
+                f.ApellidosCliente = dr["apellidos_cliente"].ToString();
+                f.NumeroDocumentoCliente = dr["documento_cliente"].ToString();
+                lista.Add(f);
             }
+
             return lista;
         }
 
+        /// <summary>
+        /// Obtiene todas las facturas de un cliente específico.
+        /// </summary>
+        /// <param name="idCliente">Identificador del cliente.</param>
+        /// <returns>Lista de facturas del cliente.</returns>
         public List<Factura> ObtenerPorCliente(int idCliente)
         {
-            List<Factura> lista = new List<Factura>();
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                // JOIN con la tabla clientes para obtener nombre, apellidos y documento
-                string sql = @"SELECT f.*, 
-                               c.nombre AS nombre_cliente, 
-                               c.apellidos AS apellidos_cliente, 
-                               c.num_documento AS documento_cliente
-                        FROM facturas f 
-                        INNER JOIN clientes c ON f.id_cliente = c.id_cliente
-                        WHERE f.id_cliente = @idCliente
-                        ORDER BY f.fecha_emision DESC";
+            List<Factura> lista = new();
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@idCliente", idCliente);
-                con.Open();
-                using (MySqlDataReader dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        Factura f = MapearFactura(dr);
-                        // Datos extendidos del cliente para la UI
-                        f.NombreCliente = dr["nombre_cliente"].ToString();
-                        f.ApellidosCliente = dr["apellidos_cliente"].ToString();
-                        f.NumeroDocumentoCliente = dr["documento_cliente"].ToString();
-                        lista.Add(f);
-                    }
-                }
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            string sql = @"SELECT f.*, c.nombre AS nombre_cliente, c.apellidos AS apellidos_cliente, 
+                            c.num_documento AS documento_cliente
+                           FROM facturas f
+                           INNER JOIN clientes c ON f.id_cliente = c.id_cliente
+                           WHERE f.id_cliente = @idCliente
+                           ORDER BY f.fecha_emision DESC";
+
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@idCliente", idCliente);
+
+            using MySqlDataReader dr = cmd.ExecuteReader();
+            while (dr.Read())
+            {
+                Factura f = MappingFactura(dr);
+                f.NombreCliente = dr["nombre_cliente"].ToString();
+                f.ApellidosCliente = dr["apellidos_cliente"].ToString();
+                f.NumeroDocumentoCliente = dr["documento_cliente"].ToString();
+                lista.Add(f);
             }
+
             return lista;
         }
 
+        /// <summary>
+        /// Obtiene las facturas pendientes de pago.
+        /// </summary>
+        /// <returns>Lista de facturas pendientes.</returns>
         public List<Factura> ObtenerFacturasPendientes()
         {
-            List<Factura> lista = new List<Factura>();
-            using (MySqlConnection con = conexion.ObtenerConexion())
+            List<Factura> lista = new();
+
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            string sql = @"SELECT f.*, c.nombre AS nombre_cliente, c.apellidos AS apellidos_cliente
+                           FROM facturas f
+                           INNER JOIN clientes c ON f.id_cliente = c.id_cliente
+                           WHERE f.estado = 'Pendiente'
+                           ORDER BY f.fecha_emision ASC";
+
+            MySqlCommand cmd = new(sql, con);
+
+            using MySqlDataReader dr = cmd.ExecuteReader();
+            while (dr.Read())
             {
-                // Traemos las facturas pendientes con el nombre del cliente para el Dashboard
-                string sql = @"SELECT f.*, 
-                               c.nombre AS nombre_cliente, 
-                               c.apellidos AS apellidos_cliente
-                        FROM facturas f 
-                        INNER JOIN clientes c ON f.id_cliente = c.id_cliente
-                        WHERE f.estado = 'Pendiente'
-                        ORDER BY f.fecha_emision ASC"; // ASC para ver las más antiguas primero
-
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-
-                try
-                {
-                    con.Open();
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            // Usamos tu mapeador existente
-                            Factura f = MapearFactura(dr);
-
-                            // Asignamos los nombres para que se vean en el DataGrid
-                            f.NombreCliente = dr["nombre_cliente"].ToString();
-                            f.ApellidosCliente = dr["apellidos_cliente"].ToString();
-
-                            lista.Add(f);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Error al obtener facturas pendientes: " + ex.Message);
-                }
+                Factura f = MappingFactura(dr);
+                f.NombreCliente = dr["nombre_cliente"].ToString();
+                f.ApellidosCliente = dr["apellidos_cliente"].ToString();
+                lista.Add(f);
             }
+
             return lista;
         }
 
-        public decimal CalcularDeudaCliente(int idCliente)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                // Sumamos el total de las facturas que están en estado 'Pendiente'
-                string sql = @"SELECT IFNULL(SUM(total), 0) 
-                       FROM facturas 
-                       WHERE id_cliente = @idCliente 
-                       AND estado = 'Pendiente'";
-
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@idCliente", idCliente);
-
-                con.Open();
-                object result = cmd.ExecuteScalar();
-
-                return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
-            }
-        }
-
+        /// <summary>
+        /// Anula una factura existente.
+        /// </summary>
+        /// <param name="idFactura">Identificador de la factura.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool AnularFactura(int idFactura)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                string sql = @"UPDATE facturas 
-                               SET estado = 'Anulada', 
-                                   observaciones = CONCAT(IFNULL(observaciones,''), ' [ANULADA EL ', NOW(), ']') 
-                               WHERE id_factura = @id";
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id", idFactura);
-                con.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            string sql = @"UPDATE facturas 
+                           SET estado = 'Anulada',
+                               observaciones = CONCAT(IFNULL(observaciones,''), ' [ANULADA]')
+                           WHERE id_factura = @id";
+
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@id", idFactura);
+
+            return cmd.ExecuteNonQuery() > 0;
         }
 
-        public string ObtenerUltimoNumeroPorAnio(int anioActual)
+        /// <summary>
+        /// Actualiza el estado de una factura.
+        /// </summary>
+        /// <param name="idFactura">Identificador de la factura.</param>
+        /// <param name="estado">Nuevo estado.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
+        public bool ActualizarEstadoFactura(int idFactura, string estado)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                string sql = @"SELECT MAX(numero_factura) 
-                               FROM facturas 
-                               WHERE numero_factura LIKE CONCAT(@anio, '-%')";
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                {
-                    cmd.Parameters.AddWithValue("@anio", anioActual.ToString());
-                    con.Open();
-                    object result = cmd.ExecuteScalar();
+            string sql = "UPDATE facturas SET estado = @estado WHERE id_factura = @id";
 
-                    if (result == DBNull.Value || result == null)
-                        return null;
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@estado", estado);
+            cmd.Parameters.AddWithValue("@id", idFactura);
 
-                    return result.ToString();
-                }
-            }
+            return cmd.ExecuteNonQuery() > 0;
         }
 
-        public bool ActualizarEstadoFactura(int idFactura, string nuevoEstado)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                string sql = @"UPDATE facturas SET estado = @estado WHERE id_factura = @id";
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@estado", nuevoEstado);
-                cmd.Parameters.AddWithValue("@id", idFactura);
-
-                con.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-
+        /// <summary>
+        /// Obtiene los ingresos del mes actual.
+        /// </summary>
+        /// <returns>Total de ingresos del mes.</returns>
         public decimal ObtenerIngresosMes()
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                // Modificamos el SQL para filtrar por el mes y año actuales
-                string sql = @"SELECT IFNULL(SUM(total), 0) 
-                       FROM facturas 
-                       WHERE MONTH(fecha_emision) = MONTH(CURDATE()) 
-                       AND YEAR(fecha_emision) = YEAR(CURDATE())
-                       AND estado = 'Pagada'";
+            string sql = @"SELECT IFNULL(SUM(total),0)
+                           FROM facturas
+                           WHERE MONTH(fecha_emision)=MONTH(CURDATE())
+                           AND YEAR(fecha_emision)=YEAR(CURDATE())
+                           AND estado='Pagada'";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-
-                object result = cmd.ExecuteScalar();
-
-                return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
-            }
+            MySqlCommand cmd = new(sql, con);
+            return Convert.ToDecimal(cmd.ExecuteScalar());
         }
 
+        /// <summary>
+        /// Calcula la deuda pendiente de un cliente.
+        /// </summary>
+        /// <param name="idCliente">Identificador del cliente.</param>
+        /// <returns>Total de deuda pendiente.</returns>
+        public decimal CalcularDeudaCliente(int idCliente)
+        {
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
+            string sql = @"SELECT IFNULL(SUM(total),0)
+                           FROM facturas
+                           WHERE id_cliente=@id AND estado='Pendiente'";
 
-        private Factura MapearFactura(MySqlDataReader dr)
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@id", idCliente);
+
+            return Convert.ToDecimal(cmd.ExecuteScalar());
+        }
+
+        /// <summary>
+        /// Obtiene el último número de factura generado en un año concreto.
+        /// </summary>
+        /// <param name="anioActual">Año de búsqueda.</param>
+        /// <returns>Último número de factura del año o null si no existe.</returns>
+        public string? ObtenerUltimoNumeroPorAnio(int anioActual)
+        {
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            string sql = @"SELECT MAX(numero_factura)
+                   FROM facturas
+                   WHERE numero_factura LIKE CONCAT(@anio, '-%')";
+
+            using MySqlCommand cmd = new(sql, con)
+            {
+                Parameters =
+                {
+                    new MySqlParameter("@anio", anioActual.ToString())
+                }
+            };
+
+            object result = cmd.ExecuteScalar();
+
+            if (result == null || result == DBNull.Value)
+                return null;
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// Carga los parámetros de la cabecera de factura.
+        /// </summary>
+        /// <param name="cmd">Comando MySQL.</param>
+        /// <param name="cita">Objeto factura con los datos.</param>
+        private static void CargarParametrosFactura(MySqlCommand cmd, Factura f)
+        {
+            cmd.Parameters.AddWithValue("@idCliente", f.IdCliente);
+            cmd.Parameters.AddWithValue("@numeroFactura", f.NumeroFactura);
+            cmd.Parameters.AddWithValue("@estado", f.Estado ?? "Pendiente");
+            cmd.Parameters.AddWithValue("@baseImponible", f.BaseImponible);
+            cmd.Parameters.AddWithValue("@ivaTotal", f.IvaTotal);
+            cmd.Parameters.AddWithValue("@total", f.Total);
+            cmd.Parameters.AddWithValue("@metodoPago", f.MetodoPago);
+            cmd.Parameters.AddWithValue("@fechaEmision", DateTime.Now);
+            cmd.Parameters.AddWithValue("@observaciones", f.Observaciones as object ?? DBNull.Value);
+        }
+
+        /// <summary>
+        /// Inicializa los parámetros del detalle de factura.
+        /// </summary>
+        /// <param name="cmd">Comando MySQL.</param>
+        private static void CargarParametrosDetalle(MySqlCommand cmd)
+        {
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add("@idFactura", MySqlDbType.Int32);
+            cmd.Parameters.Add("@idConcepto", MySqlDbType.Int32);
+            cmd.Parameters.Add("@nombreConcepto", MySqlDbType.VarChar);
+            cmd.Parameters.Add("@tipo", MySqlDbType.VarChar);
+            cmd.Parameters.Add("@cantidad", MySqlDbType.Int32);
+            cmd.Parameters.Add("@precioUnitario", MySqlDbType.Decimal);
+            cmd.Parameters.Add("@ivaPorcentaje", MySqlDbType.Decimal);
+            cmd.Parameters.Add("@subtotal", MySqlDbType.Decimal);
+            cmd.Parameters.Add("@ivaImporte", MySqlDbType.Decimal);
+            cmd.Parameters.Add("@totalLinea", MySqlDbType.Decimal);
+        }
+
+        /// <summary>
+        /// Realiza el mapeo de un registro de base de datos a un objeto Factura.
+        /// </summary>
+        /// <param name="rdr">Lector de datos.</param>
+        /// <returns>Objeto Factura.</returns>
+        private static Factura MappingFactura(MySqlDataReader rdr)
         {
             return new Factura
             {
-                IdFactura = Convert.ToInt32(dr["id_factura"]),
-                IdCliente = Convert.ToInt32(dr["id_cliente"]),
-                NumeroFactura = dr["numero_factura"].ToString(),
-                Estado = dr["estado"].ToString(),
-                FechaEmision = Convert.ToDateTime(dr["fecha_emision"]),
-                BaseImponible = dr["base_imponible"] != DBNull.Value ? Convert.ToDecimal(dr["base_imponible"]) : 0,
-                IvaTotal = dr["iva_total"] != DBNull.Value ? Convert.ToDecimal(dr["iva_total"]) : 0,
-                Total = Convert.ToDecimal(dr["total"]),
-                MetodoPago = dr["metodo_pago"].ToString(),
-                Observaciones = dr["observaciones"] != DBNull.Value ? dr["observaciones"].ToString() : ""
+                IdFactura = Convert.ToInt32(rdr["id_factura"]),
+                IdCliente = Convert.ToInt32(rdr["id_cliente"]),
+                NumeroFactura = rdr["numero_factura"].ToString(),
+                Estado = rdr["estado"].ToString(),
+                FechaEmision = Convert.ToDateTime(rdr["fecha_emision"]),
+                BaseImponible = Convert.ToDecimal(rdr["base_imponible"]),
+                IvaTotal = Convert.ToDecimal(rdr["iva_total"]),
+                Total = Convert.ToDecimal(rdr["total"]),
+                MetodoPago = rdr["metodo_pago"].ToString(),
+                Observaciones = rdr["observaciones"] == DBNull.Value ? "" : rdr["observaciones"].ToString()
             };
         }
     }

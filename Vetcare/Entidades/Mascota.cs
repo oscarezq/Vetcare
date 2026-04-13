@@ -20,23 +20,37 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Número de chip de la mascota.
         /// </summary>
-        public string NumeroChip { get; set; }
+        public string? NumeroChip { get; set; }
 
         /// <summary>
         /// Nombre de la mascota.
         /// </summary>
-        public string Nombre { get; set; }
-
-        public int IdEspecie { get; set; }
-        public int IdRaza { get; set; }
-
-        public string NombreEspecie { get; set; }
-        public string NombreRaza { get; set; }
+        public string? Nombre { get; set; }
 
         /// <summary>
-        /// Sexo de la mascota (macho, hembra).
+        /// Identificador de la especie a la que pertenece la mascota.
         /// </summary>
-        public string Sexo { get; set; }
+        public int IdEspecie { get; set; }
+
+        /// <summary>
+        /// Nombre de la especie a la que pertenece la mascota.
+        /// </summary>
+        public string? NombreEspecie { get; set; }
+
+        /// <summary>
+        /// Identificador de la raza la que pertenece la mascota.
+        /// </summary>
+        public int IdRaza { get; set; }
+
+        /// <summary>
+        /// Nombre de la raza a la que pertenece la mascota.
+        /// </summary>
+        public string? NombreRaza { get; set; }
+
+        /// <summary>
+        /// Sexo de la mascota ('Macho', 'Hembra').
+        /// </summary>
+        public string? Sexo { get; set; }
 
         /// <summary>
         /// Peso de la mascota en kilogramos.
@@ -51,28 +65,26 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Nombre del dueño de la mascota.
         /// </summary>
-        public string NombreDueno { get; set; }
+        public string? NombreDueno { get; set; }
 
         /// <summary>
         /// Apellidos del dueño de la mascota.
         /// </summary>
-        public string ApellidosDueno { get; set; }
+        public string? ApellidosDueno { get; set; }
 
         /// <summary>
         /// Número de identificación del dueño de la mascota.
         /// </summary>
-        public string NumeroIdentificacionDueno { get; set; }
+        public string? NumeroIdentificacionDueno { get; set; }
 
         /// <summary>
-        /// Nombre + Apellidos del dueño.
+        /// Nombre + Apellidos + Número de identificación del dueño.
         /// </summary>
-        public string NombreApellidosDueno => $"{this.NombreDueno} {this.ApellidosDueno}";
+        public string? Dueno => $"{this.NombreDueno} {this.ApellidosDueno} ({this.NumeroIdentificacionDueno})";
 
         /// <summary>
-        /// Nombre + Apellidos + (Identificador) del dueño.
+        /// Indica si la mascota está activa en el sistema.
         /// </summary>
-        public string Dueno => $"{this.NombreDueno} {this.ApellidosDueno} ({this.NumeroIdentificacionDueno})";
-
         public bool Activo { get; set; }
     }
 }

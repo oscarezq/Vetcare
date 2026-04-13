@@ -11,7 +11,7 @@ namespace Vetcare.Negocio
     public class ClienteService
     {
         // Objeto DAO para acceder a los datos
-        public ClienteDAO clienteDAO = new ClienteDAO();
+        public ClienteDAO clienteDAO = new();
 
         /// <summary>
         /// Método para obtener todos los clientes
@@ -27,7 +27,7 @@ namespace Vetcare.Negocio
         /// </summary>
         /// <param name="id">ID del cliente a obtener.</param>
         /// <returns>Cliente si existe; de lo contrario, null.</returns>
-        public Cliente ObtenerPorId(int id)
+        public Cliente? ObtenerPorId(int id)
         {
             return clienteDAO.ObtenerPorId(id);
         }

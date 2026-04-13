@@ -7,14 +7,14 @@ namespace Vetcare.Negocio
 {
     class CitaService
     {
-        public CitaDAO citaDAO = new CitaDAO();
+        public CitaDAO citaDAO = new();
 
         public List<Cita> ObtenerTodas()
         {
             return citaDAO.ObtenerTodas();
         }
 
-        public Cita ObtenerPorId(int id)
+        public Cita? ObtenerPorId(int id)
         {
             return citaDAO.ObtenerPorId(id);
         }
@@ -37,16 +37,6 @@ namespace Vetcare.Negocio
         public bool ActualizarEstado(int idCita, string estado)
         {
             return citaDAO.ActualizarEstado(idCita, estado);
-        }
-
-        public bool Eliminar(int idCita)
-        {
-            return citaDAO.Eliminar(idCita);
-        }
-
-        public bool EliminarVarias(List<int> ids)
-        {
-            return citaDAO.EliminarVarias(ids);
         }
 
         public int ContarCitasHoy()

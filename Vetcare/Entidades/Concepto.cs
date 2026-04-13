@@ -1,30 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vetcare.Entidades
 {
+    /// <summary>
+    /// Clase que representa un concepto (producto o servicio) registrado en el sistema.
+    /// </summary>
     public class Concepto
     {
+        /// <summary>
+        /// Identificador del concepto.
+        /// </summary>
         public int IdConcepto { get; set; }
-        public string Tipo { get; set; } // Producto o Servicio
-        public string Nombre { get; set; }
-        public string Descripcion { get; set; }
+
+        /// <summary>
+        /// Tipo de concepto ('Producto', 'Servicio').
+        /// </summary>
+        public string? Tipo { get; set; }
+
+        /// <summary>
+        /// Nombre del concepto.
+        /// </summary>
+        public string? Nombre { get; set; }
+
+        /// <summary>
+        /// Descripción del concepto.
+        /// </summary>
+        public string? Descripcion { get; set; }
+
+        /// <summary>
+        /// Precio (con IVA) del concepto.
+        /// </summary>
         public decimal Precio { get; set; }
+
+        /// <summary>
+        /// Porcentaje de IVA que se aplica al concepto ('4', '10', '21').
+        /// </summary>
         public decimal IvaPorcentaje { get; set; }
 
-        public decimal PrecioSinIva
-        {
-            get
-            {
-                return Precio / (1 + (IvaPorcentaje / 100m));
-            }
-        }
-
+        /// <summary>
+        /// Indica si el concepto está activo en el sistema.
+        /// </summary>
         public bool Activo { get; set; }
+
+        /// <summary>
+        /// Stock disponible (solo para los productos).
+        /// </summary>
         public int? Stock { get; set; }
+
+        /// <summary>
+        /// Fecha de alta del concepto en el sistema.
+        /// </summary>
         public DateTime FechaAlta { get; set; }
     }
 }

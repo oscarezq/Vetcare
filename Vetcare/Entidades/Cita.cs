@@ -23,12 +23,12 @@ namespace Vetcare.Entidades
         public int IdVeterinario { get; set; }
 
         /// <summary>
-        /// Identificador del usuario asociado al veterinario que va a atender a la mascota.
+        /// Identificador del usuario correspondiente al veterinario que va a atender a la mascota.
         /// </summary>
         public int IdUsuarioVeterinario { get; set; }
 
         /// <summary>
-        /// Identificador del usuario asociado al dueño de la mascota.
+        /// Identificador del cliente asociado al dueño de la mascota.
         /// </summary>
         public int IdUsuarioDueno { get; set; }
 
@@ -40,43 +40,41 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Motivo de la cita.
         /// </summary>
-        public string Motivo { get; set; }
+        public string? Motivo { get; set; }
 
         /// <summary>
-        /// Estado de la cita ('pendiente', 'cancelada', 'completada').
+        /// Estado de la cita ('Pendiente', 'Cancelada', 'Completada').
         /// </summary>
-        public string Estado { get; set; }
+        public string? Estado { get; set; }
 
         /// <summary>
         /// Observaciones asociadas a la cita.
         /// </summary>
-        public string Observaciones { get; set; }
+        public string? Observaciones { get; set; }
 
         /// <summary>
         /// Nombre de la mascota.
         /// </summary>
-        public string NombreMascota { get; set; }
+        public string? NombreMascota { get; set; }
 
         /// <summary>
         /// Nombre del dueño de la mascota.
         /// </summary>
-        public string NombreDueno { get; set; }
+        public string? NombreDueno { get; set; }
 
         /// <summary>
         /// Nombre del veterinario.
         /// </summary>
-        public string NombreVeterinario { get; set; }
+        public string? NombreVeterinario { get; set; }
 
         /// <summary>
         /// Número de colegiado del veterinario.
         /// </summary>
-        public string NumeroColegiado { get; set; }
+        public string? NumeroColegiado { get; set; }
 
+        /// <summary>
+        /// Duración estimada de la cita.
+        /// </summary>
         public int DuracionEstimada {  get; set; }
-
-        // PROPIEDAD PARA LA INTERFAZ
-        public string InfoVeterinario => $"{NombreVeterinario} ({NumeroColegiado})";
-
-        public bool EsMia { get; set; }
     }
 }

@@ -5,15 +5,25 @@ using Vetcare.Entidades;
 
 namespace Vetcare.Datos
 {
+    /// <summary>
+    /// Objeto de acceso a datos (DAO) para la entidad Cliente.
+    /// Gestiona las operaciones de consulta, inserción, actualización y desactivación
+    /// de clientes en la base de datos.
+    /// </summary>
     public class ClienteDAO
     {
-        private Conexion conexion = new Conexion();
+        /// <summary>
+        /// Objeto encargado de proporcionar la conexión a la base de datos.
+        /// </summary>
+        private readonly Conexion conexion = new();
 
-        // ------------------ MÉTODOS PRINCIPALES ------------------
-
+        /// <summary>
+        /// Obtiene todos los clientes registrados en el sistema.
+        /// </summary>
+        /// <returns>Lista de clientes.</returns>
         public List<Cliente> ObtenerTodos()
         {
-            List<Cliente> lista = new List<Cliente>();
+            List<Cliente> lista = new();
 
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
@@ -21,20 +31,24 @@ namespace Vetcare.Datos
                 string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, activo, telefono, email, 
                                       calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta
                                FROM clientes";
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
-                {
-                    while (rdr.Read())
-                        lista.Add(MappingCliente(rdr));
-                }
+
+                using MySqlCommand cmd = new(sql, con);
+                using MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                    lista.Add(MappingCliente(rdr));
             }
 
             return lista;
         }
 
-        public Cliente ObtenerPorId(int id)
+        /// <summary>
+        /// Obtiene un cliente por su identificador.
+        /// </summary>
+        /// <param name="id">Identificador del cliente.</param>
+        /// <returns>Objeto Cliente si existe; en caso contrario, null.</returns>
+        public Cliente? ObtenerPorId(int id)
         {
-            Cliente cliente = null;
+            Cliente? cliente = null;
 
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
@@ -44,46 +58,47 @@ namespace Vetcare.Datos
                                FROM clientes
                                WHERE id_cliente = @id";
 
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                {
-                    cmd.Parameters.AddWithValue("@id", id);
+                using MySqlCommand cmd = new(sql, con);
+                cmd.Parameters.AddWithValue("@id", id);
 
-                    using (MySqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        if (rdr.Read())
-                            cliente = MappingCliente(rdr);
-                    }
-                }
+                using MySqlDataReader rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                    cliente = MappingCliente(rdr);
             }
 
             return cliente;
         }
 
+        /// <summary>
+        /// Inserta un nuevo cliente en la base de datos.
+        /// </summary>
+        /// <param name="cliente">Objeto cliente a insertar.</param>
+        /// <returns>True si la inserción se realiza correctamente.</returns>
         public bool Insertar(Cliente cliente)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                string sql = @"INSERT INTO clientes
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+            string sql = @"INSERT INTO clientes
                                (tipo_documento, num_documento, nombre, apellidos, telefono, email, 
                                 calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta)
                                VALUES (@tipoDocumento, @numDocumento, @nombre, @apellidos, @telefono, @email, 
                                 @calle, @numero, @pisoPuerta, @codigoPostal, @localidad, @provincia, @fechaAlta)";
 
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                {
-                    CargarParametros(cmd, cliente);
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-            }
+            using MySqlCommand cmd = new(sql, con);
+            CargarParametros(cmd, cliente);
+            return cmd.ExecuteNonQuery() > 0;
         }
 
+        /// <summary>
+        /// Actualiza los datos de un cliente existente.
+        /// </summary>
+        /// <param name="cliente">Objeto cliente con los datos actualizados.</param>
+        /// <returns>True si la actualización se realiza correctamente.</returns>
         public bool Actualizar(Cliente cliente)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                string sql = @"UPDATE clientes 
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+            string sql = @"UPDATE clientes 
                                SET tipo_documento = @tipoDocumento,
                                    num_documento = @numDocumento,
                                    nombre = @nombre,
@@ -98,107 +113,87 @@ namespace Vetcare.Datos
                                    provincia = @provincia
                                WHERE id_cliente = @id";
 
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                {
-                    CargarParametros(cmd, cliente);
-                    cmd.Parameters.AddWithValue("@id", cliente.IdCliente);
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-            }
+            using MySqlCommand cmd = new(sql, con);
+            CargarParametros(cmd, cliente);
+            cmd.Parameters.AddWithValue("@id", cliente.IdCliente);
+            return cmd.ExecuteNonQuery() > 0;
         }
 
+        /// <summary>
+        /// Desactiva un cliente y todas sus mascotas asociadas mediante una transacción.
+        /// </summary>
+        /// <param name="idCliente">Identificador del cliente.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool Desactivar(int idCliente)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            using MySqlTransaction trans = con.BeginTransaction();
+            try
             {
-                con.Open();
-                // Iniciamos una transacción para asegurar la integridad de los datos
-                using (MySqlTransaction trans = con.BeginTransaction())
+                string sqlCliente = "UPDATE clientes SET activo = FALSE WHERE id_cliente = @id";
+                using (MySqlCommand cmdCliente = new(sqlCliente, con, trans))
                 {
-                    try
-                    {
-                        // 1. Desactivar al Cliente
-                        string sqlCliente = "UPDATE clientes SET activo = FALSE WHERE id_cliente = @id";
-                        using (MySqlCommand cmdCliente = new MySqlCommand(sqlCliente, con, trans))
-                        {
-                            cmdCliente.Parameters.AddWithValue("@id", idCliente);
-                            cmdCliente.ExecuteNonQuery();
-                        }
-
-                        // 2. Desactivar todas sus Mascotas
-                        string sqlMascotas = "UPDATE mascotas SET activo = FALSE WHERE id_cliente = @id";
-                        using (MySqlCommand cmdMascotas = new MySqlCommand(sqlMascotas, con, trans))
-                        {
-                            cmdMascotas.Parameters.AddWithValue("@id", idCliente);
-                            cmdMascotas.ExecuteNonQuery();
-                        }
-
-                        // Si todo ha ido bien, confirmamos los cambios
-                        trans.Commit();
-                        return true;
-                    }
-                    catch (Exception)
-                    {
-                        // Si algo falla, deshacemos cualquier cambio pendiente
-                        trans.Rollback();
-                        throw; // Re-lanzamos la excepción para que el Service/UI la capture
-                    }
+                    cmdCliente.Parameters.AddWithValue("@id", idCliente);
+                    cmdCliente.ExecuteNonQuery();
                 }
+
+                string sqlMascotas = "UPDATE mascotas SET activo = FALSE WHERE id_cliente = @id";
+                using (MySqlCommand cmdMascotas = new(sqlMascotas, con, trans))
+                {
+                    cmdMascotas.Parameters.AddWithValue("@id", idCliente);
+                    cmdMascotas.ExecuteNonQuery();
+                }
+
+                trans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                trans.Rollback();
+                throw;
             }
         }
 
+        /// <summary>
+        /// Reactiva un cliente previamente desactivado.
+        /// </summary>
+        /// <param name="idCliente">Identificador del cliente.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool Reactivar(int idCliente)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                string sql = "UPDATE clientes SET activo = TRUE WHERE id_cliente = @id";
+            string sql = "UPDATE clientes SET activo = TRUE WHERE id_cliente = @id";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id", idCliente);
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@id", idCliente);
 
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            return cmd.ExecuteNonQuery() > 0;
         }
 
+        /// <summary>
+        /// Cuenta el número total de clientes registrados en el sistema.
+        /// </summary>
+        /// <returns>Número de clientes.</returns>
         public int ContarClientes()
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                string sql = "SELECT COUNT(*) FROM clientes";
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                return Convert.ToInt32(cmd.ExecuteScalar());
-            }
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+            string sql = "SELECT COUNT(*) FROM clientes";
+            MySqlCommand cmd = new(sql, con);
+
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
-        // ------------------ MÉTODOS AUXILIARES ------------------
-
-        private Cliente MappingCliente(MySqlDataReader rdr)
-        {
-            return new Cliente
-            {
-                IdCliente = Convert.ToInt32(rdr["id_cliente"]),
-                TipoDocumento = rdr["tipo_documento"].ToString(),
-                NumDocumento = rdr["num_documento"].ToString(),
-                Nombre = rdr["nombre"].ToString(),
-                Apellidos = rdr["apellidos"].ToString(),
-                Telefono = rdr["telefono"].ToString(),
-                Email = rdr["email"].ToString(),
-                Activo = Convert.ToBoolean(rdr["activo"]),
-                // Mapeo de nuevos campos de dirección
-                CalleDireccion = rdr["calle"].ToString(),
-                NumeroDireccion = rdr["numero"].ToString(),
-                PisoPuertaDireccion = rdr["piso_puerta"].ToString(),
-                CodigoPostalDireccion = rdr["codigo_postal"].ToString(),
-                LocalidadDireccion = rdr["localidad"].ToString(),
-                ProvinciaDireccion = rdr["provincia"].ToString(),
-                FechaAlta = Convert.ToDateTime(rdr["fecha_alta"])
-            };
-        }
-
-        private void CargarParametros(MySqlCommand cmd, Cliente cliente)
+        /// <summary>
+        /// Carga los parámetros necesarios en un comando SQL a partir de un objeto Cliente.
+        /// </summary>
+        /// <param name="cmd">Comando MySQL.</param>
+        /// <param name="cliente">Objeto cliente con los datos.</param>
+        private static void CargarParametros(MySqlCommand cmd, Cliente cliente)
         {
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@tipoDocumento", cliente.TipoDocumento);
@@ -214,6 +209,33 @@ namespace Vetcare.Datos
             cmd.Parameters.AddWithValue("@localidad", cliente.LocalidadDireccion);
             cmd.Parameters.AddWithValue("@provincia", cliente.ProvinciaDireccion);
             cmd.Parameters.AddWithValue("@fechaAlta", cliente.FechaAlta);
+        }
+
+        /// <summary>
+        /// Realiza el mapeo de un registro de base de datos a un objeto Cliente.
+        /// </summary>
+        /// <param name="rdr">Lector de datos.</param>
+        /// <returns>Objeto Cliente.</returns>
+        private static Cliente MappingCliente(MySqlDataReader rdr)
+        {
+            return new Cliente
+            {
+                IdCliente = Convert.ToInt32(rdr["id_cliente"]),
+                TipoDocumento = rdr["tipo_documento"].ToString(),
+                NumDocumento = rdr["num_documento"].ToString(),
+                Nombre = rdr["nombre"].ToString(),
+                Apellidos = rdr["apellidos"].ToString(),
+                Telefono = rdr["telefono"].ToString(),
+                Email = rdr["email"].ToString(),
+                Activo = Convert.ToBoolean(rdr["activo"]),
+                CalleDireccion = rdr["calle"].ToString(),
+                NumeroDireccion = rdr["numero"].ToString(),
+                PisoPuertaDireccion = rdr["piso_puerta"].ToString(),
+                CodigoPostalDireccion = rdr["codigo_postal"].ToString(),
+                LocalidadDireccion = rdr["localidad"].ToString(),
+                ProvinciaDireccion = rdr["provincia"].ToString(),
+                FechaAlta = Convert.ToDateTime(rdr["fecha_alta"])
+            };
         }
     }
 }

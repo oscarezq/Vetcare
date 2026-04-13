@@ -5,104 +5,65 @@ using Vetcare.Entidades;
 
 namespace Vetcare.Datos
 {
+    /// <summary>
+    /// Objeto de acceso a datos (DAO) para la entidad Especie.
+    /// Gestiona las operaciones de consulta e inserción de especies en la base de datos.
+    /// </summary>
     class EspecieDAO
     {
-        Conexion conexion = new Conexion();
+        /// <summary>
+        /// Objeto encargado de proporcionar la conexión a la base de datos.
+        /// </summary>
+        readonly Conexion conexion = new();
 
+        /// <summary>
+        /// Obtiene todas las especies registradas en el sistema.
+        /// </summary>
+        /// <returns>Lista de especies.</returns>
         public List<Especie> ObtenerTodas()
         {
-            List<Especie> lista = new List<Especie>();
+            List<Especie> lista = new();
 
-            using (MySqlConnection con = conexion.ObtenerConexion())
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            string sql = "SELECT id_especie, nombre FROM especies";
+
+            MySqlCommand cmd = new(sql, con);
+
+            using MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
             {
-                con.Open();
-
-                string sql = "SELECT id_especie, nombre FROM especies";
-
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
-                {
-                    while (rdr.Read())
-                    {
-                        lista.Add(MappingEspecie(rdr));
-                    }
-                }
+                lista.Add(MapearEspecie(rdr));
             }
 
             return lista;
         }
 
-        public Especie ObtenerPorId(int id)
-        {
-            Especie especie = null;
-
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-
-                string sql = "SELECT id_especie, nombre FROM especies WHERE id_especie = @id";
-
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id", id);
-
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
-                {
-                    if (rdr.Read())
-                        especie = MappingEspecie(rdr);
-                }
-            }
-
-            return especie;
-        }
-
+        /// <summary>
+        /// Inserta una nueva especie en la base de datos.
+        /// </summary>
+        /// <param name="especie">Objeto especie a insertar.</param>
+        /// <returns>True si la inserción se realiza correctamente.</returns>
         public bool Insertar(Especie especie)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                string sql = "INSERT INTO especies (nombre) VALUES (@nombre)";
+            string sql = "INSERT INTO especies (nombre) VALUES (@nombre)";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@nombre", especie.NombreEspecie);
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@nombre", especie.NombreEspecie);
 
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            return cmd.ExecuteNonQuery() > 0;
         }
 
-        public bool Actualizar(Especie especie)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-
-                string sql = "UPDATE especies SET nombre = @nombre WHERE id_especie = @id";
-
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@nombre", especie.NombreEspecie);
-                cmd.Parameters.AddWithValue("@id", especie.IdEspecie);
-
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-
-        public bool Eliminar(int id)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-
-                string sql = "DELETE FROM especies WHERE id_especie = @id";
-
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id", id);
-
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-
-        private Especie MappingEspecie(MySqlDataReader rdr)
+        /// <summary>
+        /// Realiza el mapeo de un registro de base de datos a un objeto Especie.
+        /// </summary>
+        /// <param name="rdr">Lector de datos.</param>
+        /// <returns>Objeto Especie.</returns>
+        private static Especie MapearEspecie(MySqlDataReader rdr)
         {
             return new Especie
             {
