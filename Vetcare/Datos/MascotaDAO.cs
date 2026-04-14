@@ -5,16 +5,25 @@ using Vetcare.Entidades;
 
 namespace Vetcare.Datos
 {
+    /// <summary>
+    /// Objeto de acceso a datos (DAO) para la entidad Mascota.
+    /// Gestiona las operaciones de consulta, inserción, actualización y desactivación
+    /// de mascotas en la base de datos.
+    /// </summary>
     class MascotaDAO
     {
-        Conexion conexion = new Conexion();
+        /// <summary>
+        /// Objeto encargado de proporcionar la conexión a la base de datos.
+        /// </summary>
+        readonly Conexion conexion = new();
 
-        // ===========================
-        // OBTENER MASCOTAS
-        // ===========================
+        /// <summary>
+        /// Obtiene todas las mascotas registradas en el sistema.
+        /// </summary>
+        /// <returns>Lista de mascotas.</returns>
         public List<Mascota> ObtenerTodas()
         {
-            List<Mascota> lista = new List<Mascota>();
+            List<Mascota> lista = new();
 
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
@@ -36,27 +45,30 @@ namespace Vetcare.Datos
                        c.apellidos AS apellidos_dueno,
                        c.num_documento AS documento_dueno
                 FROM mascotas m
-                INNER JOIN clientes c ON m.id_cliente = c.id_cliente
-                INNER JOIN razas r ON m.id_raza = r.id_raza
-                INNER JOIN especies e ON r.id_especie = e.id_especie";
+                    INNER JOIN clientes c ON m.id_cliente = c.id_cliente
+                    INNER JOIN razas r ON m.id_raza = r.id_raza
+                    INNER JOIN especies e ON r.id_especie = e.id_especie";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlCommand cmd = new(sql, con);
 
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
+                using MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
                 {
-                    while (rdr.Read())
-                    {
-                        lista.Add(MappingMascota(rdr));
-                    }
+                    lista.Add(MappingMascota(rdr));
                 }
             }
 
             return lista;
         }
 
-        public Mascota ObtenerPorId(int idMascota)
+        /// <summary>
+        /// Obtiene una mascota por su identificador.
+        /// </summary>
+        /// <param name="idMascota">Identificador de la mascota.</param>
+        /// <returns>Objeto Mascota si existe; en caso contrario, null.</returns>
+        public Mascota? ObtenerPorId(int idMascota)
         {
-            Mascota mascota = null;
+            Mascota? mascota = null;
 
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
@@ -78,27 +90,30 @@ namespace Vetcare.Datos
                        c.apellidos AS apellidos_dueno,
                        c.num_documento AS documento_dueno
                 FROM mascotas m
-                INNER JOIN clientes c ON m.id_cliente = c.id_cliente
-                INNER JOIN razas r ON m.id_raza = r.id_raza
-                INNER JOIN especies e ON r.id_especie = e.id_especie
+                    INNER JOIN clientes c ON m.id_cliente = c.id_cliente
+                    INNER JOIN razas r ON m.id_raza = r.id_raza
+                    INNER JOIN especies e ON r.id_especie = e.id_especie
                 WHERE m.id_mascota = @id";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlCommand cmd = new(sql, con);
                 cmd.Parameters.AddWithValue("@id", idMascota);
 
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
-                {
-                    if (rdr.Read())
-                        mascota = MappingMascota(rdr);
-                }
+                using MySqlDataReader rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                    mascota = MappingMascota(rdr);
             }
 
             return mascota;
         }
 
+        /// <summary>
+        /// Obtiene todas las mascotas de un cliente específico.
+        /// </summary>
+        /// <param name="idCliente">Identificador del cliente.</param>
+        /// <returns>Lista de mascotas del cliente.</returns>
         public List<Mascota> ObtenerPorCliente(int idCliente)
         {
-            List<Mascota> lista = new List<Mascota>();
+            List<Mascota> lista = new();
 
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
@@ -120,145 +135,165 @@ namespace Vetcare.Datos
                        c.apellidos AS apellidos_dueno,
                        c.num_documento AS documento_dueno
                 FROM mascotas m
-                INNER JOIN clientes c ON m.id_cliente = c.id_cliente
-                INNER JOIN razas r ON m.id_raza = r.id_raza
-                INNER JOIN especies e ON r.id_especie = e.id_especie
+                    INNER JOIN clientes c ON m.id_cliente = c.id_cliente
+                    INNER JOIN razas r ON m.id_raza = r.id_raza
+                    INNER JOIN especies e ON r.id_especie = e.id_especie
                 WHERE m.id_cliente = @idCliente";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlCommand cmd = new(sql, con);
                 cmd.Parameters.AddWithValue("@idCliente", idCliente);
 
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
-                {
-                    while (rdr.Read())
-                        lista.Add(MappingMascota(rdr));
-                }
+                using MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                    lista.Add(MappingMascota(rdr));
             }
 
             return lista;
         }
 
-        // ===========================
-        // INSERTAR / ACTUALIZAR
-        // ===========================
+        /// <summary>
+        /// Inserta una nueva mascota en la base de datos.
+        /// </summary>
+        /// <param name="mascota">Objeto mascota a insertar.</param>
+        /// <returns>True si la inserción se realiza correctamente.</returns>
         public bool Insertar(Mascota mascota)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                string sql = @"INSERT INTO mascotas
-                               (id_cliente, id_raza, numero_chip, nombre, sexo, peso, fecha_nacimiento, activo)
-                               VALUES (@idCliente, @idRaza, @numeroChip, @nombre, @sexo, @peso, @fechaNacimiento, TRUE)";
+            string sql = @"INSERT INTO mascotas (id_cliente, id_raza, numero_chip, 
+                               nombre, sexo, peso, fecha_nacimiento, activo)
+                           VALUES (@idCliente, @idRaza, @numeroChip, @nombre, @sexo, 
+                               @peso, @fechaNacimiento, TRUE)";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                CargarParametros(cmd, mascota);
+            MySqlCommand cmd = new(sql, con);
+            CargarParametros(cmd, mascota);
 
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            return cmd.ExecuteNonQuery() > 0;
         }
 
+        /// <summary>
+        /// Actualiza los datos de una mascota existente.
+        /// </summary>
+        /// <param name="mascota">Objeto mascota con los datos actualizados.</param>
+        /// <returns>True si la actualización se realiza correctamente.</returns>
         public bool Actualizar(Mascota mascota)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                string sql = @"UPDATE mascotas
-                               SET id_cliente = @idCliente,
-                                   id_raza = @idRaza,
-                                   numero_chip = @numeroChip,
-                                   nombre = @nombre,
-                                   sexo = @sexo,
-                                   peso = @peso,
-                                   fecha_nacimiento = @fechaNacimiento
-                               WHERE id_mascota = @id";
+            string sql = @"UPDATE mascotas
+                           SET id_cliente = @idCliente,
+                               id_raza = @idRaza,
+                               numero_chip = @numeroChip,
+                               nombre = @nombre,
+                               sexo = @sexo,
+                               peso = @peso,
+                               fecha_nacimiento = @fechaNacimiento
+                           WHERE id_mascota = @id";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                CargarParametros(cmd, mascota);
-                cmd.Parameters.AddWithValue("@id", mascota.IdMascota);
+            MySqlCommand cmd = new(sql, con);
+            CargarParametros(cmd, mascota);
+            cmd.Parameters.AddWithValue("@id", mascota.IdMascota);
 
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            return cmd.ExecuteNonQuery() > 0;
         }
 
-        // ===========================
-        // SOFT DELETE (DESACTIVAR)
-        // ===========================
+        /// <summary>
+        /// Desactiva una mascota (borrado lógico).
+        /// </summary>
+        /// <param name="idMascota">Identificador de la mascota.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool Desactivar(int idMascota)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                string sql = "UPDATE mascotas SET activo = FALSE WHERE id_mascota = @id";
+            string sql = @"UPDATE mascotas
+                           SET activo = FALSE 
+                           WHERE id_mascota = @id";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id", idMascota);
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@id", idMascota);
 
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            return cmd.ExecuteNonQuery() > 0;
         }
 
+        /// <summary>
+        /// Desactiva varias mascotas utilizando una transacción.
+        /// </summary>
+        /// <param name="idsMascotas">Lista de identificadores de mascotas.</param>
+        /// <returns>True si todas se desactivan correctamente.</returns>
         public bool DesactivarVarios(List<int> idsMascotas)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+            MySqlTransaction transaccion = con.BeginTransaction();
+
+            try
             {
-                con.Open();
-                MySqlTransaction transaccion = con.BeginTransaction();
+                string sql = @"UPDATE mascotas
+                               SET activo = FALSE 
+                               WHERE id_mascota = @id";
 
-                try
+                foreach (int id in idsMascotas)
                 {
-                    string sql = "UPDATE mascotas SET activo = FALSE WHERE id_mascota = @id";
-
-                    foreach (int id in idsMascotas)
-                    {
-                        MySqlCommand cmd = new MySqlCommand(sql, con, transaccion);
-                        cmd.Parameters.AddWithValue("@id", id);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    transaccion.Commit();
-                    return true;
+                    MySqlCommand cmd = new(sql, con, transaccion);
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
                 }
-                catch
-                {
-                    transaccion.Rollback();
-                    return false;
-                }
+
+                transaccion.Commit();
+                return true;
+            }
+            catch
+            {
+                transaccion.Rollback();
+                return false;
             }
         }
 
+        /// <summary>
+        /// Cuenta el número de mascotas activas en el sistema.
+        /// </summary>
+        /// <returns>Número de mascotas activas.</returns>
         public int ContarMascotas()
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                string sql = "SELECT COUNT(*) FROM mascotas WHERE activo = TRUE";
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                return Convert.ToInt32(cmd.ExecuteScalar());
-            }
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+            string sql = @"SELECT COUNT(*)
+                           FROM mascotas 
+                           WHERE activo = TRUE";
+            MySqlCommand cmd = new(sql, con);
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
+        /// <summary>
+        /// Reactiva una mascota previamente desactivada.
+        /// </summary>
+        /// <param name="idMascota">Identificador de la mascota.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool Reactivar(int idMascota)
         {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-                string sql = "UPDATE mascotas SET activo = TRUE WHERE id_mascota = @id";
+            string sql = @"UPDATE mascotas
+                           SET activo = TRUE
+                           WHERE id_mascota = @id";
 
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id", idMascota);
+            MySqlCommand cmd = new(sql, con);
+            cmd.Parameters.AddWithValue("@id", idMascota);
 
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            return cmd.ExecuteNonQuery() > 0;
         }
 
-        // ===========================
-        // MÉTODOS AUXILIARES
-        // ===========================
-        private void CargarParametros(MySqlCommand cmd, Mascota mascota)
+        /// <summary>
+        /// Carga los parámetros necesarios en un comando SQL a partir de un objeto Mascota.
+        /// </summary>
+        /// <param name="cmd">Comando MySQL.</param>
+        /// <param name="mascota">Objeto mascota con los datos.</param>
+        private static void CargarParametros(MySqlCommand cmd, Mascota mascota)
         {
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@idCliente", mascota.IdCliente);
@@ -270,7 +305,12 @@ namespace Vetcare.Datos
             cmd.Parameters.AddWithValue("@fechaNacimiento", mascota.FechaNacimiento);
         }
 
-        private Mascota MappingMascota(MySqlDataReader rdr)
+        /// <summary>
+        /// Realiza el mapeo de un registro de base de datos a un objeto Mascota.
+        /// </summary>
+        /// <param name="rdr">Lector de datos.</param>
+        /// <returns>Objeto Mascota.</returns>
+        private static Mascota MappingMascota(MySqlDataReader rdr)
         {
             return new Mascota
             {

@@ -1,61 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Controls.Primitives;
 using MySql.Data.MySqlClient;
 using Vetcare.Entidades;
 
 namespace Vetcare.Datos
 {
     /// <summary>
-    /// Clase encargada del acceso a datos para la entidad Veterinario.
-    /// Gestiona operaciones CRUD y operaciones masivas contra la base de datos MySQL.
+    /// Objeto de acceso a datos (DAO) para la entidad Veterinario.
+    /// Gestiona las operaciones de consulta, inserción, actualización y borrado lógico
+    /// de veterinarios en la base de datos.
     /// </summary>
     public class VeterinarioDAO
     {
-        Conexion conexion = new Conexion();
+        /// <summary>
+        /// Objeto encargado de proporcionar la conexión a la base de datos.
+        /// </summary>
+        private readonly Conexion conexion = new();
 
         /// <summary>
-        /// Cadena de conexión a la base de datos.
-        /// (Idealmente debería centralizarse en una clase Conexion).
+        /// Obtiene todos los veterinarios del sistema junto con los datos del usuario asociado.
         /// </summary>
-        private string cadenaConexion = "Server=localhost;Database=vetcare;Uid=root;Pwd=;";
-
-        /// <summary>
-        /// Obtiene todos los veterinarios activos realizando un JOIN con la tabla usuarios.
-        /// </summary>
-        /// <returns>Lista de veterinarios activos.</returns>
+        /// <returns>Lista de veterinarios.</returns>
         public List<Veterinario> ObtenerTodos()
         {
-            List<Veterinario> lista = new List<Veterinario>();
+            List<Veterinario> lista = new();
 
-            string sql = @"SELECT v.id_veterinario, v.id_usuario, v.especialidad, v.numero_colegiado, u.username, u.nombre, u.apellidos 
-                            FROM veterinarios v
-                            INNER JOIN usuarios u ON v.id_usuario = u.id_usuario";
+            string sql = @"SELECT v.id_veterinario, 
+                                  v.id_usuario, 
+                                  v.especialidad, 
+                                  v.numero_colegiado, 
+                                  u.username,
+                                  u.nombre, 
+                                  u.apellidos 
+                           FROM veterinarios v
+                           INNER JOIN usuarios u ON v.id_usuario = u.id_usuario";
 
             try
             {
-                using (MySqlConnection con = conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    MySqlCommand cmd = new MySqlCommand(sql, con);
+                using MySqlConnection con = conexion.ObtenerConexion();
+                con.Open();
 
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            lista.Add(new Veterinario
-                            {
-                                IdVeterinario = Convert.ToInt32(dr["id_veterinario"]),
-                                IdUsuario = Convert.ToInt32(dr["id_usuario"]),
-                                Especialidad = dr["especialidad"].ToString(),
-                                NumeroColegiado = dr["numero_colegiado"].ToString(),
-                                Nombre = dr["nombre"].ToString(),
-                                Apellidos = dr["apellidos"].ToString(),
-                                Username = dr["username"].ToString()
-                            });
-                        }
-                    }
-                }
+                MySqlCommand cmd = new(sql, con);
+
+                using MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                    lista.Add(MappingVeterinario(dr));
             }
             catch (Exception ex)
             {
@@ -66,91 +55,35 @@ namespace Vetcare.Datos
         }
 
         /// <summary>
-        /// Obtiene un veterinario activo por su ID.
+        /// Obtiene un veterinario a partir del ID de usuario asociado.
         /// </summary>
-        /// <param name="idVeterinario">ID del veterinario.</param>
-        /// <returns>Objeto Veterinario si existe, null si no se encuentra.</returns>
-        public Veterinario ObtenerPorId(int idVeterinario)
+        /// <param name="idUsuario">ID del usuario.</param>
+        /// <returns>Objeto Veterinario si existe; en caso contrario, null.</returns>
+        public Veterinario? ObtenerPorIdUsuario(int idUsuario)
         {
-            Veterinario veterinario = null;
+            Veterinario? veterinario = null;
 
-            string sql = @"SELECT v.id_veterinario, v.id_usuario, v.especialidad, v.numero_colegiado,
-                          u.nombre, u.apellidos
-                   FROM veterinarios v
-                   INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
-                   WHERE v.id_veterinario = @idVeterinario";
+            string sql = @"SELECT v.id_veterinario, 
+                                  v.id_usuario, 
+                                  v.especialidad, 
+                                  v.numero_colegiado,
+                                  u.nombre, 
+                                  u.apellidos
+                           FROM veterinarios v
+                           INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
+                           WHERE v.id_usuario = @idUsuario";
 
             try
             {
-                using (MySqlConnection con = conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    MySqlCommand cmd = new MySqlCommand(sql, con);
-                    cmd.Parameters.AddWithValue("@idVeterinario", idVeterinario);
+                using MySqlConnection con = conexion.ObtenerConexion();
+                con.Open();
 
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        if (dr.Read())
-                        {
-                            veterinario = new Veterinario
-                            {
-                                IdVeterinario = Convert.ToInt32(dr["id_veterinario"]),
-                                IdUsuario = Convert.ToInt32(dr["id_usuario"]),
-                                Especialidad = dr["especialidad"].ToString(),
-                                NumeroColegiado = dr["numero_colegiado"].ToString(),
-                                Nombre = dr["nombre"].ToString(),
-                                Apellidos = dr["apellidos"].ToString()
-                            };
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error en VeterinarioDAO.ObtenerPorId: " + ex.Message);
-            }
+                MySqlCommand cmd = new(sql, con);
+                cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
 
-            return veterinario;
-        }
-
-        /// <summary>
-        /// Obtiene los datos profesionales de un veterinario usando el ID de su cuenta de usuario.
-        /// </summary>
-        public Veterinario ObtenerPorIdUsuario(int idUsuario)
-        {
-            Veterinario veterinario = null;
-
-            // Cambiamos el WHERE para buscar por v.id_usuario en lugar de v.id_veterinario
-            string sql = @"SELECT v.id_veterinario, v.id_usuario, v.especialidad, v.numero_colegiado,
-                           u.nombre, u.apellidos
-                    FROM veterinarios v
-                    INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
-                    WHERE v.id_usuario = @idUsuario";
-
-            try
-            {
-                using (MySqlConnection con = conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    MySqlCommand cmd = new MySqlCommand(sql, con);
-                    cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
-
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        if (dr.Read())
-                        {
-                            veterinario = new Veterinario
-                            {
-                                IdVeterinario = Convert.ToInt32(dr["id_veterinario"]),
-                                IdUsuario = Convert.ToInt32(dr["id_usuario"]),
-                                Especialidad = dr["especialidad"].ToString(),
-                                NumeroColegiado = dr["numero_colegiado"].ToString(),
-                                Nombre = dr["nombre"].ToString(),
-                                Apellidos = dr["apellidos"].ToString()
-                            };
-                        }
-                    }
-                }
+                using MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.Read())
+                    veterinario = MappingVeterinario(dr);
             }
             catch (Exception ex)
             {
@@ -164,7 +97,7 @@ namespace Vetcare.Datos
         /// Inserta un nuevo veterinario en la base de datos.
         /// </summary>
         /// <param name="v">Objeto Veterinario a insertar.</param>
-        /// <returns>True si la operación fue exitosa.</returns>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool Insertar(Veterinario v)
         {
             string sql = @"INSERT INTO veterinarios (id_usuario, especialidad, numero_colegiado)
@@ -172,17 +105,13 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    MySqlCommand cmd = new MySqlCommand(sql, con);
+                using MySqlConnection con = conexion.ObtenerConexion();
+                con.Open();
 
-                    cmd.Parameters.AddWithValue("@idUsuario", v.IdUsuario);
-                    cmd.Parameters.AddWithValue("@especialidad", v.Especialidad);
-                    cmd.Parameters.AddWithValue("@numeroColegiado", v.NumeroColegiado);
+                MySqlCommand cmd = new(sql, con);
+                CargarParametros(cmd, v);
 
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
             catch (Exception ex)
             {
@@ -191,48 +120,8 @@ namespace Vetcare.Datos
         }
 
         /// <summary>
-        /// Inserta múltiples veterinarios utilizando una transacción.
-        /// </summary>
-        /// <param name="lista">Lista de veterinarios a insertar.</param>
-        /// <returns>True si todos se insertaron correctamente.</returns>
-        public bool InsertarVarios(List<Veterinario> lista)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlTransaction trans = con.BeginTransaction();
-
-                try
-                {
-                    foreach (var v in lista)
-                    {
-                        string sql = @"INSERT INTO veterinarios (id_usuario, especialidad, numero_colegiado)
-                                       VALUES (@idUsuario, @especialidad, @numeroColegiado)";
-
-                        MySqlCommand cmd = new MySqlCommand(sql, con, trans);
-                        cmd.Parameters.AddWithValue("@idUsuario", v.IdUsuario);
-                        cmd.Parameters.AddWithValue("@especialidad", v.Especialidad);
-                        cmd.Parameters.AddWithValue("@numeroColegiado", v.NumeroColegiado);
-
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    trans.Commit();
-                    return true;
-                }
-                catch
-                {
-                    trans.Rollback();
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
         /// Actualiza los datos de un veterinario existente.
         /// </summary>
-        /// <param name="v">Objeto Veterinario con los nuevos datos.</param>
-        /// <returns>True si la actualización fue exitosa.</returns>
         public bool Actualizar(Veterinario v)
         {
             string sql = @"UPDATE veterinarios 
@@ -242,17 +131,14 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    MySqlCommand cmd = new MySqlCommand(sql, con);
+                using MySqlConnection con = conexion.ObtenerConexion();
+                con.Open();
 
-                    cmd.Parameters.AddWithValue("@especialidad", v.Especialidad);
-                    cmd.Parameters.AddWithValue("@numeroColegiado", v.NumeroColegiado);
-                    cmd.Parameters.AddWithValue("@idVeterinario", v.IdVeterinario);
+                MySqlCommand cmd = new(sql, con);
+                CargarParametros(cmd, v);
+                cmd.Parameters.AddWithValue("@idVeterinario", v.IdVeterinario);
 
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
             catch (Exception ex)
             {
@@ -261,50 +147,8 @@ namespace Vetcare.Datos
         }
 
         /// <summary>
-        /// Actualiza múltiples veterinarios dentro de una transacción.
+        /// Desactiva un veterinario mediante el usuario asociado.
         /// </summary>
-        /// <param name="lista">Lista de veterinarios a actualizar.</param>
-        /// <returns>True si todas las actualizaciones fueron exitosas.</returns>
-        public bool ActualizarVarios(List<Veterinario> lista)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlTransaction trans = con.BeginTransaction();
-
-                try
-                {
-                    foreach (var v in lista)
-                    {
-                        string sql = @"UPDATE veterinarios 
-                                       SET especialidad = @especialidad,
-                                           numero_colegiado = @numeroColegiado
-                                       WHERE id_veterinario = @idVeterinario";
-
-                        MySqlCommand cmd = new MySqlCommand(sql, con, trans);
-                        cmd.Parameters.AddWithValue("@especialidad", v.Especialidad);
-                        cmd.Parameters.AddWithValue("@numeroColegiado", v.NumeroColegiado);
-                        cmd.Parameters.AddWithValue("@idVeterinario", v.IdVeterinario);
-
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    trans.Commit();
-                    return true;
-                }
-                catch
-                {
-                    trans.Rollback();
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Realiza un borrado lógico del veterinario desactivando su usuario asociado.
-        /// </summary>
-        /// <param name="idVeterinario">ID del veterinario a desactivar.</param>
-        /// <returns>True si la operación fue exitosa.</returns>
         public bool BorradoLogico(int idVeterinario)
         {
             string sql = @"UPDATE usuarios u
@@ -314,14 +158,13 @@ namespace Vetcare.Datos
 
             try
             {
-                using (MySqlConnection con = conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    MySqlCommand cmd = new MySqlCommand(sql, con);
-                    cmd.Parameters.AddWithValue("@idVeterinario", idVeterinario);
+                using MySqlConnection con = conexion.ObtenerConexion();
+                con.Open();
 
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+                MySqlCommand cmd = new(sql, con);
+                cmd.Parameters.AddWithValue("@idVeterinario", idVeterinario);
+
+                return cmd.ExecuteNonQuery() > 0;
             }
             catch (Exception ex)
             {
@@ -330,71 +173,27 @@ namespace Vetcare.Datos
         }
 
         /// <summary>
-        /// Realiza el borrado lógico de múltiples veterinarios usando transacción.
+        /// Obtiene el ID de veterinario a partir del ID de usuario.
         /// </summary>
-        /// <param name="ids">Lista de IDs de veterinarios a desactivar.</param>
-        /// <returns>True si todos fueron desactivados correctamente.</returns>
-        public bool BorradoLogicoVarios(List<int> ids)
-        {
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                MySqlTransaction trans = con.BeginTransaction();
-
-                try
-                {
-                    foreach (int id in ids)
-                    {
-                        string sql = @"UPDATE usuarios u
-                                       INNER JOIN veterinarios v ON u.id_usuario = v.id_usuario
-                                       SET u.activo = FALSE
-                                       WHERE v.id_veterinario = @idVeterinario";
-
-                        MySqlCommand cmd = new MySqlCommand(sql, con, trans);
-                        cmd.Parameters.AddWithValue("@idVeterinario", id);
-
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    trans.Commit();
-                    return true;
-                }
-                catch
-                {
-                    trans.Rollback();
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Busca el ID de la tabla veterinarios que corresponde a un ID de la tabla usuarios.
-        /// </summary>
-        /// <param name="idUsuario">El ID del usuario logueado.</param>
-        /// <returns>El int id_veterinario encontrado, o 0 si no existe.</returns>
         public int ObtenerIdVeterinarioPorUsuario(int idUsuario)
         {
             int idEncontrado = 0;
-            string sql = "SELECT id_veterinario FROM veterinarios WHERE id_usuario = @idUsuario";
+            string sql = "SELECT id_veterinario " +
+                         "FROM veterinarios " +
+                         "WHERE id_usuario = @idUsuario";
 
             try
             {
-                using (MySqlConnection con = conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                    {
-                        cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
+                using MySqlConnection con = conexion.ObtenerConexion();
+                con.Open();
 
-                        // ExecuteScalar es perfecto aquí porque solo queremos UNA columna de UNA fila (un int)
-                        object resultado = cmd.ExecuteScalar();
+                MySqlCommand cmd = new(sql, con);
+                cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
 
-                        if (resultado != null && resultado != DBNull.Value)
-                        {
-                            idEncontrado = Convert.ToInt32(resultado);
-                        }
-                    }
-                }
+                object resultado = cmd.ExecuteScalar();
+
+                if (resultado != null && resultado != DBNull.Value)
+                    idEncontrado = Convert.ToInt32(resultado);
             }
             catch (Exception ex)
             {
@@ -402,6 +201,35 @@ namespace Vetcare.Datos
             }
 
             return idEncontrado;
+        }
+
+        /// <summary>
+        /// Carga los parámetros necesarios en un comando SQL a partir de un objeto Veterinario.
+        /// </summary>
+        private static void CargarParametros(MySqlCommand cmd, Veterinario v)
+        {
+            cmd.Parameters.Clear();
+
+            cmd.Parameters.AddWithValue("@idUsuario", v.IdUsuario);
+            cmd.Parameters.AddWithValue("@especialidad", v.Especialidad);
+            cmd.Parameters.AddWithValue("@numeroColegiado", v.NumeroColegiado);
+        }
+
+        /// <summary>
+        /// Realiza el mapeo de un registro de base de datos a un objeto Veterinario.
+        /// </summary>
+        private static Veterinario MappingVeterinario(MySqlDataReader dr)
+        {
+            return new Veterinario
+            {
+                IdVeterinario = Convert.ToInt32(dr["id_veterinario"]),
+                IdUsuario = Convert.ToInt32(dr["id_usuario"]),
+                Especialidad = dr["especialidad"].ToString(),
+                NumeroColegiado = dr["numero_colegiado"].ToString(),
+                Nombre = dr["nombre"]?.ToString(),
+                Apellidos = dr["apellidos"]?.ToString(),
+                Username = dr["username"] != DBNull.Value ? dr["username"].ToString() : ""
+            };
         }
     }
 }

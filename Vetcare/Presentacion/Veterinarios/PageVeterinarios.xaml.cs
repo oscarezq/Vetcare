@@ -230,41 +230,6 @@ namespace Vetcare.Presentacion.Veterinarios
             }
         }
 
-        private void btnEliminarVarios_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (dgVeterinarios.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show("Debes seleccionar al menos un veterinario.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                MessageBoxResult confirmacion = MessageBox.Show(
-                    $"¿Eliminar {dgVeterinarios.SelectedItems.Count} veterinario(s)?",
-                    "Confirmar eliminación múltiple", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                if (confirmacion == MessageBoxResult.Yes)
-                {
-                    List<int> idsAEliminar = new List<int>();
-                    foreach (Veterinario v in dgVeterinarios.SelectedItems)
-                    {
-                        idsAEliminar.Add(v.IdVeterinario);
-                    }
-
-                    if (vs.BorradoLogicoVarios(idsAEliminar))
-                    {
-                        MessageBox.Show("Veterinarios eliminados correctamente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
-                        CargarDatos();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al eliminar veterinarios: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private void hlUsuario_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Hyperlink hl && hl.DataContext is Veterinario v)

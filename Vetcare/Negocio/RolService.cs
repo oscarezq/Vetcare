@@ -6,7 +6,7 @@ namespace Vetcare.Negocio
 {
     public class RolService
     {
-        private RolDAO _rolDAO = new RolDAO();
+        private readonly RolDAO _rolDAO = new();
 
         public List<Rol> ListarRoles()
         {

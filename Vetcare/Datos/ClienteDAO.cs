@@ -28,12 +28,26 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, activo, telefono, email, 
-                                      calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta
+                string sql = @"SELECT id_cliente, 
+                                      tipo_documento, 
+                                      num_documento, 
+                                      nombre, 
+                                      apellidos, 
+                                      activo, 
+                                      telefono, 
+                                      email, 
+                                      calle, 
+                                      numero, 
+                                      piso_puerta, 
+                                      codigo_postal, 
+                                      localidad, 
+                                      provincia, 
+                                      fecha_alta
                                FROM clientes";
 
                 using MySqlCommand cmd = new(sql, con);
                 using MySqlDataReader rdr = cmd.ExecuteReader();
+
                 while (rdr.Read())
                     lista.Add(MappingCliente(rdr));
             }
@@ -53,8 +67,21 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT id_cliente, tipo_documento, num_documento, nombre, apellidos, activo, telefono, email, 
-                                      calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta
+                string sql = @"SELECT id_cliente, 
+                                      tipo_documento, 
+                                      num_documento, 
+                                      nombre, 
+                                      apellidos, 
+                                      activo, 
+                                      telefono, 
+                                      email, 
+                                      calle,
+                                      numero, 
+                                      piso_puerta, 
+                                      codigo_postal, 
+                                      localidad, 
+                                      provincia, 
+                                      fecha_alta
                                FROM clientes
                                WHERE id_cliente = @id";
 
@@ -78,14 +105,16 @@ namespace Vetcare.Datos
         {
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
-            string sql = @"INSERT INTO clientes
-                               (tipo_documento, num_documento, nombre, apellidos, telefono, email, 
-                                calle, numero, piso_puerta, codigo_postal, localidad, provincia, fecha_alta)
-                               VALUES (@tipoDocumento, @numDocumento, @nombre, @apellidos, @telefono, @email, 
-                                @calle, @numero, @pisoPuerta, @codigoPostal, @localidad, @provincia, @fechaAlta)";
+            string sql = @"INSERT INTO clientes (tipo_documento, num_documento, nombre, 
+                               apellidos, telefono, email, calle, numero, piso_puerta, 
+                               codigo_postal, localidad, provincia, fecha_alta)
+                           VALUES (@tipoDocumento, @numDocumento, @nombre, @apellidos, 
+                                   @telefono, @email, @calle, @numero, @pisoPuerta, 
+                                   @codigoPostal, @localidad, @provincia, @fechaAlta)";
 
             using MySqlCommand cmd = new(sql, con);
             CargarParametros(cmd, cliente);
+
             return cmd.ExecuteNonQuery() > 0;
         }
 
@@ -99,23 +128,24 @@ namespace Vetcare.Datos
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
             string sql = @"UPDATE clientes 
-                               SET tipo_documento = @tipoDocumento,
-                                   num_documento = @numDocumento,
-                                   nombre = @nombre,
-                                   apellidos = @apellidos,
-                                   telefono = @telefono,
-                                   email = @email,
-                                   calle = @calle,
-                                   numero = @numero,
-                                   piso_puerta = @pisoPuerta,
-                                   codigo_postal = @codigoPostal,
-                                   localidad = @localidad,
-                                   provincia = @provincia
-                               WHERE id_cliente = @id";
+                           SET tipo_documento = @tipoDocumento,
+                               num_documento = @numDocumento,
+                               nombre = @nombre,
+                               apellidos = @apellidos,
+                               telefono = @telefono,
+                               email = @email,
+                               calle = @calle,
+                               numero = @numero,
+                               piso_puerta = @pisoPuerta,
+                               codigo_postal = @codigoPostal,
+                               localidad = @localidad,
+                               provincia = @provincia
+                           WHERE id_cliente = @id";
 
             using MySqlCommand cmd = new(sql, con);
             CargarParametros(cmd, cliente);
             cmd.Parameters.AddWithValue("@id", cliente.IdCliente);
+
             return cmd.ExecuteNonQuery() > 0;
         }
 
@@ -132,14 +162,18 @@ namespace Vetcare.Datos
             using MySqlTransaction trans = con.BeginTransaction();
             try
             {
-                string sqlCliente = "UPDATE clientes SET activo = FALSE WHERE id_cliente = @id";
+                string sqlCliente = "UPDATE clientes " +
+                                    "SET activo = FALSE " +
+                                    "WHERE id_cliente = @id";
                 using (MySqlCommand cmdCliente = new(sqlCliente, con, trans))
                 {
                     cmdCliente.Parameters.AddWithValue("@id", idCliente);
                     cmdCliente.ExecuteNonQuery();
                 }
 
-                string sqlMascotas = "UPDATE mascotas SET activo = FALSE WHERE id_cliente = @id";
+                string sqlMascotas = "UPDATE mascotas " +
+                                     "SET activo = FALSE " +
+                                     "WHERE id_cliente = @id";
                 using (MySqlCommand cmdMascotas = new(sqlMascotas, con, trans))
                 {
                     cmdMascotas.Parameters.AddWithValue("@id", idCliente);
@@ -165,8 +199,9 @@ namespace Vetcare.Datos
         {
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
-
-            string sql = "UPDATE clientes SET activo = TRUE WHERE id_cliente = @id";
+            string sql = "UPDATE clientes " +
+                         "SET activo = TRUE " +
+                         "WHERE id_cliente = @id";
 
             MySqlCommand cmd = new(sql, con);
             cmd.Parameters.AddWithValue("@id", idCliente);
@@ -182,7 +217,9 @@ namespace Vetcare.Datos
         {
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
-            string sql = "SELECT COUNT(*) FROM clientes";
+            string sql = "SELECT COUNT(*) " +
+                         "FROM clientes";
+
             MySqlCommand cmd = new(sql, con);
 
             return Convert.ToInt32(cmd.ExecuteScalar());

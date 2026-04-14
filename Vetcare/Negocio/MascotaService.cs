@@ -11,7 +11,7 @@ namespace Vetcare.Negocio
     class MascotaService
     {
         // Objeto DAO para acceder a los datos
-        public MascotaDAO mascotaDAO = new MascotaDAO();
+        public MascotaDAO mascotaDAO = new();
 
         /// <summary>
         /// Método para obtener todas las mascotas
@@ -26,7 +26,7 @@ namespace Vetcare.Negocio
         /// Método para obtener una mascota por su identificador
         /// </summary>
         /// <returns>Mascota con el identificador correspondiente</returns>
-        public Mascota ObtenerPorId(int id)
+        public Mascota? ObtenerPorId(int id)
         {
             return mascotaDAO.ObtenerPorId(id);
         }

@@ -26,11 +26,13 @@ namespace Vetcare.Datos
             List<Concepto> lista = new();
 
             using MySqlConnection con = conexion.ObtenerConexion();
-
-            string sql = "SELECT * FROM conceptos ORDER BY nombre ASC";
-            MySqlCommand cmd = new(sql, con);
-
             con.Open();
+
+            string sql = "SELECT * " +
+                         "FROM conceptos " +
+                         "ORDER BY nombre ASC";
+
+            MySqlCommand cmd = new(sql, con);
             using MySqlDataReader dr = cmd.ExecuteReader();
 
             while (dr.Read())
@@ -49,12 +51,14 @@ namespace Vetcare.Datos
             Concepto? concepto = null;
 
             using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-            string sql = "SELECT * FROM conceptos WHERE id_concepto = @id";
+            string sql = "SELECT * " +
+                         "FROM conceptos " +
+                         "WHERE id_concepto = @id";
+
             MySqlCommand cmd = new(sql, con);
             cmd.Parameters.AddWithValue("@id", id);
-
-            con.Open();
             using MySqlDataReader dr = cmd.ExecuteReader();
 
             if (dr.Read())
@@ -72,11 +76,14 @@ namespace Vetcare.Datos
             List<Concepto> lista = new();
 
             using MySqlConnection con = conexion.ObtenerConexion();
-
-            string sql = "SELECT * FROM conceptos WHERE tipo = 'Servicio' ORDER BY nombre ASC";
-            MySqlCommand cmd = new(sql, con);
-
             con.Open();
+
+            string sql = "SELECT *" +
+                         "FROM conceptos " +
+                         "WHERE tipo = 'Servicio' " +
+                         "ORDER BY nombre ASC";
+
+            MySqlCommand cmd = new(sql, con);
             using MySqlDataReader dr = cmd.ExecuteReader();
 
             while (dr.Read())
@@ -94,11 +101,14 @@ namespace Vetcare.Datos
             List<Concepto> lista = new();
 
             using MySqlConnection con = conexion.ObtenerConexion();
-
-            string sql = "SELECT * FROM conceptos WHERE tipo = 'Producto' ORDER BY nombre ASC";
-            MySqlCommand cmd = new(sql, con);
-
             con.Open();
+
+            string sql = "SELECT * " +
+                         "FROM conceptos " +
+                         "WHERE tipo = 'Producto' " +
+                         "ORDER BY nombre ASC";
+            
+            MySqlCommand cmd = new(sql, con);
             using MySqlDataReader dr = cmd.ExecuteReader();
 
             while (dr.Read())
@@ -115,6 +125,7 @@ namespace Vetcare.Datos
         public bool Insertar(Concepto c)
         {
             using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
             string sql = @"INSERT INTO conceptos 
                           (tipo, nombre, descripcion, precio, iva_porcentaje, stock, activo)
@@ -123,7 +134,6 @@ namespace Vetcare.Datos
             MySqlCommand cmd = new(sql, con);
             CargarParametros(cmd, c);
 
-            con.Open();
             return cmd.ExecuteNonQuery() > 0;
         }
 
@@ -135,6 +145,7 @@ namespace Vetcare.Datos
         public bool Actualizar(Concepto c)
         {
             using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
             string sql = @"UPDATE conceptos 
                            SET tipo = @tipo,
@@ -150,7 +161,6 @@ namespace Vetcare.Datos
             CargarParametros(cmd, c);
             cmd.Parameters.AddWithValue("@id", c.IdConcepto);
 
-            con.Open();
             return cmd.ExecuteNonQuery() > 0;
         }
 
@@ -162,13 +172,15 @@ namespace Vetcare.Datos
         public bool Eliminar(int idConcepto)
         {
             using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-            string sql = "UPDATE conceptos SET activo = FALSE WHERE id_concepto = @id";
+            string sql = "UPDATE conceptos " +
+                         "SET activo = FALSE " +
+                         "WHERE id_concepto = @id";
 
             MySqlCommand cmd = new(sql, con);
             cmd.Parameters.AddWithValue("@id", idConcepto);
 
-            con.Open();
             return cmd.ExecuteNonQuery() > 0;
         }
 
@@ -180,13 +192,15 @@ namespace Vetcare.Datos
         public bool Reactivar(int idConcepto)
         {
             using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
 
-            string sql = "UPDATE conceptos SET activo = TRUE WHERE id_concepto = @id";
+            string sql = "UPDATE conceptos " +
+                         "SET activo = TRUE " +
+                         "WHERE id_concepto = @id";
 
             MySqlCommand cmd = new(sql, con);
             cmd.Parameters.AddWithValue("@id", idConcepto);
 
-            con.Open();
             return cmd.ExecuteNonQuery() > 0;
         }
 

@@ -27,7 +27,9 @@ namespace Vetcare.Datos
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
 
-            string sql = "SELECT id_especie, nombre FROM especies";
+            string sql = @"SELECT id_especie,
+                                  nombre
+                           FROM especies";
 
             MySqlCommand cmd = new(sql, con);
 
@@ -50,7 +52,8 @@ namespace Vetcare.Datos
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
 
-            string sql = "INSERT INTO especies (nombre) VALUES (@nombre)";
+            string sql = @"INSERT INTO especies (nombre) 
+                           VALUES (@nombre)";
 
             MySqlCommand cmd = new(sql, con);
             cmd.Parameters.AddWithValue("@nombre", especie.NombreEspecie);

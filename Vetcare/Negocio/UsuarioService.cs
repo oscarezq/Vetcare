@@ -99,30 +99,6 @@ namespace Vetcare.Negocio
         }
 
         /// <summary>
-        /// Inserta una lista de usuarios de forma masiva.
-        /// </summary>
-        /// <param name="lista">Lista de usuarios.</param>
-        /// <returns>True si todos se guardaron correctamente.</returns>
-        public bool InsertarVarios(List<Usuario> lista)
-        {
-            if (lista == null || lista.Count == 0) return false;
-            return _usuarioDAO.InsertarVarios(lista);
-        }
-
-        /// <summary>
-        /// Actualiza los datos de un usuario existente.
-        /// </summary>
-        /// <param name="u">Objeto Usuario con datos actualizados.</param>
-        /// <returns>True si se actualizó con éxito.</returns>
-        public bool Modificar(Usuario u)
-        {
-            if (u.IdUsuario <= 0)
-                throw new Exception("ID de usuario no válido para actualizar.");
-
-            return _usuarioDAO.Actualizar(u);
-        }
-
-        /// <summary>
         /// Actualiza la contraseña de un usuario existente.
         /// </summary>
         /// <param name="u">Objeto Usuario.</param>
@@ -131,8 +107,6 @@ namespace Vetcare.Negocio
         {
             return _usuarioDAO.Actualizar(u);
         }
-
-        // --- ELIMINACIÓN ---
 
         /// <summary>
         /// Realiza el borrado lógico de un usuario.
@@ -143,17 +117,6 @@ namespace Vetcare.Negocio
         {
             if (id <= 0) return false;
             return _usuarioDAO.BorradoLogico(id);
-        }
-
-        /// <summary>
-        /// Realiza el borrado lógico masivo de una lista de IDs.
-        /// </summary>
-        /// <param name="ids">Lista de IDs de usuarios.</param>
-        /// <returns>True si la operación se completó.</returns>
-        public bool EliminarVarios(List<int> ids)
-        {
-            if (ids == null || ids.Count == 0) return false;
-            return _usuarioDAO.BorradoLogicoVarios(ids);
         }
 
         public bool ExisteUsername(string username)

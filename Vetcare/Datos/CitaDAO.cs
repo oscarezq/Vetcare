@@ -28,13 +28,20 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-
-                string sql = @" SELECT c.id_cita, c.id_mascota, c.id_veterinario, c.fecha_hora, c.duracion_estimada, 
-                                    c.motivo, c.estado, c.observaciones,  m.nombre AS nombre_mascota, 
-                                    CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
-                                    cli.id_cliente AS id_cliente_dueno, 
-                                    CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario, 
-                                    v.numero_colegiado, v.id_usuario AS id_usuario_veterinario 
+                string sql = @" SELECT c.id_cita, 
+                                       c.id_mascota, 
+                                       c.id_veterinario, 
+                                       c.fecha_hora, 
+                                       c.duracion_estimada, 
+                                       c.motivo, 
+                                       c.estado, 
+                                       c.observaciones,
+                                       m.nombre AS nombre_mascota, 
+                                       CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
+                                       cli.id_cliente AS id_cliente_dueno, 
+                                       CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario, 
+                                       v.numero_colegiado, 
+                                       v.id_usuario AS id_usuario_veterinario 
                                 FROM citas c INNER JOIN mascotas m ON c.id_mascota = m.id_mascota 
                                     INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente 
                                     INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario 
@@ -43,6 +50,7 @@ namespace Vetcare.Datos
 
                 MySqlCommand cmd = new(sql, con);
                 using MySqlDataReader rdr = cmd.ExecuteReader();
+
                 while (rdr.Read())
                 {
                     lista.Add(MappingCita(rdr));
@@ -64,12 +72,20 @@ namespace Vetcare.Datos
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @"SELECT c.id_cita, c.id_mascota, c.id_veterinario, c.fecha_hora, c.duracion_estimada, 
-                                    c.motivo, c.estado, c.observaciones, m.nombre AS nombre_mascota, 
-                                    CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
-                                    cli.id_cliente AS id_cliente_dueno, 
-                                    CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario, v.numero_colegiado, 
-                                    v.id_usuario AS id_usuario_veterinario 
+                string sql = @"SELECT c.id_cita, 
+                                      c.id_mascota, 
+                                      c.id_veterinario, 
+                                      c.fecha_hora, 
+                                      c.duracion_estimada, 
+                                      c.motivo, 
+                                      c.estado,
+                                      c.observaciones, 
+                                      m.nombre AS nombre_mascota, 
+                                      CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
+                                      cli.id_cliente AS id_cliente_dueno, 
+                                      CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario,
+                                      v.numero_colegiado, 
+                                      v.id_usuario AS id_usuario_veterinario 
                                 FROM citas c INNER JOIN mascotas m ON c.id_mascota = m.id_mascota 
                                     INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente 
                                     INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario 
@@ -78,8 +94,8 @@ namespace Vetcare.Datos
 
                 MySqlCommand cmd = new(sql, con);
                 cmd.Parameters.AddWithValue("@id", idCita);
-
                 using MySqlDataReader rdr = cmd.ExecuteReader();
+
                 if (rdr.Read())
                     cita = MappingCita(rdr);
             }
@@ -95,15 +111,24 @@ namespace Vetcare.Datos
         public List<Cita> ObtenerCitasHoyPorVeterinario(int idVeterinario)
         {
             List<Cita> lista = new();
+
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                string sql = @" SELECT c.id_cita, c.id_mascota, c.id_veterinario, c.fecha_hora, 
-                                    c.duracion_estimada, c.motivo, c.estado, c.observaciones, 
-                                    m.nombre AS nombre_mascota, cli.id_cliente AS id_cliente_dueno, 
-                                    CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
-                                    CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario, v.numero_colegiado, 
-                                    v.id_usuario AS id_usuario_veterinario 
+                string sql = @" SELECT c.id_cita, 
+                                       c.id_mascota,
+                                       c.id_veterinario, 
+                                       c.fecha_hora, 
+                                       c.duracion_estimada, 
+                                       c.motivo, 
+                                       c.estado, 
+                                       c.observaciones, 
+                                       m.nombre AS nombre_mascota, 
+                                       cli.id_cliente AS id_cliente_dueno, 
+                                       CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
+                                       CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario, 
+                                       v.numero_colegiado,
+                                       v.id_usuario AS id_usuario_veterinario 
                                 FROM citas c INNER JOIN mascotas m ON c.id_mascota = m.id_mascota 
                                     INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente 
                                     INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario 
@@ -113,13 +138,54 @@ namespace Vetcare.Datos
 
                 MySqlCommand cmd = new(sql, con);
                 cmd.Parameters.AddWithValue("@idVeterinario", idVeterinario);
-
                 using MySqlDataReader rdr = cmd.ExecuteReader();
+
                 while (rdr.Read())
-                {
                     lista.Add(MappingCita(rdr));
-                }
             }
+
+            return lista;
+        }
+
+        /// <summary>
+        /// Obtiene las próximas citas del día actual.
+        /// </summary>
+        /// <returns>Lista de citas ordenadas por fecha.</returns>
+        public List<Cita> ObtenerProximasCitas()
+        {
+            List<Cita> lista = new();
+
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                string sql = @" SELECT c.id_cita, 
+                                       c.id_mascota, 
+                                       c.id_veterinario, 
+                                       c.fecha_hora, 
+                                       c.duracion_estimada, 
+                                       c.motivo, 
+                                       c.estado, 
+                                       c.observaciones, 
+                                       m.nombre AS nombre_mascota, 
+                                       CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
+                                       cli.id_cliente AS id_cliente_dueno, 
+                                       CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario, 
+                                       v.numero_colegiado, 
+                                       v.id_usuario AS id_usuario_veterinario 
+                                FROM citas c INNER JOIN mascotas m ON c.id_mascota = m.id_mascota 
+                                    INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente 
+                                    INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario 
+                                    INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario 
+                                WHERE DATE(c.fecha_hora) = CURDATE() AND c.estado <> 'Cancelada' 
+                                ORDER BY c.fecha_hora ASC";
+
+                MySqlCommand cmd = new(sql, con);
+                using MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                    lista.Add(MappingCita(rdr));
+            }
+
             return lista;
         }
 
@@ -133,12 +199,13 @@ namespace Vetcare.Datos
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
             string sql = @" INSERT INTO citas (id_mascota, id_veterinario, fecha_hora, duracion_estimada, 
-                                    motivo, estado, observaciones) 
-                                VALUES (@idMascota, @idVeterinario, @fecha_hora, @duracion_estimada, @motivo, 
-                                    @estado, @observaciones)";
+                                motivo, estado, observaciones) 
+                            VALUES (@idMascota, @idVeterinario, @fecha_hora, @duracion_estimada, @motivo,
+                                estado, @observaciones)";
 
             MySqlCommand cmd = new(sql, con);
             CargarParametros(cmd, cita);
+
             return cmd.ExecuteNonQuery() > 0;
         }
 
@@ -152,10 +219,14 @@ namespace Vetcare.Datos
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
             string sql = @" UPDATE citas 
-                                SET id_mascota = @idMascota, id_veterinario = @idVeterinario, 
-                                    fecha_hora = @fecha_hora, duracion_estimada = @duracion_estimada, 
-                                    motivo = @motivo, estado = @estado, observaciones = @observaciones 
-                                WHERE id_cita = @id";
+                            SET id_mascota = @idMascota, 
+                                id_veterinario = @idVeterinario, 
+                                fecha_hora = @fecha_hora, 
+                                duracion_estimada = @duracion_estimada, 
+                                motivo = @motivo, 
+                                estado = @estado, 
+                                observaciones = @observaciones
+                            WHERE id_cita = @id";
 
             MySqlCommand cmd = new(sql, con);
             CargarParametros(cmd, cita);
@@ -175,8 +246,8 @@ namespace Vetcare.Datos
             using MySqlConnection con = conexion.ObtenerConexion();
             con.Open();
             string sql = @" UPDATE citas 
-                                SET estado = @estado 
-                                WHERE id_cita = @id";
+                            SET estado = @estado 
+                            WHERE id_cita = @id";
 
             MySqlCommand cmd = new(sql, con);
             cmd.Parameters.AddWithValue("@estado", estado);
@@ -196,8 +267,8 @@ namespace Vetcare.Datos
             string sql = @"SELECT COUNT(*) 
                            FROM citas 
                            WHERE DATE(fecha_hora) = CURDATE() AND estado <> 'Cancelada'";
-            MySqlCommand cmd = new(sql, con);
 
+            MySqlCommand cmd = new(sql, con);
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
@@ -220,39 +291,6 @@ namespace Vetcare.Datos
             cmd.Parameters.AddWithValue("@idVeterinario", idUsuarioVeterinario);
 
             return Convert.ToInt32(cmd.ExecuteScalar());
-        }
-
-        /// <summary>
-        /// Obtiene las próximas citas del día actual.
-        /// </summary>
-        /// <returns>Lista de citas ordenadas por fecha.</returns>
-        public List<Cita> ObtenerProximasCitas()
-        {
-            List<Cita> lista = new();
-            using (MySqlConnection con = conexion.ObtenerConexion())
-            {
-                con.Open();
-                string sql = @" SELECT c.id_cita, c.id_mascota, c.id_veterinario, c.fecha_hora, 
-                                    c.duracion_estimada, c.motivo, c.estado, c.observaciones, 
-                                    m.nombre AS nombre_mascota, CONCAT(cli.nombre,' ',cli.apellidos) AS nombre_dueno, 
-                                    cli.id_cliente AS id_cliente_dueno, 
-                                    CONCAT(uv.nombre,' ',uv.apellidos) AS nombre_veterinario, v.numero_colegiado, 
-                                    v.id_usuario AS id_usuario_veterinario 
-                                FROM citas c INNER JOIN mascotas m ON c.id_mascota = m.id_mascota 
-                                    INNER JOIN clientes cli ON m.id_cliente = cli.id_cliente 
-                                    INNER JOIN veterinarios v ON c.id_veterinario = v.id_veterinario 
-                                    INNER JOIN usuarios uv ON v.id_usuario = uv.id_usuario 
-                                WHERE DATE(c.fecha_hora) = CURDATE() AND c.estado <> 'Cancelada' 
-                                ORDER BY c.fecha_hora ASC";
-
-                MySqlCommand cmd = new(sql, con);
-                using MySqlDataReader rdr = cmd.ExecuteReader();
-                while (rdr.Read())
-                {
-                    lista.Add(MappingCita(rdr));
-                }
-            }
-            return lista;
         }
 
         /// <summary>

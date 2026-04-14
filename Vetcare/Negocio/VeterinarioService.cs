@@ -14,7 +14,7 @@ namespace Vetcare.Negocio
         /// <summary>
         /// Instancia del objeto de acceso a datos para Veterinario.
         /// </summary>
-        private VeterinarioDAO veteDAO = new VeterinarioDAO();
+        private readonly VeterinarioDAO veteDAO = new();
 
         /// <summary>
         /// Obtiene la lista completa de veterinarios activos.
@@ -29,16 +29,7 @@ namespace Vetcare.Negocio
         /// Obtiene la lista completa de veterinarios activos.
         /// </summary>
         /// <returns>Lista de objetos Veterinario.</returns>
-        public Veterinario ObtenerPorId(int idVet)
-        {
-            return veteDAO.ObtenerPorId(idVet);
-        }
-
-        /// <summary>
-        /// Obtiene la lista completa de veterinarios activos.
-        /// </summary>
-        /// <returns>Lista de objetos Veterinario.</returns>
-        public Veterinario ObtenerPorIdUsuario(int idVet)
+        public Veterinario? ObtenerPorIdUsuario(int idVet)
         {
             return veteDAO.ObtenerPorIdUsuario(idVet);
         }
@@ -54,16 +45,6 @@ namespace Vetcare.Negocio
         }
 
         /// <summary>
-        /// Inserta múltiples veterinarios en el sistema.
-        /// </summary>
-        /// <param name="lista">Lista de veterinarios a insertar.</param>
-        /// <returns>True si todas las inserciones fueron exitosas.</returns>
-        public bool InsertarVarios(List<Veterinario> lista)
-        {
-            return veteDAO.InsertarVarios(lista);
-        }
-
-        /// <summary>
         /// Actualiza la información de un veterinario existente.
         /// </summary>
         /// <param name="v">Objeto Veterinario con los datos actualizados.</param>
@@ -71,16 +52,6 @@ namespace Vetcare.Negocio
         public bool Actualizar(Veterinario v)
         {
             return veteDAO.Actualizar(v);
-        }
-
-        /// <summary>
-        /// Actualiza múltiples veterinarios en el sistema.
-        /// </summary>
-        /// <param name="lista">Lista de veterinarios a actualizar.</param>
-        /// <returns>True si todas las actualizaciones fueron exitosas.</returns>
-        public bool ActualizarVarios(List<Veterinario> lista)
-        {
-            return veteDAO.ActualizarVarios(lista);
         }
 
         /// <summary>
@@ -92,17 +63,6 @@ namespace Vetcare.Negocio
         public bool BorradoLogico(int idVeterinario)
         {
             return veteDAO.BorradoLogico(idVeterinario);
-        }
-
-        /// <summary>
-        /// Realiza el borrado lógico de varios veterinarios
-        /// dentro de una misma operación transaccional.
-        /// </summary>
-        /// <param name="ids">Lista de identificadores de veterinarios.</param>
-        /// <returns>True si todos fueron desactivados correctamente.</returns>
-        public bool BorradoLogicoVarios(List<int> ids)
-        {
-            return veteDAO.BorradoLogicoVarios(ids);
         }
 
         public int ObtenerIdVeterinarioPorUsuario(int idUsuario)
