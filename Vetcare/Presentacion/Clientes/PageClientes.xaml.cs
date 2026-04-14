@@ -9,145 +9,167 @@ using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Clientes
 {
+    /// <summary>
+    /// Página de presentación encargada de gestionar la visualización, filtrado y operaciones
+    /// sobre los clientes del sistema.
+    /// Permite listar, filtrar, ordenar, crear, editar, eliminar (desactivar) y reactivar clientes,
+    /// así como acceder a su ficha detallada.
+    /// </summary>
     public partial class PageClientes : Page
     {
-        private List<Cliente> listaCompleta = new List<Cliente>();
-        private readonly ClienteService cs = new ClienteService();
+        // Lista completa de clientes cargados desde la base de datos.
+        private List<Cliente> listaCompleta = new();
 
+        // Servicio de negocio para la gestión de clientes.
+        private readonly ClienteService cs = new();
+
+        /// <summary>
+        /// Constructor de la página de clientes.
+        /// Inicializa la vista y carga los datos.
+        /// </summary>
         public PageClientes()
         {
             InitializeComponent();
             CargarDatos();
         }
 
+        /// <summary>
+        /// Carga todos los clientes desde la base de datos.
+        /// </summary>
         private void CargarDatos()
         {
             try
             {
-                listaCompleta = cs.ObtenerTodos() ?? new List<Cliente>();
+                listaCompleta = cs.ObtenerTodos();
                 ActualizarTabla();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar clientes: {ex.Message}");
+                MessageBox.Show($"Error al cargar clientes: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
+        /// <summary>
+        /// Actualiza la tabla aplicando filtros, búsquedas y ordenación.
+        /// </summary>
         private void ActualizarTabla()
         {
-            // 1. Verificaciones de seguridad
-            if (dgClientes == null || rbAsc == null || cbBuscaEstado == null) return;
+            if (listaCompleta == null || dgClientes == null)
+                return;
 
-            // 2. Iniciamos el filtrado sobre la lista completa
+            // --- FILTRADO ---
             var filtrado = listaCompleta.AsEnumerable();
 
-            // --- Filtros de Texto ---
-            if (!string.IsNullOrWhiteSpace(txtBuscaNumDocumento.Text))
-                filtrado = filtrado.Where(c => c.NumDocumento.ToLower().Contains(txtBuscaNumDocumento.Text.ToLower()));
-
-            if (!string.IsNullOrWhiteSpace(txtBuscaCliente.Text))
-                filtrado = filtrado.Where(c => c.NombreCompleto.ToLower().Contains(txtBuscaCliente.Text.ToLower()));
-
-            if (!string.IsNullOrWhiteSpace(txtBuscaTelefono.Text))
-                filtrado = filtrado.Where(c => c.Telefono.ToLower().Contains(txtBuscaTelefono.Text.ToLower()));
-
-            if (!string.IsNullOrWhiteSpace(txtBuscaEmail.Text))
-                filtrado = filtrado.Where(c => c.Email.ToLower().Contains(txtBuscaEmail.Text.ToLower()));
-
-            // --- Filtros de Fecha ---
+            // Número de documento
+            if (!string.IsNullOrEmpty(txtBuscaNumDocumento.Text))
+                filtrado = filtrado.Where(c => c.NumDocumento!.ToLower().Contains(txtBuscaNumDocumento.Text.ToLower()));
+            // Nombre completo del cliente
+            if (!string.IsNullOrEmpty(txtBuscaCliente.Text))
+                filtrado = filtrado.Where(c => c.NombreCompleto!.ToLower().Contains(txtBuscaCliente.Text.ToLower()));
+            // Teléfono
+            if (!string.IsNullOrEmpty(txtBuscaTelefono.Text))
+                filtrado = filtrado.Where(c => c.Telefono!.ToLower().Contains(txtBuscaTelefono.Text.ToLower()));
+            // Email
+            if (!string.IsNullOrEmpty(txtBuscaEmail.Text))
+                filtrado = filtrado.Where(c => c.Email!.ToLower().Contains(txtBuscaEmail.Text.ToLower()));
+            // Fecha de alta (desde)
             if (dtpBuscaFechaDesde.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaAlta.Date >= dtpBuscaFechaDesde.SelectedDate.Value.Date);
-
+            // Fecha de alta (hasta)
             if (dtpBuscaFechaHasta.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaAlta.Date <= dtpBuscaFechaHasta.SelectedDate.Value.Date);
-
-            // --- Filtro de ESTADO (Corregido) ---
-            if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado)
+            // Estado
+            if (cbBuscaEstado.SelectedItem is ComboBoxItem item && item.Content.ToString() != "Todos")
             {
-                string estadoBusca = itemEstado.Content.ToString();
-                if (estadoBusca == "Activo")
-                {
-                    filtrado = filtrado.Where(c => c.Activo == true);
-                }
-                else if (estadoBusca == "Inactivo")
-                {
-                    filtrado = filtrado.Where(c => c.Activo == false);
-                }
+                if (item.Content.ToString() == "Activo")
+                    filtrado = filtrado.Where(c => c.Activo);
+                else if (item.Content.ToString() == "Inactivo")
+                    filtrado = filtrado.Where(c => !c.Activo);
             }
 
-            // 3. Convertimos a lista para ordenar
-            List<Cliente> listaFinal = filtrado.ToList();
-
-            // 4. Ordenación
-            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString();
+            // --- ORDENACIÓN ---
+            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Nombre";
             bool asc = rbAsc.IsChecked == true;
 
-            switch (criterio)
+            filtrado = criterio switch
             {
-                case "DNI":
-                    listaFinal = asc ? listaFinal.OrderBy(x => x.NumDocumento).ToList() : listaFinal.OrderByDescending(x => x.NumDocumento).ToList();
-                    break;
-                case "Nombre":
-                    listaFinal = asc ? listaFinal.OrderBy(x => x.Nombre).ToList() : listaFinal.OrderByDescending(x => x.Nombre).ToList();
-                    break;
-                case "Apellidos":
-                    listaFinal = asc ? listaFinal.OrderBy(x => x.Apellidos).ToList() : listaFinal.OrderByDescending(x => x.Apellidos).ToList();
-                    break;
-                case "Teléfono":
-                    listaFinal = asc ? listaFinal.OrderBy(x => x.Telefono).ToList() : listaFinal.OrderByDescending(x => x.Telefono).ToList();
-                    break;
-                case "Email":
-                    listaFinal = asc ? listaFinal.OrderBy(x => x.Email).ToList() : listaFinal.OrderByDescending(x => x.Email).ToList();
-                    break;
-                case "Fecha de Alta":
-                    listaFinal = asc ? listaFinal.OrderBy(x => x.FechaAlta).ToList() : listaFinal.OrderByDescending(x => x.FechaAlta).ToList();
-                    break;
-            }
+                "DNI" => asc ? filtrado.OrderBy(c => c.NumDocumento) : filtrado.OrderByDescending(c => c.NumDocumento),
+                "Nombre" => asc ? filtrado.OrderBy(c => c.Nombre) : filtrado.OrderByDescending(c => c.Nombre),
+                "Apellidos" => asc ? filtrado.OrderBy(c => c.Apellidos) : filtrado.OrderByDescending(c => c.Apellidos),
+                "Teléfono" => asc ? filtrado.OrderBy(c => c.Telefono) : filtrado.OrderByDescending(c => c.Telefono),
+                "Email" => asc ? filtrado.OrderBy(c => c.Email) : filtrado.OrderByDescending(c => c.Email),
+                _ => asc ? filtrado.OrderBy(c => c.FechaAlta) : filtrado.OrderByDescending(c => c.FechaAlta),
+            };
 
-            // 5. Asignar al DataGrid
-            dgClientes.ItemsSource = listaFinal;
+            dgClientes.ItemsSource = filtrado.ToList();
         }
 
-        private void FiltroAvanzado_Changed(object sender, TextChangedEventArgs e) => ActualizarTabla();
-        private void dtpBuscaFecha_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
-        private void cbOrdenarPor_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
-        private void OrdenDirection_Checked(object sender, RoutedEventArgs e) => ActualizarTabla();
-        private void cbBuscaEstado_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
+        /// <summary>
+        /// Evento que se ejecuta cuando cambia algún filtro de texto.
+        /// </summary>
+        private void FiltroAvanzado_Changed(object sender, EventArgs e) => ActualizarTabla();
 
-        private void btnLimpiar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Limpia todos los filtros aplicados en la vista.
+        /// </summary>
+        private void BtnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtBuscaNumDocumento.Clear();
             txtBuscaCliente.Clear();
             txtBuscaTelefono.Clear();
             txtBuscaEmail.Clear();
+
             dtpBuscaFechaDesde.SelectedDate = null;
             dtpBuscaFechaHasta.SelectedDate = null;
+
             cbOrdenarPor.SelectedIndex = 0;
             cbBuscaEstado.SelectedIndex = 0;
+
             rbAsc.IsChecked = true;
+
             ActualizarTabla();
         }
 
-        private void btnNuevoCliente_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear un nuevo cliente.
+        /// </summary>
+        private void BtnNuevoCliente_Click(object sender, RoutedEventArgs e)
         {
-            WindowCliente win = new WindowCliente { Owner = Window.GetWindow(this) };
-            if (win.ShowDialog() == true) CargarDatos();
+            WindowCliente ventana = new() { 
+                Owner = Window.GetWindow(this) 
+            };
+
+            if (ventana.ShowDialog() == true)
+                CargarDatos();
         }
 
-        private void btnEditar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para editar un cliente existente.
+        /// </summary>
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button b && b.DataContext is Cliente c)
             {
-                WindowCliente win = new WindowCliente(c) { Owner = Window.GetWindow(this) };
-                if (win.ShowDialog() == true) CargarDatos();
+                WindowCliente ventana = new(c) { 
+                    Owner = Window.GetWindow(this) 
+                };
+
+                if (ventana.ShowDialog() == true)
+                    CargarDatos();
             }
         }
 
-        private void btnEliminar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Desactiva (da de baja) un cliente junto con sus mascotas asociadas.
+        /// </summary>
+        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button b && b.DataContext is Cliente c)
             {
-                // Construimos un mensaje más informativo y visual
+                // Mensaje de confirmación con advertencia
                 string mensaje = $"¿Está seguro de que desea dar de baja a {c.NombreCompleto}?\n\n" +
                                  "IMPORTANTE: Esta acción también dará de baja automáticamente " +
                                  "a todas las mascotas asociadas a este cliente.";
@@ -163,6 +185,7 @@ namespace Vetcare.Presentacion.Clientes
                         if (cs.Desactivar(c.IdCliente))
                         {
                             CargarDatos();
+
                             MessageBox.Show("Cliente y mascotas desactivados correctamente.", "Éxito",
                                            MessageBoxButton.OK, MessageBoxImage.Information);
                         }
@@ -176,55 +199,24 @@ namespace Vetcare.Presentacion.Clientes
             }
         }
 
-        private void btnVerFichaCliente_Click(object sender, RoutedEventArgs e)
-        {
-            Button botonPulsado = sender as Button;
-            Cliente clienteDeLaFila = botonPulsado.DataContext as Cliente;
-
-            if (sender is Hyperlink hl && hl.DataContext is Cliente c) AbrirFicha(c.IdCliente);
-        }
-
-        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
-        {
-            Button botonPulsado = sender as Button;
-            Cliente clienteDeLaFila = botonPulsado.DataContext as Cliente;
-
-            if (clienteDeLaFila != null)
-            {
-                AbrirFicha(clienteDeLaFila.IdCliente);
-            }
-        }
-
-        private void dgClientes_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (dgClientes.SelectedItem is Cliente c) AbrirFicha(c.IdCliente);
-        }
-
-        private void AbrirFicha(int id)
-        {
-            WindowFichaCliente win = new WindowFichaCliente(id) { Owner = Window.GetWindow(this) };
-            win.ShowDialog();
-            CargarDatos();
-        }
-
-        private void btnReactivar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Reactiva un cliente previamente desactivado.
+        /// </summary>
+        private void BtnReactivar_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                Button botonPulsado = sender as Button;
-                Cliente clienteDeLaFila = botonPulsado.DataContext as Cliente;
-
-                if (clienteDeLaFila != null)
+                if (sender is Button boton && boton.DataContext is Cliente cliente)
                 {
                     MessageBoxResult confirmacion = MessageBox.Show(
-                        $"¿Deseas reactivar a {clienteDeLaFila.Nombre}?",
+                        $"¿Deseas reactivar a {cliente.Nombre}?",
                         "Confirmar acción",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
                     if (confirmacion == MessageBoxResult.Yes)
                     {
-                        if (cs.Reactivar(clienteDeLaFila.IdCliente))
+                        if (cs.Reactivar(cliente.IdCliente))
                         {
                             MessageBox.Show("Cliente reactivado correctamente.", "Información",
                                 MessageBoxButton.OK, MessageBoxImage.Information);
@@ -241,8 +233,50 @@ namespace Vetcare.Presentacion.Clientes
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al reactivar cliente: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al reactivar cliente: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        /// <summary>
+        /// Abre la ficha del cliente desde un hyperlink.
+        /// </summary>
+        private void BtnVerFichaCliente_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Hyperlink hl && hl.DataContext is Cliente cliente)
+                AbrirFicha(cliente.IdCliente);
+        }
+
+        /// <summary>
+        /// Abre la ficha del cliente desde un botón.
+        /// </summary>
+        private void BtnVerDetalle_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button boton && boton.DataContext is Cliente cliente)
+                AbrirFicha(cliente.IdCliente);
+        }
+
+        /// <summary>
+        /// Abre la ficha del cliente al hacer doble clic en la tabla.
+        /// </summary>
+        private void DgClientes_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (dgClientes.SelectedItem is Cliente cliente)
+                AbrirFicha(cliente.IdCliente);
+        }
+
+        /// <summary>
+        /// Abre la ventana de ficha del cliente.
+        /// </summary>
+        /// <param name="id">ID del cliente a mostrar.</param>
+        private void AbrirFicha(int id)
+        {
+            WindowFichaCliente ventana = new(id) { 
+                Owner = Window.GetWindow(this) 
+            };
+
+            ventana.ShowDialog();
+            CargarDatos();
         }
     }
 }

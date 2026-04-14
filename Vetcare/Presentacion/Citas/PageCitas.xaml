@@ -108,7 +108,7 @@
                         <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroCita_Changed"/>
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroCita_Changed"/>
                     </StackPanel>
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="BtnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -124,14 +124,48 @@
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="Agenda de Citas" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,20,0"/>
-                        <Border x:Name="brdSelectorVista" Background="#F2F4F4" CornerRadius="8" Padding="3" BorderBrush="#D5DBDB" BorderThickness="1">
+                        <!-- Selector Mis Citas / Todas las citas -->
+                        <Border x:Name="brdSelectorVista"
+                                Background="#F2F4F4"
+                                CornerRadius="8"
+                                Padding="3"
+                                BorderBrush="#D5DBDB"
+                                BorderThickness="1">
+
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Visible"/>
+
+                                    <Style.Triggers>
+                                        <!-- Ocultar si es Admin (1) o Recepcionista (3) -->
+                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="1">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="3">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton x:Name="rbMisCitas" Content="Mis Citas" IsChecked="True" GroupName="VistaCitas" Checked="FiltroCita_Changed" Style="{StaticResource SegmentedButtonStyle}"/>
-                                <RadioButton x:Name="rbTodasCitas" Content="Todas las Citas" GroupName="VistaCitas" Checked="FiltroCita_Changed" Style="{StaticResource SegmentedButtonStyle}"/>
+                                <RadioButton x:Name="rbMisCitas"
+                                             Content="Mis Citas"
+                                             IsChecked="True"
+                                             GroupName="VistaCitas"
+                                             Checked="FiltroCita_Changed"
+                                             Style="{StaticResource SegmentedButtonStyle}"/>
+
+                                <RadioButton x:Name="rbTodasCitas"
+                                             Content="Todas las Citas"
+                                             GroupName="VistaCitas"
+                                             Checked="FiltroCita_Changed"
+                                             Style="{StaticResource SegmentedButtonStyle}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                    <Button DockPanel.Dock="Right" x:Name="btnNuevaCita" Content="+ Agendar Cita" Click="btnNuevaCita_Click" Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
+                    <Button DockPanel.Dock="Right" x:Name="btnNuevaCita" Content="+ Agendar Cita" Click="BtnNuevaCita_Click" Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -140,9 +174,10 @@
                     </Button>
                 </DockPanel>
 
+                <!-- DataGrid con las citas -->
                 <DataGrid x:Name="dgCitas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
                           CanUserSortColumns="False" CanUserReorderColumns="False" GridLinesVisibility="None" BorderThickness="0" 
-                          HeadersVisibility="Column" MouseDoubleClick="dgCitas_MouseDoubleClick" CanUserResizeColumns="False"
+                          HeadersVisibility="Column" MouseDoubleClick="DgCitas_MouseDoubleClick" CanUserResizeColumns="False"
                           Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40">
 
                     <DataGrid.Resources>
@@ -193,7 +228,6 @@
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>
-                        <!-- ESTADO: Centrado en cabecera y contenido -->
                         <DataGridTemplateColumn Header="ESTADO" Width="120">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
@@ -234,9 +268,8 @@
                         </DataGridTemplateColumn>
 
                         <DataGridTextColumn Header="DUEÑO" Binding="{Binding NombreDueno}" Width="1.5*"/>
-                        <DataGridTextColumn Header="VETERINARIO" Binding="{Binding InfoVeterinario}" Width="1.5*"/>
+                        <DataGridTextColumn Header="VETERINARIO" Binding="{Binding NombreVeterinario}" Width="1.5*"/>
 
-                        <!-- ACCIONES: Centrado -->
                         <DataGridTemplateColumn Header="ACCIONES" Width="150">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
@@ -246,8 +279,8 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button x:Name="btnEditarAccion" Content="✎" ToolTip="Editar" Click="btnEditarCita_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand" Loaded="btnEditarAccion_Loaded"/>
+                                        <Button Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+                                        <Button x:Name="btnEditarAccion" Content="✎" ToolTip="Editar" Click="BtnEditarCita_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand" Loaded="BtnEditarAccion_Loaded"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

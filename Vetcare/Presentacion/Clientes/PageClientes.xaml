@@ -14,6 +14,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- SECCIÓN DE FILTROS -->
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
@@ -45,15 +46,15 @@
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
+                        <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="dtpBuscaFecha_SelectedDateChanged"/>
+                        <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
-                        <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="cbBuscaEstado_SelectionChanged">
+                        <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                             <ComboBoxItem Content="Todos"/>
                             <ComboBoxItem Content="Activo" IsSelected="True"/>
                             <ComboBoxItem Content="Inactivo"/>
@@ -65,7 +66,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
-                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="cbOrdenarPor_SelectionChanged">
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                         <ComboBoxItem Content="Fecha de Alta" IsSelected="True"/>
                         <ComboBoxItem Content="DNI"/>
                         <ComboBoxItem Content="Nombre"/>
@@ -74,14 +75,15 @@
                         <ComboBoxItem Content="Email"/>
                     </ComboBox>
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
-                        <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="OrdenDirection_Checked"/>
-                        <RadioButton x:Name="rbDesc" Content="Descendente" Checked="OrdenDirection_Checked"/>
+                        <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroAvanzado_Changed"/>
+                        <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroAvanzado_Changed"/>
                     </StackPanel>
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="BtnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
+        <!-- SECCIÓN DE LISTADO -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
@@ -92,12 +94,14 @@
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Listado de clientes" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
-                    <Button DockPanel.Dock="Right" x:Name="btnNuevoCliente" Content="+ Nuevo Cliente" Click="btnNuevoCliente_Click"
+                    <!-- Botoón de nueva cita -->
+                    <Button DockPanel.Dock="Right" x:Name="btnNuevoCliente" Content="+ Nuevo Cliente" Click="BtnNuevoCliente_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Visibility" Value="Visible"/>
                                 <Style.Triggers>
+                                    <!-- Ocultar si es Veterinario (2) -->
                                     <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                     </DataTrigger>
@@ -112,7 +116,8 @@
                     </Button>
                 </DockPanel>
 
-                <DataGrid x:Name="dgClientes" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" MouseDoubleClick="dgClientes_MouseDoubleClick" 
+                <!-- DataGrid con los clientes -->
+                <DataGrid x:Name="dgClientes" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" MouseDoubleClick="DgClientes_MouseDoubleClick" 
                           GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" CanUserSortColumns="False" CanUserReorderColumns="False" Background="White" 
                           FontSize="14" RowHeight="45" ColumnHeaderHeight="40" SelectionMode="Extended" SelectionUnit="FullRow" HorizontalScrollBarVisibility="Auto" CanUserResizeColumns="False">
 
@@ -194,7 +199,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock VerticalAlignment="Center">
-                                        <Hyperlink Click="btnVerFichaCliente_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
+                                        <Hyperlink Click="BtnVerFichaCliente_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
                                             <Run Text="{Binding NumDocumento}" FontWeight="SemiBold"/>
                                         </Hyperlink>
                                     </TextBlock>
@@ -218,16 +223,17 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <!-- Ver detalle -->
-                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" 
-                        Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
 
                                         <!-- Editar -->
-                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="btnEditar_Click" Margin="2,0" 
-                        Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
+                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="BtnEditar_Click" Margin="2,0" 
+                                                Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                     <Style.Triggers>
+                                                        <!-- Ocultar si el cliente no está activo o si es Veterinario (2) -->
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
@@ -240,12 +246,13 @@
                                         </Button>
 
                                         <!-- Dar de baja -->
-                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Dar de baja" Click="btnEliminar_Click" Margin="2,0" 
+                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Dar de baja" Click="BtnEliminar_Click" Margin="2,0" 
                                                 Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                     <Style.Triggers>
+                                                        <!-- Ocultar si el cliente no está activo o si el usuario es Veterinario (2) -->
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
@@ -258,12 +265,13 @@
                                         </Button>
 
                                         <!-- Reactivar -->
-                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="btnReactivar_Click" Margin="2,0" 
+                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="BtnReactivar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
+                                                        <!-- Ocultar si el cliente no está activo o si el usuario es Veterinario (2) -->
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>

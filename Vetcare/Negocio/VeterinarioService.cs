@@ -6,65 +6,70 @@ using Vetcare.Entidades;
 namespace Vetcare.Negocio
 {
     /// <summary>
-    /// Servicio encargado de gestionar la lógica de negocio relacionada con la entidad Veterinario.
-    /// Actúa como intermediario entre la capa de presentación y la capa de acceso a datos.
+    /// Servicio encargado de gestionar la lógica de negocio relacionada con los veterinarios.
+    /// Actúa como intermediario entre la capa de presentación y la capa de datos (VeterinarioDAO).
     /// </summary>
     public class VeterinarioService
     {
         /// <summary>
-        /// Instancia del objeto de acceso a datos para Veterinario.
+        /// Instancia de acceso a datos para los veterinarios.
         /// </summary>
         private readonly VeterinarioDAO veteDAO = new();
 
         /// <summary>
-        /// Obtiene la lista completa de veterinarios activos.
+        /// Obtiene todos los veterinarios registrados.
         /// </summary>
-        /// <returns>Lista de objetos Veterinario.</returns>
+        /// <returns>Lista de veterinarios.</returns>
         public List<Veterinario> ObtenerTodos()
         {
             return veteDAO.ObtenerTodos();
         }
 
         /// <summary>
-        /// Obtiene la lista completa de veterinarios activos.
+        /// Obtiene un veterinario asociado a un usuario específico.
         /// </summary>
-        /// <returns>Lista de objetos Veterinario.</returns>
+        /// <param name="idVet">ID del usuario o veterinario asociado.</param>
+        /// <returns>Veterinario encontrado o null si no existe.</returns>
         public Veterinario? ObtenerPorIdUsuario(int idVet)
         {
             return veteDAO.ObtenerPorIdUsuario(idVet);
         }
 
         /// <summary>
-        /// Inserta un nuevo veterinario en el sistema.
+        /// Inserta un nuevo veterinario en la base de datos.
         /// </summary>
-        /// <param name="v">Objeto Veterinario a insertar.</param>
-        /// <returns>True si la inserción fue exitosa; en caso contrario, false.</returns>
+        /// <param name="v">Objeto veterinario a insertar.</param>
+        /// <returns>True si se inserta correctamente, false en caso contrario.</returns>
         public bool Insertar(Veterinario v)
         {
             return veteDAO.Insertar(v);
         }
 
         /// <summary>
-        /// Actualiza la información de un veterinario existente.
+        /// Actualiza los datos de un veterinario existente.
         /// </summary>
-        /// <param name="v">Objeto Veterinario con los datos actualizados.</param>
-        /// <returns>True si la actualización fue exitosa.</returns>
+        /// <param name="v">Objeto veterinario con datos actualizados.</param>
+        /// <returns>True si se actualiza correctamente, false en caso contrario.</returns>
         public bool Actualizar(Veterinario v)
         {
             return veteDAO.Actualizar(v);
         }
 
         /// <summary>
-        /// Realiza un borrado lógico de un veterinario,
-        /// desactivando su usuario asociado en el sistema.
+        /// Realiza el borrado lógico de un veterinario.
         /// </summary>
-        /// <param name="idVeterinario">Identificador del veterinario.</param>
-        /// <returns>True si la operación fue exitosa.</returns>
+        /// <param name="idVeterinario">ID del veterinario.</param>
+        /// <returns>True si se elimina correctamente, false en caso contrario.</returns>
         public bool BorradoLogico(int idVeterinario)
         {
             return veteDAO.BorradoLogico(idVeterinario);
         }
 
+        /// <summary>
+        /// Obtiene el ID del veterinario asociado a un usuario.
+        /// </summary>
+        /// <param name="idUsuario">ID del usuario.</param>
+        /// <returns>ID del veterinario asociado.</returns>
         public int ObtenerIdVeterinarioPorUsuario(int idUsuario)
         {
             return veteDAO.ObtenerIdVeterinarioPorUsuario(idUsuario);

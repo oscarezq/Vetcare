@@ -4,13 +4,24 @@ using Vetcare.Entidades;
 
 namespace Vetcare.Negocio
 {
+    /// <summary>
+    /// Servicio encargado de gestionar la lógica de negocio relacionada con los roles.
+    /// Actúa como intermediario entre la capa de presentación y la capa de datos (RolDAO).
+    /// </summary>
     public class RolService
     {
-        private readonly RolDAO _rolDAO = new();
+        /// <summary>
+        /// Instancia de acceso a datos para los roles.
+        /// </summary>
+        private readonly RolDAO rolDAO = new();
 
+        /// <summary>
+        /// Obtiene la lista de todos los roles disponibles.
+        /// </summary>
+        /// <returns>Lista de roles.</returns>
         public List<Rol> ListarRoles()
         {
-            return _rolDAO.Listar();
+            return rolDAO.Listar();
         }
     }
 }

@@ -6,20 +6,24 @@ using Vetcare.Entidades;
 namespace Vetcare.Negocio
 {
     /// <summary>
-    /// Lógica de negocio para la gestión de usuarios.
+    /// Servicio encargado de gestionar la lógica de negocio relacionada con los usuarios.
+    /// Incluye autenticación, gestión de usuarios y validaciones básicas.
+    /// Actúa como intermediario entre la capa de presentación y la capa de datos (UsuarioDAO).
     /// </summary>
     public class UsuarioService
     {
-        // Instanciamos el DAO para comunicarnos con la base de datos
-        private UsuarioDAO _usuarioDAO = new UsuarioDAO();
+        /// <summary>
+        /// Instancia de acceso a datos para los usuarios.
+        /// </summary>
+        private readonly UsuarioDAO usuarioDAO = new();
 
         /// <summary>
-        /// Realiza las validaciones de negocio para el inicio de sesión.
+        /// Valida el login de un usuario comprobando credenciales y devolviendo el usuario autenticado.
         /// </summary>
-        /// <param name="user">Username introducido.</param>
-        /// <param name="pass">Password introducida.</param>
-        /// <param name="usuarioLogueado">Parámetro de salida que contendrá el objeto Usuario si el login es correcto.</param>
-        /// <returns>Un mensaje de error detallado o una cadena vacía si el login es exitoso.</returns>
+        /// <param name="user">Nombre de usuario.</param>
+        /// <param name="pass">Contraseña del usuario.</param>
+        /// <param name="usuarioLogueado">Usuario autenticado si las credenciales son correctas.</param>
+        /// <returns>Mensaje de error o cadena vacía si el login es correcto.</returns>
         public string ValidarLogin(string user, string pass, out Usuario usuarioLogueado)
         {
             usuarioLogueado = null;
@@ -34,10 +38,8 @@ namespace Vetcare.Negocio
 
             try
             {
-                // Llamada al DAO para verificar credenciales
-                usuarioLogueado = _usuarioDAO.Login(user, pass);
+                usuarioLogueado = usuarioDAO.Login(user, pass);
 
-                // Si el DAO devuelve null, es que el usuario no existe, la clave está mal o está inactivo
                 if (usuarioLogueado == null)
                 {
                     mensaje = "Usuario o contraseña incorrectos.";
@@ -53,80 +55,72 @@ namespace Vetcare.Negocio
         }
 
         /// <summary>
-        /// Obtiene la lista de todos los usuarios activos en el sistema.
+        /// Obtiene todos los usuarios registrados.
         /// </summary>
-        /// <returns>Lista de objetos Usuario.</returns>
+        /// <returns>Lista de usuarios.</returns>
         public List<Usuario> ObtenerTodos()
         {
-            try
-            {
-                return _usuarioDAO.ObtenerTodos();
-            }
-            catch (Exception ex)
-            {
-                // Aquí podrías loguear el error
-                throw new Exception("Error en capa de negocio al listar usuarios: " + ex.Message);
-            }
+            return usuarioDAO.ObtenerTodos();
         }
 
         /// <summary>
-        /// Busca un usuario por su identificador único.
+        /// Obtiene un usuario por su identificador.
         /// </summary>
         /// <param name="id">ID del usuario.</param>
-        /// <returns>Objeto Usuario o null si no se encuentra.</returns>
-        public Usuario ObtenerPorId(int id)
+        /// <returns>Usuario encontrado o null si no existe.</returns>
+        public Usuario? ObtenerPorId(int id)
         {
-            if (id <= 0) return null;
-            return _usuarioDAO.ObtenerPorId(id);
+            return usuarioDAO.ObtenerPorId(id);
         }
 
         /// <summary>
-        /// Inserta un nuevo usuario realizando validaciones previas.
+        /// Inserta un nuevo usuario en la base de datos.
         /// </summary>
-        /// <param name="u">Objeto Usuario a insertar.</param>
-        /// <returns>Indice del último usuario que se ha insertado.</returns>
+        /// <param name="u">Objeto usuario a insertar.</param>
+        /// <returns>ID del usuario insertado o código de resultado.</returns>
         public int Insertar(Usuario u)
         {
-            // Regla de negocio: El username es obligatorio
-            if (string.IsNullOrWhiteSpace(u.Username))
-                throw new Exception("El nombre de usuario es obligatorio.");
-
-            // Regla de negocio: El email debe tener un formato mínimo (opcional)
-            if (!string.IsNullOrEmpty(u.Email) && !u.Email.Contains("@"))
-                throw new Exception("El formato del correo electrónico no es válido.");
-
-            return _usuarioDAO.Insertar(u);
+            return usuarioDAO.Insertar(u);
         }
 
         /// <summary>
-        /// Actualiza la contraseña de un usuario existente.
+        /// Actualiza la información de un usuario existente.
         /// </summary>
-        /// <param name="u">Objeto Usuario.</param>
-        /// <returns>True si se actualizó la contraseña con éxito.</returns>
+        /// <param name="u">Objeto usuario con datos actualizados.</param>
+        /// <returns>True si se actualiza correctamente, false en caso contrario.</returns>
         public bool Actualizar(Usuario u)
         {
-            return _usuarioDAO.Actualizar(u);
+            return usuarioDAO.Actualizar(u);
         }
 
         /// <summary>
         /// Realiza el borrado lógico de un usuario.
         /// </summary>
-        /// <param name="id">ID del usuario a desactivar.</param>
-        /// <returns>True si se desactivó correctamente.</returns>
+        /// <param name="id">ID del usuario a eliminar.</param>
+        /// <returns>True si se elimina correctamente, false en caso contrario.</returns>
         public bool Eliminar(int id)
         {
-            if (id <= 0) return false;
-            return _usuarioDAO.BorradoLogico(id);
+            return usuarioDAO.BorradoLogico(id);
         }
 
+        /// <summary>
+        /// Comprueba si ya existe un nombre de usuario en la base de datos.
+        /// </summary>
+        /// <param name="username">Nombre de usuario a verificar.</param>
+        /// <returns>True si existe, false si no existe.</returns>
         public bool ExisteUsername(string username)
         {
-            return _usuarioDAO.ExisteUsername(username);
+            return usuarioDAO.ExisteUsername(username);
         }
 
+        /// <summary>
+        /// Reactiva un usuario previamente desactivado.
+        /// </summary>
+        /// <param name="idUsuario">ID del usuario.</param>
+        /// <returns>True si se reactiva correctamente, false en caso contrario.</returns>
         public bool Reactivar(int idUsuario)
         {
-            return _usuarioDAO.Reactivar(idUsuario);
+            return usuarioDAO.Reactivar(idUsuario);
         }
     }
 }

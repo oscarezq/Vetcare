@@ -6,86 +6,99 @@ using Vetcare.Entidades;
 namespace Vetcare.Negocio
 {
     /// <summary>
-    /// Clase encargada de gestionar la lógica de negocio relacionada con la entidad Mascota.
+    /// Servicio encargado de gestionar la lógica de negocio relacionada con las mascotas.
+    /// Actúa como intermediario entre la capa de presentación y la capa de datos (MascotaDAO).
     /// </summary>
     class MascotaService
     {
-        // Objeto DAO para acceder a los datos
+        /// <summary>
+        /// Instancia de acceso a datos para las mascotas.
+        /// </summary>
         public MascotaDAO mascotaDAO = new();
 
         /// <summary>
-        /// Método para obtener todas las mascotas
+        /// Obtiene todas las mascotas registradas.
         /// </summary>
-        /// <returns>Lista con todas las mascotas</returns>
+        /// <returns>Lista de mascotas.</returns>
         public List<Mascota> ObtenerTodas()
         {
             return mascotaDAO.ObtenerTodas();
         }
 
         /// <summary>
-        /// Método para obtener una mascota por su identificador
+        /// Obtiene una mascota por su identificador.
         /// </summary>
-        /// <returns>Mascota con el identificador correspondiente</returns>
+        /// <param name="id">ID de la mascota.</param>
+        /// <returns>La mascota encontrada o null si no existe.</returns>
         public Mascota? ObtenerPorId(int id)
         {
             return mascotaDAO.ObtenerPorId(id);
         }
 
         /// <summary>
-        /// Método para obtener las mascotas de un cliente concreto
+        /// Obtiene todas las mascotas asociadas a un cliente.
         /// </summary>
-        /// <param name="idCliente">Identificador del cliente</param>
-        /// <returns>Lista de mascotas pertenecientes al cliente</returns>
+        /// <param name="idCliente">ID del cliente.</param>
+        /// <returns>Lista de mascotas del cliente.</returns>
         public List<Mascota> ObtenerPorCliente(int idCliente)
         {
             return mascotaDAO.ObtenerPorCliente(idCliente);
         }
 
         /// <summary>
-        /// Método para insertar una mascota
+        /// Inserta una nueva mascota en la base de datos.
         /// </summary>
-        /// <param name="mascota">Mascota que se va a insertar</param>
-        /// <returns>Booleano que indica si se ha insertado correctamente</returns>
+        /// <param name="mascota">Objeto mascota a insertar.</param>
+        /// <returns>True si se inserta correctamente, false en caso contrario.</returns>
         public bool Insertar(Mascota mascota)
         {
             return mascotaDAO.Insertar(mascota);
         }
 
         /// <summary>
-        /// Método para actualizar una mascota
+        /// Actualiza los datos de una mascota existente.
         /// </summary>
-        /// <param name="mascota">Mascota con los datos actualizados</param>
-        /// <returns>Booleano que indica si se ha actualizado correctamente</returns>
+        /// <param name="mascota">Objeto mascota con datos actualizados.</param>
+        /// <returns>True si se actualiza correctamente, false en caso contrario.</returns>
         public bool Actualizar(Mascota mascota)
         {
             return mascotaDAO.Actualizar(mascota);
         }
 
         /// <summary>
-        /// Método para eliminar una mascota
+        /// Desactiva una mascota (baja lógica).
         /// </summary>
-        /// <param name="idMascota">Identificador de la mascota</param>
-        /// <returns>Booleano que indica si se ha eliminado correctamente</returns>
+        /// <param name="idMascota">ID de la mascota.</param>
+        /// <returns>True si se desactiva correctamente, false en caso contrario.</returns>
         public bool Desactivar(int idMascota)
         {
             return mascotaDAO.Desactivar(idMascota);
         }
 
         /// <summary>
-        /// Método para eliminar varias mascotas
+        /// Desactiva varias mascotas a la vez.
         /// </summary>
-        /// <param name="idsMascotas">Lista de identificadores de las mascotas a eliminar</param>
-        /// <returns>Booleano que indica si se han eliminado correctamente</returns>
+        /// <param name="idsMascotas">Lista de IDs de mascotas a desactivar.</param>
+        /// <returns>True si la operación se realiza correctamente.</returns>
         public bool DesactivarVarios(List<int> idsMascotas)
         {
             return mascotaDAO.DesactivarVarios(idsMascotas);
         }
 
+        /// <summary>
+        /// Reactiva una mascota previamente desactivada.
+        /// </summary>
+        /// <param name="idMascota">ID de la mascota.</param>
+        /// <returns>True si se reactiva correctamente, false en caso contrario.</returns>
         public bool Reactivar(int idMascota)
         {
             return mascotaDAO.Reactivar(idMascota);
         }
 
+        /// <summary>
+        /// Cuenta el número total de mascotas registradas.
+        /// </summary>
+        /// <returns>Número total de mascotas.</returns>
         public int ContarMascotas()
         {
             return mascotaDAO.ContarMascotas();

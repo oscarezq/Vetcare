@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using QuestPDF.Fluent;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 using Vetcare.Service;
@@ -61,6 +62,11 @@ namespace Vetcare.Presentacion.HistorialesClinicos
 
                 chkNoPesado.IsEnabled = false;
                 BloquearCampos();
+
+                if (citaActual != null && citaActual.Estado == "Completada")
+                {
+                    btnImprimir.Visibility = Visibility.Visible;
+                }
             }
         }
 
@@ -212,6 +218,50 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             // Expresión regular: solo números y un separador decimal opcional
             System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("^[0-9]*[,.]?[0-9]*$");
             e.Handled = !regex.IsMatch(fullText);
+        }
+
+        private void btnImprimir_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (citaActual == null || historialEdicion == null)
+                {
+                    MessageBox.Show("No hay datos suficientes para generar el informe.");
+                    return;
+                }
+
+                // Obtener mascota
+                MascotaService mascotaService = new MascotaService();
+                Mascota mascota = mascotaService.ObtenerPorId(citaActual.IdMascota);
+
+                // Obtener cliente
+                ClienteService clienteService = new ClienteService();
+                Cliente cliente = clienteService.ObtenerPorId(citaActual.IdUsuarioDueno);
+
+                // Guardar PDF
+                var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    Filter = "PDF (*.pdf)|*.pdf",
+                    FileName = $"Consulta_{mascota.Nombre}_{citaActual.FechaHora:yyyyMMdd}.pdf"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var documento = new InformeConsultaDocumento(mascota, cliente, citaActual, historialEdicion);
+                    documento.GeneratePdf(saveFileDialog.FileName);
+
+                    MessageBox.Show("Informe generado correctamente");
+
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName)
+                    {
+                        UseShellExecute = true
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al generar informe: " + ex.Message);
+            }
         }
     }
 }

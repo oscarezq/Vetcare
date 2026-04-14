@@ -6,76 +6,82 @@ using Vetcare.Entidades;
 namespace Vetcare.Negocio
 {
     /// <summary>
-    /// Clase encargada de gestionar la lógica de negocio relacionada con la entidad Cliente.
+    /// Servicio encargado de gestionar la lógica de negocio relacionada con los clientes.
+    /// Actúa como intermediario entre la capa de presentación y la capa de datos (ClienteDAO).
     /// </summary>
     public class ClienteService
     {
-        // Objeto DAO para acceder a los datos
+        /// <summary>
+        /// Instancia de acceso a datos para los clientes.
+        /// </summary>
         public ClienteDAO clienteDAO = new();
 
         /// <summary>
-        /// Método para obtener todos los clientes
+        /// Obtiene todos los clientes registrados.
         /// </summary>
-        /// <returns>Lista con todos los clientes</returns>
+        /// <returns>Lista de clientes.</returns>
         public List<Cliente> ObtenerTodos()
         {
             return clienteDAO.ObtenerTodos();
         }
 
         /// <summary>
-        ///Método para obtener un cliente por su ID.
+        /// Obtiene un cliente por su identificador.
         /// </summary>
-        /// <param name="id">ID del cliente a obtener.</param>
-        /// <returns>Cliente si existe; de lo contrario, null.</returns>
+        /// <param name="id">ID del cliente.</param>
+        /// <returns>El cliente encontrado o null si no existe.</returns>
         public Cliente? ObtenerPorId(int id)
         {
             return clienteDAO.ObtenerPorId(id);
         }
 
         /// <summary>
-        /// Método para insertar un cliente
+        /// Inserta un nuevo cliente en la base de datos.
         /// </summary>
-        /// <param name="cliente">Cliente que se va a insertar</param>
-        /// <returns>Booleano que indica si se ha insertado correctamente</returns>
+        /// <param name="cliente">Objeto cliente a insertar.</param>
+        /// <returns>True si se inserta correctamente, false en caso contrario.</returns>
         public bool Insertar(Cliente cliente)
         {
             return clienteDAO.Insertar(cliente);
         }
 
         /// <summary>
-        /// Método para actualizar un cliente existente.
+        /// Actualiza la información de un cliente existente.
         /// </summary>
-        /// <param name="cliente">Cliente con los datos actualizados.</param>
-        /// <returns>Booleano que indica si se ha actualizado correctamente.</returns>
+        /// <param name="cliente">Objeto cliente con los datos actualizados.</param>
+        /// <returns>True si se actualiza correctamente, false en caso contrario.</returns>
         public bool Actualizar(Cliente cliente)
         {
             return clienteDAO.Actualizar(cliente);
         }
 
         /// <summary>
-        /// Método para eliminar un cliente
+        /// Desactiva un cliente (baja lógica).
         /// </summary>
-        /// <param name="idCliente">Identificador del cliente</param>
-        /// <returns>Booleano que indica si se ha eliminado correctamente</returns>
+        /// <param name="idCliente">ID del cliente.</param>
+        /// <returns>True si se desactiva correctamente, false en caso contrario.</returns>
         public bool Desactivar(int idCliente)
         {
             return clienteDAO.Desactivar(idCliente);
         }
 
         /// <summary>
-        /// Método para eliminar un cliente
+        /// Reactiva un cliente previamente desactivado.
         /// </summary>
-        /// <param name="idCliente">Identificador del cliente</param>
-        /// <returns>Booleano que indica si se ha eliminado correctamente</returns>
+        /// <param name="idCliente">ID del cliente.</param>
+        /// <returns>True si se reactiva correctamente, false en caso contrario.</returns>
         public bool Reactivar(int idCliente)
         {
             return clienteDAO.Reactivar(idCliente);
         }
 
+        /// <summary>
+        /// Cuenta el número total de clientes registrados.
+        /// </summary>
+        /// <returns>Número total de clientes.</returns>
         public int ContarClientes()
         {
             return clienteDAO.ContarClientes();
         }
     }
 }
-

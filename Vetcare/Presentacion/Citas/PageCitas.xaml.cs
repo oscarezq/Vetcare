@@ -9,29 +9,36 @@ using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Citas
 {
+    /// <summary>
+    /// Página de presentación encargada de gestionar la visualización, filtrado y operaciones
+    /// sobre las citas del sistema.
+    /// Permite listar, filtrar, ordenar, crear, editar y ver detalles de citas.
+    /// </summary>
     public partial class PageCitas : Page
     {
-        private List<Cita> listaCompleta = new List<Cita>();
-        CitaService cs = new CitaService();
+        // Lista completa de citas cargadas desde la base de datos.
+        private List<Cita> listaCompleta = new();
 
+        // Servicio de negocio para la gestión de citas.
+        private readonly CitaService cs = new();
+
+        /// <summary>
+        /// Constructor de la página de citas.
+        /// Inicializa la vista y configura los permisos según el rol del usuario.
+        /// </summary>
         public PageCitas()
         {
             InitializeComponent();
 
-            // Ocultar selector si es Admin
-            if (Sesion.UsuarioActual.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3)
-            {
-                brdSelectorVista.Visibility = Visibility.Collapsed;
-                rbTodasCitas.IsChecked = true; // Siempre ven todas
-            }
-            else
-            {
-                rbMisCitas.IsChecked = true; // Veterinario
-            }
+            // Por defecto, se selecciona "Mis citas" 
+            rbMisCitas.IsChecked = true;
 
             CargarDatos();
         }
 
+        /// <summary>
+        /// Carga todas las citas desde la base de datos.
+        /// </summary>
         private void CargarDatos()
         {
             try
@@ -41,109 +48,162 @@ namespace Vetcare.Presentacion.Citas
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar citas: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al cargar citas: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
+        /// <summary>
+        /// Actualiza la tabla aplicando filtros, búsquedas y ordenación.
+        /// </summary>
         private void ActualizarTabla()
         {
-            if (listaCompleta == null || dgCitas == null) return;
+            if (listaCompleta == null || dgCitas == null) 
+                return;
 
-            // --- FILTRADO CON LINQ ---
-            var query = listaCompleta.AsEnumerable();
+            // --- FILTRADO ---
+            var filtrado = listaCompleta.AsEnumerable();
 
-            // 1. Filtro de Pestaña/Selector (Solo si no es admin)
-            if (Sesion.UsuarioActual.IdRol != 1 && rbMisCitas.IsChecked == true)
-            {
-                query = query.Where(c => c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario);
-            }
-
-            // 2. Filtros de Búsqueda (Tus filtros originales)
+            // Filtro por rol (veterinario solo ve sus citas si tiene seleccionado 'Mis citas')
+            if (Sesion.UsuarioActual!.IdRol != 1 && rbMisCitas.IsChecked == true)
+                filtrado = filtrado.Where(c => c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario);
+            // Nombre de la mascota
             if (!string.IsNullOrEmpty(txtBuscaPaciente.Text))
-                query = query.Where(c => c.NombreMascota.ToLower().Contains(txtBuscaPaciente.Text.ToLower()));
-
+                filtrado = filtrado.Where(c => c.NombreMascota!.ToLower().Contains(txtBuscaPaciente.Text.ToLower()));
+            // Nombre del veterinario
             if (!string.IsNullOrEmpty(txtBuscaVeterinario.Text))
-                query = query.Where(c => c.NombreVeterinario.ToLower().Contains(txtBuscaVeterinario.Text.ToLower()));
-
+                filtrado = filtrado.Where(c => c.NombreVeterinario!.ToLower().Contains(txtBuscaVeterinario.Text.ToLower()));
+            // Nombre del dueño
             if (!string.IsNullOrEmpty(txtBuscaDueno.Text))
-                query = query.Where(c => c.NombreDueno.ToLower().Contains(txtBuscaDueno.Text.ToLower()));
-
+                filtrado = filtrado.Where(c => c.NombreDueno!.ToLower().Contains(txtBuscaDueno.Text.ToLower()));
+            // Estado de la cita
             if (cbBuscaEstado.SelectedItem is ComboBoxItem item && item.Content.ToString() != "Todos")
-                query = query.Where(c => c.Estado == item.Content.ToString());
-
-            // 3. Filtros de Fecha
+                filtrado = filtrado.Where(c => c.Estado == item.Content.ToString());
+            // Fecha (desde)
             if (dtpFechaDesde.SelectedDate.HasValue)
-                query = query.Where(c => c.FechaHora.Date >= dtpFechaDesde.SelectedDate.Value.Date);
+                filtrado = filtrado.Where(c => c.FechaHora.Date >= dtpFechaDesde.SelectedDate.Value.Date);
+            // Fecha (hasta)
             if (dtpFechaHasta.SelectedDate.HasValue)
-                query = query.Where(c => c.FechaHora.Date <= dtpFechaHasta.SelectedDate.Value.Date);
+                filtrado = filtrado.Where(c => c.FechaHora.Date <= dtpFechaHasta.SelectedDate.Value.Date);
 
             // --- ORDENACIÓN ---
-            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Fecha";
-            bool asc = rbAsc.IsChecked == true;
+            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Fecha"; // Campo por el que ordenar
+            bool asc = rbAsc.IsChecked == true; // Orden de ordenación
 
-            switch (criterio)
+            filtrado = criterio switch
             {
-                case "Mascota": query = asc ? query.OrderBy(c => c.NombreMascota) : query.OrderByDescending(c => c.NombreMascota); break;
-                case "Veterinario": query = asc ? query.OrderBy(c => c.NombreVeterinario) : query.OrderByDescending(c => c.NombreVeterinario); break;
-                case "Estado": query = asc ? query.OrderBy(c => c.Estado) : query.OrderByDescending(c => c.Estado); break;
-                default: query = asc ? query.OrderBy(c => c.FechaHora) : query.OrderByDescending(c => c.FechaHora); break;
-            }
+                "Mascota" => asc ? filtrado.OrderBy(c => c.NombreMascota) : filtrado.OrderByDescending(c => c.NombreMascota),
+                "Veterinario" => asc ? filtrado.OrderBy(c => c.NombreVeterinario) : filtrado.OrderByDescending(c => c.NombreVeterinario),
+                "Estado" => asc ? filtrado.OrderBy(c => c.Estado) : filtrado.OrderByDescending(c => c.Estado),
+                _ => asc ? filtrado.OrderBy(c => c.FechaHora) : filtrado.OrderByDescending(c => c.FechaHora),
+            };
 
-            dgCitas.ItemsSource = query.ToList();
+            dgCitas.ItemsSource = filtrado.ToList();
         }
 
-        // LÓGICA DE SEGURIDAD PARA EL LÁPIZ (Sin tocar la entidad Cita)
-        private void btnEditarAccion_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.DataContext is Cita c)
-            {
-                bool esAdminORecepcionista = Sesion.UsuarioActual.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3;
-                bool esSuPropiaCita = c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario;
-
-                if (esAdminORecepcionista || esSuPropiaCita)
-                {
-                    btn.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    btn.Visibility = Visibility.Collapsed;
-                }
-            }
-        }
-
+        /// <summary>
+        /// Evento que se ejecuta cuando cambia algún filtro.
+        /// </summary>
         private void FiltroCita_Changed(object sender, EventArgs e) => ActualizarTabla();
 
-        private void btnLimpiar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Limpia todos los filtros aplicados en la vista.
+        /// </summary>
+        private void BtnLimpiar_Click(object sender, RoutedEventArgs e)
         {
-            txtBuscaPaciente.Clear(); txtBuscaVeterinario.Clear(); txtBuscaDueno.Clear();
-            cbBuscaEstado.SelectedIndex = 0; dtpFechaDesde.SelectedDate = null; dtpFechaHasta.SelectedDate = null;
+            txtBuscaPaciente.Clear();
+            txtBuscaVeterinario.Clear();
+            txtBuscaDueno.Clear();
+
+            cbBuscaEstado.SelectedIndex = 0;
+            dtpFechaDesde.SelectedDate = null;
+            dtpFechaHasta.SelectedDate = null;
+
             ActualizarTabla();
         }
 
-        private void btnNuevaCita_Click(object sender, RoutedEventArgs e)
-        {
-            if (new WindowCita { Owner = Window.GetWindow(this) }.ShowDialog() == true) CargarDatos();
-        }
-
-        private void btnEditarCita_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Controla la visibilidad del botón de edición según el rol del usuario
+        /// y si la cita pertenece al veterinario actual.
+        /// </summary>
+        private void BtnEditarAccion_Loaded(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is Cita c)
-                if (new WindowCita(c) { Owner = Window.GetWindow(this) }.ShowDialog() == true) CargarDatos();
+            {
+                bool esAdminORecepcionista = Sesion.UsuarioActual!.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3;
+                bool esSuPropiaCita = c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario;
+
+                // Si el usuario es admin o recepcionista --> Botón de editar cita visible en todas las citas
+                // Si el usuario es veterinario --> Botón de editar cita visible SOLO EN SUS CITAS
+                btn.Visibility = (esAdminORecepcionista || esSuPropiaCita)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
         }
 
-        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear una nueva cita.
+        /// </summary>
+        private void BtnNuevaCita_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is Cita c) abrirVentanaDetalles(c.IdCita);
+            WindowCita ventana = new()
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            if (ventana.ShowDialog() == true)
+                CargarDatos();
+
         }
 
-        private void dgCitas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// Abre la ventana para editar una cita existente.
+        /// </summary>
+        private void BtnEditarCita_Click(object sender, RoutedEventArgs e)
         {
-            if (dgCitas.SelectedItem is Cita c) abrirVentanaDetalles(c.IdCita);
+            if (sender is Button btn && btn.DataContext is Cita cita)
+            {
+                WindowCita ventana = new(cita)
+                {
+                    Owner = Window.GetWindow(this)
+                };
+
+                if (ventana.ShowDialog() == true)
+                    CargarDatos();
+            }
         }
 
-        private void abrirVentanaDetalles(int idCita)
+        /// <summary>
+        /// Abre la ventana de detalles de una cita.
+        /// </summary>
+        private void BtnVerDetalle_Click(object sender, RoutedEventArgs e)
         {
-            WindowFichaCita ficha = new WindowFichaCita(idCita) { Owner = Window.GetWindow(this) };
+            if (sender is Button btn && btn.DataContext is Cita c)
+                AbrirVentanaDetalles(c.IdCita);
+        }
+
+        /// <summary>
+        /// Abre la ficha de la cita al hacer doble clic en la tabla.
+        /// </summary>
+        private void DgCitas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgCitas.SelectedItem is Cita c)
+                AbrirVentanaDetalles(c.IdCita);
+        }
+
+        /// <summary>
+        /// Abre la ventana de ficha de cita.
+        /// </summary>
+        /// <param name="idCita">ID de la cita a mostrar.</param>
+        private void AbrirVentanaDetalles(int idCita)
+        {
+            WindowFichaCita ficha = new(idCita)
+            {
+                Owner = Window.GetWindow(this)
+            };
+
             ficha.ShowDialog();
             CargarDatos();
         }
