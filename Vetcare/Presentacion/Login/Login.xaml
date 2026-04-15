@@ -30,7 +30,7 @@
 
                 <Button x:Name="btnEntrar" Content="INICIAR SESIÓN" Height="40" 
                         Background="#27AE60" Foreground="White" FontWeight="Bold" 
-                        Cursor="Hand" Click="btnEntrar_Click" IsDefault="True">
+                        Cursor="Hand" Click="BtnEntrar_Click" IsDefault="True">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="5"/>

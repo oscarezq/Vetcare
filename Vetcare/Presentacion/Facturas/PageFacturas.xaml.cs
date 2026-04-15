@@ -3,190 +3,228 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Vetcare.Datos;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Facturas
 {
+    /// <summary>
+    /// Página de presentación encargada de gestionar la visualización, filtrado y operaciones
+    /// sobre las facturas del sistema.
+    /// Permite listar, filtrar, ordenar, crear, ver detalles, imprimir y anular facturas.
+    /// </summary>
     public partial class PageFacturas : Page
     {
-        private List<Factura> listaFacturas;
-        private FacturaService facturaService = new FacturaService();
+        // Lista completa de facturas cargadas desde la base de datos.
+        private List<Factura> listaCompleta = new();
 
+        // Servicio de negocio para la gestión de facturas.
+        private readonly FacturaService cs = new();
+
+        /// <summary>
+        /// Constructor de la página de facturas.
+        /// Inicializa la vista y carga los datos iniciales.
+        /// </summary>
         public PageFacturas()
         {
             InitializeComponent();
             CargarDatos();
         }
 
+        /// <summary>
+        /// Carga todas las facturas desde la base de datos.
+        /// </summary>
         private void CargarDatos()
         {
             try
             {
-                listaFacturas = facturaService.ObtenerTodas();
-                AplicarFiltrosYOrden();
+                listaCompleta = cs.ObtenerTodas();
+                ActualizarTabla();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar las facturas: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al cargar facturas: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        private void AplicarFiltrosYOrden()
+        /// <summary>
+        /// Actualiza la tabla aplicando filtros, búsquedas y ordenación.
+        /// </summary>
+        private void ActualizarTabla()
         {
-            if (listaFacturas == null) return;
+            // Verificación para evitar errores durante la inicialización de componentes
+            if (listaCompleta == null || dgFacturas == null)
+                return;
 
-            var filtrados = listaFacturas.AsEnumerable();
+            // --- FILTRADO ---
+            var filtrado = listaCompleta.AsEnumerable();
 
-            // 1. Filtro por Texto (Cliente o Número de Factura)
+            // Filtro por cliente
             if (!string.IsNullOrWhiteSpace(txtBuscaCliente.Text))
-            {
-                string busquedaCliente = txtBuscaCliente.Text.ToLower().Trim();
-                filtrados = filtrados.Where(f =>
-                    f.NombreCliente != null && f.NombreApellidosCliente.ToLower().Contains(busquedaCliente));
-            }
+                filtrado = filtrado.Where(f =>
+                    f.NombreApellidosCliente != null &&
+                    f.NombreApellidosCliente.ToLower().Contains(txtBuscaCliente.Text.ToLower()));
 
-            // 2. Filtro por Número de Factura
+            // Filtro por número de factura
             if (!string.IsNullOrWhiteSpace(txtBuscaNumero.Text))
-            {
-                string busquedaNum = txtBuscaNumero.Text.ToLower().Trim();
-                filtrados = filtrados.Where(f =>
-                    f.NumeroFactura != null && f.NumeroFactura.ToLower().Contains(busquedaNum));
-            }
+                filtrado = filtrado.Where(f =>
+                    f.NumeroFactura != null &&
+                    f.NumeroFactura.ToLower().Contains(txtBuscaNumero.Text.ToLower()));
 
-            // 3. Filtro por Rango de Fechas
+            // Filtro por fecha (desde)
             if (dpDesde.SelectedDate.HasValue)
-                filtrados = filtrados.Where(f => f.FechaEmision >= dpDesde.SelectedDate.Value);
+                filtrado = filtrado.Where(f => f.FechaEmision >= dpDesde.SelectedDate.Value);
 
+            // Filtro por fecha (hasta)
             if (dpHasta.SelectedDate.HasValue)
-                filtrados = filtrados.Where(f => f.FechaEmision <= dpHasta.SelectedDate.Value);
+                filtrado = filtrado.Where(f => f.FechaEmision <= dpHasta.SelectedDate.Value);
 
-            // 4. Filtro por Estado 
-            if (cbEstado.SelectedIndex > 0) // El índice 0 es "Todos"
+            // Filtro por estado de la factura
+            if (cbEstado.SelectedItem is ComboBoxItem item && item.Content.ToString() != "Todos")
+                filtrado = filtrado.Where(f => f.Estado == item.Content.ToString());
+
+            // --- ORDENACIÓN ---
+            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Fecha";
+            bool asc = rbAsc.IsChecked == true;
+
+            filtrado = criterio switch
             {
-                string estadoSeleccionado = (cbEstado.SelectedItem as ComboBoxItem).Content.ToString();
-                filtrados = filtrados.Where(f => f.Estado == estadoSeleccionado);
-            }
+                "Cliente" => asc ? filtrado.OrderBy(f => f.NombreApellidosCliente) : filtrado.OrderByDescending(f => f.NombreApellidosCliente),
+                "Total" => asc ? filtrado.OrderBy(f => f.Total) : filtrado.OrderByDescending(f => f.Total),
+                _ => asc ? filtrado.OrderBy(f => f.FechaEmision) : filtrado.OrderByDescending(f => f.FechaEmision),
+            };
 
-            // 5. Lógica de Ordenación
-            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem).Content.ToString();
-            bool descendente = rbDesc.IsChecked ?? true;
-
-            switch (criterio)
-            {
-                case "Cliente":
-                    filtrados = descendente ? filtrados.OrderByDescending(f => f.NombreCliente) : filtrados.OrderBy(f => f.NombreCliente);
-                    break;
-                case "Total":
-                    filtrados = descendente ? filtrados.OrderByDescending(f => f.Total) : filtrados.OrderBy(f => f.Total);
-                    break;
-                default:
-                    filtrados = descendente ? filtrados.OrderByDescending(f => f.FechaEmision) : filtrados.OrderBy(f => f.FechaEmision);
-                    break;
-            }
-
-            dgFacturas.ItemsSource = filtrados.ToList();
+            dgFacturas.ItemsSource = filtrado.ToList();
         }
 
-        private void FiltroFactura_Changed(object sender, EventArgs e) => AplicarFiltrosYOrden();
+        /// <summary>
+        /// Evento que se ejecuta cuando cambia algún filtro.
+        /// </summary>
+        private void FiltroFactura_Changed(object sender, EventArgs e) => ActualizarTabla();
 
-        private void btnLimpiar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Limpia todos los filtros aplicados en la vista.
+        /// </summary>
+        private void BtnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtBuscaCliente.Clear();
             txtBuscaNumero.Clear();
+
             dpDesde.SelectedDate = null;
             dpHasta.SelectedDate = null;
+
             cbEstado.SelectedIndex = 0;
             cbOrdenarPor.SelectedIndex = 0;
-            rbDesc.IsChecked = true;
-            AplicarFiltrosYOrden();
+
+            rbAsc.IsChecked = true;
+
+            ActualizarTabla();
         }
 
-        private void dgFacturas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear una nueva factura.
+        /// </summary>
+        private void BtnNuevaFactura_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Verificar que el usuario hizo clic en una fila con datos
-            if (dgFacturas.SelectedItem is Factura facturaSeleccionada)
+            WindowFactura ventana = new()
             {
-                try
-                {
-                    // 2. Instanciar tu nuevo DAO
-                    DetalleFacturaDAO detalleDAO = new DetalleFacturaDAO();
+                Owner = Window.GetWindow(this)
+            };
 
-                    // 3. Cargar las líneas de la base de datos a la factura
-                    facturaSeleccionada.Detalles = detalleDAO.ObtenerDetallesPorFactura(facturaSeleccionada.IdFactura);
-
-                    // 4. Abrir la ventana de detalle pasando el objeto ya "relleno"
-                    WindowDetalleFactura detalleWin = new WindowDetalleFactura(facturaSeleccionada);
-                    detalleWin.ShowDialog();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error al cargar los detalles: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        private void btnNuevaFactura_Click(object sender, RoutedEventArgs e)
-        {
-            WindowFactura NuevaFacturaWin = new WindowFactura();
-            if (NuevaFacturaWin.ShowDialog() == true) 
+            if (ventana.ShowDialog() == true)
                 CargarDatos();
         }
 
-        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana de detalles de una factura.
+        /// </summary>
+        private void BtnVerDetalle_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Obtenemos el botón que disparó el evento
-            Button btn = sender as Button;
+            if (sender is Button btn && btn.DataContext is Factura f)
+                AbrirVentanaDetalles(f);
+        }
 
-            // 2. El DataContext de ese botón es automáticamente el objeto 'Factura' de esa fila
-            if (btn != null && btn.DataContext is Factura facturaSeleccionada)
+        /// <summary>
+        /// Abre la ficha de la factura al hacer doble clic en la tabla.
+        /// </summary>
+        private void DgFacturas_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgFacturas.SelectedItem is Factura f)
+                AbrirVentanaDetalles(f);
+        }
+
+        /// <summary>
+        /// Abre la ventana de ficha de factura.
+        /// </summary>
+        private void AbrirVentanaDetalles(Factura factura)
+        {
+            try
             {
-                try
-                {
-                    // 3. Cargamos los detalles (Igual que haces en el DoubleClick)
-                    DetalleFacturaDAO detalleDAO = new DetalleFacturaDAO();
-                    facturaSeleccionada.Detalles = detalleDAO.ObtenerDetallesPorFactura(facturaSeleccionada.IdFactura);
+                DetalleFacturaDAO detalleDAO = new();
+                factura.Detalles = detalleDAO.ObtenerDetallesPorFactura(factura.IdFactura);
 
-                    // 4. Abrimos la ventana
-                    WindowDetalleFactura detalleWin = new WindowDetalleFactura(facturaSeleccionada);
-                    detalleWin.ShowDialog();
-                }
-                catch (Exception ex)
+                WindowDetalleFactura ventana = new(factura)
                 {
-                    MessageBox.Show("Error al cargar los detalles: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    Owner = Window.GetWindow(this)
+                };
+
+                if (ventana.ShowDialog() == true)
+                    CargarDatos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar los detalles: " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        private void btnImprimir_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Genera el documento de la factura (simulación).
+        /// </summary>
+        private void BtnImprimir_Click(object sender, RoutedEventArgs e)
         {
-            if (((Button)sender).DataContext is Factura factura)
+            if (sender is Button btn && btn.DataContext is Factura f)
             {
-                MessageBox.Show($"Generando PDF para la factura {factura.NumeroFactura}...", "Imprimir", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Generando PDF para la factura {f.NumeroFactura}...",
+                    "Imprimir",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
         }
 
-        private void btnAnular_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Anula una factura tras confirmación del usuario.
+        /// </summary>
+        private void BtnAnular_Click(object sender, RoutedEventArgs e)
         {
-            if (((Button)sender).DataContext is Factura factura)
+            if (sender is Button btn && btn.DataContext is Factura f)
             {
-                if (factura.Estado == "Anulada")
+                if (f.Estado == "Anulada")
                 {
-                    MessageBox.Show("Esta factura ya está anulada.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Esta factura ya está anulada.",
+                        "Aviso",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                     return;
                 }
 
-                var result = MessageBox.Show($"¿Está seguro de que desea anular la factura {factura.NumeroFactura}?",
-                    "Confirmar Anulación", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var result = MessageBox.Show(
+                    $"¿Está seguro de que desea anular la factura {f.NumeroFactura}?",
+                    "Confirmar Anulación",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // Usamos IdFactura que es como se llama en tu DAO
-                    if (facturaService.AnularFactura(factura.IdFactura))
-                    {
+                    if (cs.AnularFactura(f.IdFactura))
                         CargarDatos();
-                    }
                 }
             }
         }

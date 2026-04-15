@@ -197,6 +197,37 @@ namespace Vetcare.Datos
             }
         }
 
+        public bool InsertarUsuarioAdmin(string hash, string salt)
+        {
+            using MySqlConnection con = conexion.ObtenerConexion();
+
+            string insertQuery = @"INSERT INTO usuarios (id_rol, username, password_hash, salt, nombre, apellidos, 
+                                       email, telefono, activo, debe_cambiar_password) 
+                                   VALUES (@rol, @user, @hash, @salt, @nombre, @apellidos, @email, @telefono, 1, 1);";
+
+            MySqlCommand cmd = new(insertQuery, con);
+
+            // Datos del admin
+            cmd.Parameters.AddWithValue("@rol", 1);
+            cmd.Parameters.AddWithValue("@user", "admin");
+            cmd.Parameters.AddWithValue("@hash", hash);
+            cmd.Parameters.AddWithValue("@salt", salt);
+            cmd.Parameters.AddWithValue("@nombre", "Admin");
+            cmd.Parameters.AddWithValue("@apellidos", "Sistema");
+            cmd.Parameters.AddWithValue("@email", "admin@admin.com");
+            cmd.Parameters.AddWithValue("@telefono", "123456789");
+
+            try
+            {
+                con.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al insertar admin: " + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Actualiza los datos de un usuario existente.
         /// </summary>
@@ -288,6 +319,19 @@ namespace Vetcare.Datos
                            WHERE username = @user";
             MySqlCommand cmd = new(sql, con);
             cmd.Parameters.AddWithValue("@user", username);
+
+            int count = Convert.ToInt32(cmd.ExecuteScalar());
+            return count > 0;
+        }
+
+        public bool ComprobarHayUsuarios()
+        {
+            using MySqlConnection con = conexion.ObtenerConexion();
+            con.Open();
+
+            string sql = @"SELECT COUNT(*)
+                           FROM usuarios";
+            MySqlCommand cmd = new(sql, con);
 
             int count = Convert.ToInt32(cmd.ExecuteScalar());
             return count > 0;

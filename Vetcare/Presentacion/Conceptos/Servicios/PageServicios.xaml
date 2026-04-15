@@ -70,7 +70,7 @@
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroServicio_Changed"/>
                     </StackPanel>
 
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="BtnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -87,7 +87,7 @@
                     <TextBlock Text="Catálogo de Servicios" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
                     <!-- MODIFICADO: Eliminado el trigger que ocultaba el botón al Recepcionista -->
-                    <Button DockPanel.Dock="Right" x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Click="btnNuevoServicio_Click"
+                    <Button DockPanel.Dock="Right" x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Click="BtnNuevoServicio_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
                         <Button.Resources>
                             <Style TargetType="Border">
@@ -98,7 +98,7 @@
                 </DockPanel>
 
                 <DataGrid x:Name="dgServicios" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="dgServicios_MouseDoubleClick"
+                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="DgServicios_MouseDoubleClick"
                           Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" CanUserSortColumns="False" CanUserReorderColumns="False"
                           SelectionMode="Single" SelectionUnit="FullRow" CanUserResizeColumns="False">
 
@@ -182,7 +182,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock VerticalAlignment="Center">
-                                        <Hyperlink Click="btnVerDetalle_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
+                                        <Hyperlink Click="BtnVerDetalle_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
                                             <Run Text="{Binding Nombre}" FontWeight="SemiBold"/>
                                         </Hyperlink>
                                     </TextBlock>
@@ -213,10 +213,10 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <!-- BOTÓN DETALLE: Siempre visible -->
-                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
 
                                         <!-- BOTÓN EDITAR: Modificado para acceso de Recepcionista -->
-                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="btnEditarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
+                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="BtnEditarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -230,7 +230,7 @@
                                         </Button>
 
                                         <!-- BOTÓN ELIMINAR: Modificado para acceso de Recepcionista -->
-                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Eliminar" Click="btnEliminarServicio_Click" Margin="2,0" Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
+                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Eliminar" Click="BtnEliminarServicio_Click" Margin="2,0" Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -244,7 +244,7 @@
                                         </Button>
 
                                         <!-- BOTÓN REACTIVAR: Modificado para acceso de Recepcionista -->
-                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="btnReactivarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
+                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="BtnReactivarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Collapsed"/>

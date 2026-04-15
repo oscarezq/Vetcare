@@ -24,17 +24,10 @@ namespace Vetcare.Negocio
         /// <param name="pass">Contraseña del usuario.</param>
         /// <param name="usuarioLogueado">Usuario autenticado si las credenciales son correctas.</param>
         /// <returns>Mensaje de error o cadena vacía si el login es correcto.</returns>
-        public string ValidarLogin(string user, string pass, out Usuario usuarioLogueado)
+        public string ValidarLogin(string user, string pass, out Usuario? usuarioLogueado)
         {
             usuarioLogueado = null;
             string mensaje = string.Empty;
-
-            // Validaciones previas
-            if (string.IsNullOrWhiteSpace(user))
-                return "El nombre de usuario es obligatorio.";
-
-            if (string.IsNullOrWhiteSpace(pass))
-                return "La contraseña es obligatoria.";
 
             try
             {
@@ -47,7 +40,6 @@ namespace Vetcare.Negocio
             }
             catch (Exception ex)
             {
-                // Capturamos errores de conexión o SQL
                 mensaje = "Error de conexión: " + ex.Message;
             }
 
@@ -71,6 +63,20 @@ namespace Vetcare.Negocio
         public Usuario? ObtenerPorId(int id)
         {
             return usuarioDAO.ObtenerPorId(id);
+        }
+
+        /// <summary>
+        /// Comprueba si ya existe algún usuario en la base de datos.
+        /// </summary>
+        /// <returns>True si hay usuarios, false si no hay usuarios</returns>
+        public bool ComprobarHayUsuarios()
+        {
+            return usuarioDAO.ComprobarHayUsuarios();
+        }
+
+        public bool InsertarUsuarioAdmin(string hash, string salt)
+        {
+            return usuarioDAO.InsertarUsuarioAdmin(hash, salt);
         }
 
         /// <summary>

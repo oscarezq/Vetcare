@@ -111,16 +111,16 @@
                 <TextBlock Text="ACCESOS RÁPIDOS" FontSize="12" FontWeight="Bold" Foreground="#1E293B" Margin="5,0,0,10"/>
                 <UniformGrid x:Name="gridBotones" Columns="4">
                     <!-- Botones comunes -->
-                    <Button x:Name="btnNuevaCita" Content="+ Nueva Cita" Style="{StaticResource ActionButtonStyle}" Background="#3498DB" Click="btnNuevaCita_Click"/>
+                    <Button x:Name="btnNuevaCita" Content="+ Nueva Cita" Style="{StaticResource ActionButtonStyle}" Background="#3498DB" Click="BtnNuevaCita_Click"/>
 
                     <!-- Botones que cambian según ROL -->
-                    <Button x:Name="btnNuevaMascota" Content="+ Nueva Mascota" Style="{StaticResource ActionButtonStyle}" Background="#27AE60" Click="btnNuevaMascota_Click"/>
-                    <Button x:Name="btnNuevoCliente" Content="+ Nuevo Cliente" Style="{StaticResource ActionButtonStyle}" Background="#8E44AD" Click="btnNuevoCliente_Click"/>
-                    <Button x:Name="btnAccesoFactura" Content="+ Nueva Factura" Style="{StaticResource ActionButtonStyle}" Background="#F39C12" Click="btnNuevaFactura_Click"/>
+                    <Button x:Name="btnNuevaMascota" Content="+ Nueva Mascota" Style="{StaticResource ActionButtonStyle}" Background="#27AE60" Click="BtnNuevaMascota_Click"/>
+                    <Button x:Name="btnNuevoCliente" Content="+ Nuevo Cliente" Style="{StaticResource ActionButtonStyle}" Background="#8E44AD" Click="BtnNuevoCliente_Click"/>
+                    <Button x:Name="btnAccesoFactura" Content="+ Nueva Factura" Style="{StaticResource ActionButtonStyle}" Background="#F39C12" Click="BtnNuevaFactura_Click"/>
 
                     <!-- Nuevos botones para Veterinario -->
-                    <Button x:Name="btnNuevoProducto" Content="+ Nuevo Producto" Visibility="Collapsed" Style="{StaticResource ActionButtonStyle}" Background="#E67E22" Click="btnNuevoProducto_Click"/>
-                    <Button x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Visibility="Collapsed" Style="{StaticResource ActionButtonStyle}" Background="#16A085" Click="btnNuevoServicio_Click"/>
+                    <Button x:Name="btnNuevoProducto" Content="+ Nuevo Producto" Visibility="Collapsed" Style="{StaticResource ActionButtonStyle}" Background="#E67E22" Click="BtnNuevoProducto_Click"/>
+                    <Button x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Visibility="Collapsed" Style="{StaticResource ActionButtonStyle}" Background="#16A085" Click="BtnNuevoServicio_Click"/>
                 </UniformGrid>
             </StackPanel>
         </Border>
@@ -158,7 +158,7 @@
                             <DataGridTemplateColumn Header="DETALLES" Width="110">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Ver Cita" Click="btnVerConsulta_Click" Background="#EBF5FB" Foreground="#2E86C1" FontWeight="Bold" FontSize="11" Height="28"/>
+                                        <Button Content="Ver Cita" Click="BtnVerConsulta_Click" Background="#EBF5FB" Foreground="#2E86C1" FontWeight="Bold" FontSize="11" Height="28"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -193,7 +193,7 @@
                             <DataGridTemplateColumn Header="ACCIÓN" Width="110">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Ver Factura" Click="btnVerFactura_Click" Background="#FDEDEC" Foreground="#C0392B" FontWeight="Bold" FontSize="11" Height="28"/>
+                                        <Button Content="Ver Factura" Click="BtnVerFactura_Click" Background="#FDEDEC" Foreground="#C0392B" FontWeight="Bold" FontSize="11" Height="28"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

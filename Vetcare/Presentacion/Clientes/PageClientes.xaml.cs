@@ -57,31 +57,38 @@ namespace Vetcare.Presentacion.Clientes
         /// </summary>
         private void ActualizarTabla()
         {
+            // Verificación para evitar errores durante la inicialización de componentes
             if (listaCompleta == null || dgClientes == null)
                 return;
 
             // --- FILTRADO ---
             var filtrado = listaCompleta.AsEnumerable();
 
-            // Número de documento
+            // Filtro por número de documento
             if (!string.IsNullOrEmpty(txtBuscaNumDocumento.Text))
                 filtrado = filtrado.Where(c => c.NumDocumento!.ToLower().Contains(txtBuscaNumDocumento.Text.ToLower()));
-            // Nombre completo del cliente
+
+            // Filtro por nombre completo del cliente
             if (!string.IsNullOrEmpty(txtBuscaCliente.Text))
                 filtrado = filtrado.Where(c => c.NombreCompleto!.ToLower().Contains(txtBuscaCliente.Text.ToLower()));
-            // Teléfono
+
+            // Filtro por teléfono
             if (!string.IsNullOrEmpty(txtBuscaTelefono.Text))
                 filtrado = filtrado.Where(c => c.Telefono!.ToLower().Contains(txtBuscaTelefono.Text.ToLower()));
-            // Email
+
+            // Filtro por email
             if (!string.IsNullOrEmpty(txtBuscaEmail.Text))
                 filtrado = filtrado.Where(c => c.Email!.ToLower().Contains(txtBuscaEmail.Text.ToLower()));
-            // Fecha de alta (desde)
+
+            // Filtro por fecha de alta (desde)
             if (dtpBuscaFechaDesde.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaAlta.Date >= dtpBuscaFechaDesde.SelectedDate.Value.Date);
-            // Fecha de alta (hasta)
+
+            // Filtro por fecha de alta (hasta)
             if (dtpBuscaFechaHasta.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaAlta.Date <= dtpBuscaFechaHasta.SelectedDate.Value.Date);
-            // Estado
+
+            // Filtro por estado
             if (cbBuscaEstado.SelectedItem is ComboBoxItem item && item.Content.ToString() != "Todos")
             {
                 if (item.Content.ToString() == "Activo")

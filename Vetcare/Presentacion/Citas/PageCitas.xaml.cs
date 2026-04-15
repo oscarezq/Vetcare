@@ -60,6 +60,7 @@ namespace Vetcare.Presentacion.Citas
         /// </summary>
         private void ActualizarTabla()
         {
+            // Verificación para evitar errores durante la inicialización de componentes
             if (listaCompleta == null || dgCitas == null) 
                 return;
 
@@ -69,22 +70,28 @@ namespace Vetcare.Presentacion.Citas
             // Filtro por rol (veterinario solo ve sus citas si tiene seleccionado 'Mis citas')
             if (Sesion.UsuarioActual!.IdRol != 1 && rbMisCitas.IsChecked == true)
                 filtrado = filtrado.Where(c => c.IdVeterinario == Sesion.UsuarioActual.IdVeterinario);
-            // Nombre de la mascota
+
+            // Filtro por nombre de la mascota
             if (!string.IsNullOrEmpty(txtBuscaPaciente.Text))
                 filtrado = filtrado.Where(c => c.NombreMascota!.ToLower().Contains(txtBuscaPaciente.Text.ToLower()));
-            // Nombre del veterinario
+
+            // Filtro por nombre del veterinario
             if (!string.IsNullOrEmpty(txtBuscaVeterinario.Text))
                 filtrado = filtrado.Where(c => c.NombreVeterinario!.ToLower().Contains(txtBuscaVeterinario.Text.ToLower()));
-            // Nombre del dueño
+
+            // Filtro por nombre del dueño
             if (!string.IsNullOrEmpty(txtBuscaDueno.Text))
                 filtrado = filtrado.Where(c => c.NombreDueno!.ToLower().Contains(txtBuscaDueno.Text.ToLower()));
-            // Estado de la cita
+
+            // Filtro por estado de la cita
             if (cbBuscaEstado.SelectedItem is ComboBoxItem item && item.Content.ToString() != "Todos")
                 filtrado = filtrado.Where(c => c.Estado == item.Content.ToString());
-            // Fecha (desde)
+
+            // Filtro por fecha (desde)
             if (dtpFechaDesde.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaHora.Date >= dtpFechaDesde.SelectedDate.Value.Date);
-            // Fecha (hasta)
+
+            // Filtro por fecha (hasta)
             if (dtpFechaHasta.SelectedDate.HasValue)
                 filtrado = filtrado.Where(c => c.FechaHora.Date <= dtpFechaHasta.SelectedDate.Value.Date);
 
