@@ -280,7 +280,38 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
-                                        <Button x:Name="btnEditarAccion" Content="✎" ToolTip="Editar" Click="BtnEditarCita_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand" Loaded="BtnEditarAccion_Loaded"/>
+                                        <Button Content="✎"
+                                                ToolTip="Editar"
+                                                Click="BtnEditarCita_Click"
+                                                Margin="2,0"
+                                                Background="#EBF5FB"
+                                                Foreground="#2E86C1"
+                                                Width="35"
+                                                Height="30"
+                                                BorderBrush="#AED6F1"
+                                                Cursor="Hand">
+
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+
+                                                        <!-- cualquier otro estado -->
+                                                        <DataTrigger Binding="{Binding Estado}" Value="Completada">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+
+                                                        <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

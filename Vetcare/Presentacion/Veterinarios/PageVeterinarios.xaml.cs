@@ -12,31 +12,33 @@ using Vetcare.Presentacion.Usuarios;
 namespace Vetcare.Presentacion.Veterinarios
 {
     /// <summary>
-    /// Página encargada de mostrar, filtrar, ordenar y gestionar los veterinarios registrados en el sistema.
+    /// Página de presentación encargada de gestionar la visualización, filtrado,
+    /// ordenación y operaciones sobre los veterinarios del sistema.
+    /// Permite listar, buscar, ordenar, crear, editar, eliminar y ver detalles de veterinarios.
     /// </summary>
     public partial class PageVeterinarios : Page
     {
-        // Lista completa de veterinarios obtenida de la base de datos
-        private List<Veterinario> listaCompleta = new List<Veterinario>();
+        // Lista completa de veterinarios cargados desde la base de datos.
+        private List<Veterinario> listaCompleta = new();
 
-        // Servicio de negocio para operaciones de veterinarios
-        private VeterinarioService vs = new VeterinarioService();
+        // Servicio de negocio para la gestión de veterinarios.
+        private readonly VeterinarioService vs = new();
 
-        private UsuarioService _usuarioService = new UsuarioService();
+        // Servicio de usuarios (necesario para edición).
+        private readonly UsuarioService usuarioService = new();
 
         /// <summary>
-        /// Inicializa una nueva instancia de la clase <see cref="PageVeterinarios"/>.
+        /// Constructor de la página de veterinarios.
+        /// Inicializa la vista y carga los datos iniciales.
         /// </summary>
         public PageVeterinarios()
         {
             InitializeComponent();
-
-            // Carga inicial de datos en la tabla
             CargarDatos();
         }
 
         /// <summary>
-        /// Recupera la información de todos los veterinarios desde la capa de negocio.
+        /// Carga todos los veterinarios desde la base de datos.
         /// </summary>
         private void CargarDatos()
         {
@@ -47,226 +49,244 @@ namespace Vetcare.Presentacion.Veterinarios
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar veterinarios: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al cargar veterinarios: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Filtra, ordena y actualiza el DataGrid con los veterinarios visibles según criterios del usuario.
+        /// Actualiza la tabla aplicando filtros, búsquedas y ordenación.
         /// </summary>
         private void ActualizarTabla()
         {
+            // Verificación para evitar errores durante la inicialización
+            if (listaCompleta == null || dgVeterinarios == null)
+                return;
+
             try
             {
-                if (listaCompleta == null) return;
-                if (rbAsc == null || cbOrdenarPor == null || dgVeterinarios == null) return;
-
                 // --- FILTRADO ---
-                List<Veterinario> listaFiltrada = new List<Veterinario>();
-                foreach (var v in listaCompleta)
-                {
-                    string nombreBusca = txtBuscaNombre.Text.ToLower();
-                    string apellidosBusca = txtBuscaApellidos.Text.ToLower();
-                    string especialidadBusca = txtBuscaEspecialidad.Text.ToLower();
-                    string numeroColegiadoBusca = txtBuscaNumeroColegiado.Text.ToLower();
+                var filtrado = listaCompleta.AsEnumerable();
 
-                    if (!string.IsNullOrEmpty(nombreBusca) && !v.Nombre.ToLower().Contains(nombreBusca)) continue;
-                    if (!string.IsNullOrEmpty(apellidosBusca) && !v.Apellidos.ToLower().Contains(apellidosBusca)) continue;
-                    if (!string.IsNullOrEmpty(especialidadBusca) && !v.Especialidad.ToLower().Contains(especialidadBusca)) continue;
-                    if (!string.IsNullOrEmpty(numeroColegiadoBusca) && !v.NumeroColegiado.ToLower().Contains(numeroColegiadoBusca)) continue;
+                // Filtro por nombre
+                if (!string.IsNullOrEmpty(txtBuscaNombre.Text))
+                    filtrado = filtrado.Where(v => v.Nombre!.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
 
-                    listaFiltrada.Add(v);
-                }
+                // Filtro por apellidos
+                if (!string.IsNullOrEmpty(txtBuscaApellidos.Text))
+                    filtrado = filtrado.Where(v => v.Apellidos!.ToLower().Contains(txtBuscaApellidos.Text.ToLower()));
+
+                // Filtro por especialidad
+                if (!string.IsNullOrEmpty(txtBuscaEspecialidad.Text))
+                    filtrado = filtrado.Where(v => v.Especialidad!.ToLower().Contains(txtBuscaEspecialidad.Text.ToLower()));
+
+                // Filtro por número de colegiado
+                if (!string.IsNullOrEmpty(txtBuscaNumeroColegiado.Text))
+                    filtrado = filtrado.Where(v => v.NumeroColegiado!.ToLower().Contains(txtBuscaNumeroColegiado.Text.ToLower()));
 
                 // --- ORDENACIÓN ---
-                ComboBoxItem itemSeleccionado = (ComboBoxItem)cbOrdenarPor.SelectedItem;
-                if (itemSeleccionado != null)
+                string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Nombre";
+                bool asc = rbAsc.IsChecked == true;
+
+                filtrado = criterio switch
                 {
-                    string criterio = itemSeleccionado.Content.ToString();
-                    bool esAscendente = (bool)rbAsc.IsChecked;
+                    "Nombre" => asc ? filtrado.OrderBy(v => v.Nombre) : filtrado.OrderByDescending(v => v.Nombre),
+                    "Apellidos" => asc ? filtrado.OrderBy(v => v.Apellidos) : filtrado.OrderByDescending(v => v.Apellidos),
+                    "Especialidad" => asc ? filtrado.OrderBy(v => v.Especialidad) : filtrado.OrderByDescending(v => v.Especialidad),
+                    _ => asc ? filtrado.OrderBy(v => v.NumeroColegiado) : filtrado.OrderByDescending(v => v.NumeroColegiado),
+                };
 
-                    switch (criterio)
-                    {
-                        case "Nombre":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Nombre.CompareTo(y.Nombre) : y.Nombre.CompareTo(x.Nombre));
-                            break;
-                        case "Apellidos":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Apellidos.CompareTo(y.Apellidos) : y.Apellidos.CompareTo(x.Apellidos));
-                            break;
-                        case "Especialidad":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Especialidad.CompareTo(y.Especialidad) : y.Especialidad.CompareTo(x.Especialidad));
-                            break;
-                        case "Nº Colegiado":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.NumeroColegiado.CompareTo(y.NumeroColegiado) : y.NumeroColegiado.CompareTo(x.NumeroColegiado));
-                            break;
-                    }
-                }
-
-                dgVeterinarios.ItemsSource = listaFiltrada;
+                // Actualizamos el DataGrid
+                dgVeterinarios.ItemsSource = filtrado.ToList();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al actualizar tabla: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al actualizar tabla: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        // --- EVENTOS DE FILTRADO Y ORDENACIÓN ---
-        private void FiltroAvanzado_Changed(object sender, TextChangedEventArgs e) => ActualizarTabla();
-        private void cbOrdenarPor_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
-        private void OrdenDirection_Checked(object sender, RoutedEventArgs e) => ActualizarTabla();
+        // --- EVENTOS DE FILTROS ---
 
-        private void btnLimpiar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Evento que se ejecuta cuando cambia algún filtro.
+        /// </summary>
+        private void FiltroAvanzado_Changed(object sender, EventArgs e) => ActualizarTabla();
+
+        /// <summary>
+        /// Limpia todos los filtros aplicados.
+        /// </summary>
+        private void BtnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtBuscaNombre.Clear();
             txtBuscaApellidos.Clear();
             txtBuscaEspecialidad.Clear();
             txtBuscaNumeroColegiado.Clear();
+
             cbOrdenarPor.SelectedIndex = 0;
             rbAsc.IsChecked = true;
+
             ActualizarTabla();
         }
 
-        // --- ACCIONES CRUD ---
-
-        private void btnNuevoVeterinario_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear un nuevo veterinario.
+        /// </summary>
+        private void BtnNuevoVeterinario_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Instanciamos la ventana normal (el constructor sin nada)
-            WindowUsuario win = new WindowUsuario();
+            WindowUsuario win = new()
+            {
+                Owner = Window.GetWindow(this)
+            };
 
-            // 2. Buscamos el objeto "Veterinario" dentro del ComboBox de la ventana
-            // Buscamos en la lista de roles que ya cargó la ventana
+            // Seleccionamos automáticamente el rol "Veterinario"
             foreach (Rol item in win.cbRol.Items)
             {
                 if (item.NombreRol == "Veterinario")
                 {
-                    win.cbRol.SelectedItem = item; // Lo seleccionamos
+                    win.cbRol.SelectedItem = item;
                     break;
                 }
             }
 
-            // 3. Bloqueamos el ComboBox para que no lo cambien
+            // Bloqueamos el rol y personalizamos la ventana
             win.cbRol.IsEnabled = false;
-
-            // 4. Cambiamos el título para que quede más pro
             win.lblTitulo.Text = "NUEVO VETERINARIO";
 
-            // 5. La mostramos
             if (win.ShowDialog() == true)
-            {
-                CargarDatos(); // Refrescas tu lista de veterinarios
-            }
+                CargarDatos();
         }
 
-        private void btnEditar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para editar un veterinario existente.
+        /// </summary>
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // 1. Obtenemos el veterinario seleccionado del botón
-                Button boton = sender as Button;
-                Veterinario v = boton.DataContext as Veterinario;
-
-                if (v != null)
+                if (sender is Button btn && btn.DataContext is Veterinario v)
                 {
-                    // 2. Necesitamos el objeto "Usuario" completo para la ventana.
-                    // Lo obtenemos a través de su ID de usuario.
-                    Usuario usu = _usuarioService.ObtenerPorId(v.IdUsuario);
+                    // Obtenemos el usuario asociado al veterinario
+                    Usuario? usu = usuarioService.ObtenerPorId(v.IdUsuario);
 
-                    if (usu != null)
+                    if (usu == null)
                     {
-                        // 3. Instanciamos la ventana pasándole el usuario (modo edición)
-                        WindowUsuario win = new WindowUsuario(usu);
-
-                        // 4. Bloqueamos los campos que no deben cambiarse en edición de veterinarios
-                        win.cbRol.IsEnabled = false;    // El rol no se cambia desde aquí
-                        win.txtUsername.IsEnabled = false; // El username suele ser fijo
-
-                        // 5. Cambiamos el título
-                        win.lblTitulo.Text = "EDITAR VETERINARIO";
-
-                        // 6. Mostramos la ventana
-                        if (win.ShowDialog() == true)
-                        {
-                            CargarDatos(); // Refrescamos el DataGrid
-                        }
+                        MessageBox.Show("No se encontró el usuario vinculado.",
+                            "Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return;
                     }
-                    else
+
+                    WindowUsuario win = new(usu)
                     {
-                        MessageBox.Show("No se encontró el usuario vinculado a este veterinario.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Owner = Window.GetWindow(this)
+                    };
+
+                    // Bloqueamos campos no editables
+                    win.cbRol.IsEnabled = false;
+                    win.txtUsername.IsEnabled = false;
+                    win.lblTitulo.Text = "EDITAR VETERINARIO";
+
+                    if (win.ShowDialog() == true)
+                        CargarDatos();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al abrir la edición: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Realiza un borrado lógico de un veterinario.
+        /// </summary>
+        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is Button btn && btn.DataContext is Veterinario v)
+                {
+                    var confirmacion = MessageBox.Show(
+                        $"¿Deseas eliminar a {v.Nombre} {v.Apellidos}?",
+                        "Confirmar eliminación",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (confirmacion == MessageBoxResult.Yes && vs.BorradoLogico(v.IdVeterinario))
+                    {
+                        MessageBox.Show("Veterinario eliminado correctamente.",
+                            "Información",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+
+                        CargarDatos();
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al abrir la edición: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al eliminar veterinario: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        private void btnEliminar_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Button boton = sender as Button;
-                Veterinario v = boton.DataContext as Veterinario;
-
-                if (v != null)
-                {
-                    MessageBoxResult confirmacion = MessageBox.Show(
-                        $"¿Estás seguro de que deseas eliminar a {v.Nombre} {v.Apellidos}?",
-                        "Confirmar eliminación", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                    if (confirmacion == MessageBoxResult.Yes)
-                    {
-                        if (vs.BorradoLogico(v.IdVeterinario))
-                        {
-                            MessageBox.Show("Veterinario eliminado correctamente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
-                            CargarDatos();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al eliminar veterinario: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void hlUsuario_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ficha del usuario asociado al veterinario.
+        /// </summary>
+        private void HlUsuario_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Hyperlink hl && hl.DataContext is Veterinario v)
             {
-                // Abrir la ficha pasando el IdUsuario
-                WindowFichaUsuario ficha = new WindowFichaUsuario(v.IdUsuario);
-                ficha.Owner = Window.GetWindow(this); // Establece ventana padre
-                ficha.ShowDialog();
+                WindowFichaUsuario ficha = new(v.IdUsuario)
+                {
+                    Owner = Window.GetWindow(this)
+                };
 
-                // Aquí podrías recargar la lista si cambió algo
+                ficha.ShowDialog();
                 CargarDatos();
             }
         }
 
-        private void dgVeterinarios_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// Abre la ficha del veterinario al hacer doble clic en la tabla.
+        /// </summary>
+        private void DgVeterinarios_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (dgVeterinarios.SelectedItem is Veterinario v)
-            {
-                abrirVentanaDetalles(v.IdVeterinario);
-            }
+                AbrirVentanaDetalles(v.IdVeterinario);
         }
 
-        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Botón para ver detalles de un veterinario.
+        /// </summary>
+        private void BtnVerDetalle_Click(object sender, RoutedEventArgs e)
         {
             if (dgVeterinarios.SelectedItem is Veterinario v)
-            {
-                abrirVentanaDetalles(v.IdVeterinario);
-            }
+                AbrirVentanaDetalles(v.IdVeterinario);
         }
 
-        private void abrirVentanaDetalles(int idVeterinario)
+        /// <summary>
+        /// Abre la ventana de ficha de veterinario.
+        /// </summary>
+        private void AbrirVentanaDetalles(int idVeterinario)
         {
-            WindowFichaUsuario ficha = new WindowFichaUsuario(idVeterinario);
-            ficha.Owner = Window.GetWindow(this);
+            WindowFichaUsuario ficha = new(idVeterinario)
+            {
+                Owner = Window.GetWindow(this)
+            };
+
             ficha.ShowDialog();
-
-            CargarDatos(); // refrescar lista si hubo cambios
+            CargarDatos();
         }
     }
 }

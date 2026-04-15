@@ -6,7 +6,10 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- RECURSOS VISUALES REUTILIZABLES DE LA VENTANA -->
     <Window.Resources>
+
+        <!-- Estilo para etiquetas de campos -->
         <Style x:Key="FieldLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -14,6 +17,7 @@
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
 
+        <!-- Estilo base para inputs (TextBox, DatePicker, etc.) -->
         <Style x:Key="ModernInput" TargetType="Control">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Background" Value="White"/>
@@ -24,6 +28,7 @@
             <Setter Property="FontSize" Value="14"/>
         </Style>
 
+        <!-- Estilo para botones tipo input (selección de mascota/veterinario) -->
         <Style x:Key="InputButton" TargetType="Button">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Background" Value="White"/>
@@ -31,6 +36,8 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="Cursor" Value="Hand"/>
+
+            <!-- Plantilla personalizada del botón -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -44,62 +51,89 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
+    <!-- CONTENEDOR PRINCIPAL -->
     <Border Padding="30">
+
         <Grid>
             <Grid.RowDefinitions>
+                <!-- Contenido principal -->
                 <RowDefinition Height="*"/>
+                <!-- Botones inferiores -->
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <!-- CONTENIDO SCROLL (FORMULARIO) -->
             <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
+
                 <StackPanel>
+
+                    <!-- TÍTULO DE LA VENTANA -->
                     <StackPanel Margin="0,0,0,30">
                         <TextBlock x:Name="lblTitulo" Text="NUEVA CITA" FontSize="26" FontWeight="Bold" Foreground="#2C3E50"/>
                         <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
                     </StackPanel>
 
+                    <!-- SECCIÓN: MASCOTA Y VETERINARIO -->
                     <UniformGrid Columns="2" Margin="0,0,0,20">
+
+                        <!-- Selección de mascota -->
                         <StackPanel Margin="5">
                             <TextBlock Text="MASCOTA" Style="{StaticResource FieldLabel}"/>
-                            <Button x:Name="btnSeleccionarMascota" Click="btnBuscarMascota_Click" Style="{StaticResource InputButton}">
+                            <Button x:Name="btnSeleccionarMascota" Click="BtnBuscarMascota_Click" Style="{StaticResource InputButton}">
                                 <Grid Margin="12,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
+
+                                    <!-- Texto dinámico de mascota -->
                                     <TextBlock x:Name="txtNombreMascota" Text="Seleccionar mascota..." VerticalAlignment="Center" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
+
+                                    <!-- Icono decorativo -->
                                     <TextBlock Grid.Column="1" Text="🐾" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
                                 </Grid>
                             </Button>
                         </StackPanel>
 
+                        <!-- Selección de veterinario -->
                         <StackPanel Margin="5">
                             <TextBlock Text="VETERINARIO" Style="{StaticResource FieldLabel}"/>
-                            <Button x:Name="btnSeleccionarVeterinario" Click="btnBuscarVeterinario_Click" Style="{StaticResource InputButton}">
+                            <Button x:Name="btnSeleccionarVeterinario" Click="BtnBuscarVeterinario_Click" Style="{StaticResource InputButton}">
                                 <Grid Margin="12,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
+
+                                    <!-- Texto dinámico de veterinario -->
                                     <TextBlock x:Name="txtNombreVeterinario" Text="Seleccionar veterinario..." VerticalAlignment="Center" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
+
+                                    <!-- Icono decorativo -->
                                     <TextBlock Grid.Column="1" Text="👨‍⚕️" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
                                 </Grid>
                             </Button>
                         </StackPanel>
+
                     </UniformGrid>
 
+                    <!-- SECCIÓN: FECHA, HORA Y DURACIÓN -->
                     <UniformGrid Columns="3" Margin="0,0,0,20">
+
+                        <!-- Fecha -->
                         <StackPanel Margin="5">
                             <TextBlock Text="FECHA" Style="{StaticResource FieldLabel}"/>
                             <DatePicker x:Name="dtpFecha" Style="{StaticResource ModernInput}"/>
                         </StackPanel>
 
+                        <!-- Hora -->
                         <StackPanel Margin="5">
                             <TextBlock Text="HORA (HH:MM)" Style="{StaticResource FieldLabel}"/>
                             <TextBox x:Name="txtHora" Style="{StaticResource ModernInput}" MaxLength="5">
                                 <TextBox.Resources>
+                                    <!-- Bordes redondeados -->
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="8"/>
                                     </Style>
@@ -107,6 +141,7 @@
                             </TextBox>
                         </StackPanel>
 
+                        <!-- Duración -->
                         <StackPanel Margin="5">
                             <TextBlock Text="DURACIÓN ESTIMADA (MIN)" Style="{StaticResource FieldLabel}"/>
                             <TextBox x:Name="txtDuracion" Style="{StaticResource ModernInput}" Text="30">
@@ -117,42 +152,56 @@
                                 </TextBox.Resources>
                             </TextBox>
                         </StackPanel>
+
                     </UniformGrid>
 
+                    <!-- MOTIVO DE LA CITA -->
                     <StackPanel Margin="5,0,5,20">
                         <TextBlock Text="MOTIVO DE LA CITA" Style="{StaticResource FieldLabel}"/>
                         <TextBox x:Name="txtMotivo" Height="80" Style="{StaticResource ModernInput}" 
                                  TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" Padding="10">
+
                             <TextBox.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="8"/>
                                 </Style>
                             </TextBox.Resources>
+
                         </TextBox>
                     </StackPanel>
 
+                    <!-- OBSERVACIONES -->
                     <StackPanel Margin="5,0,5,10">
                         <TextBlock Text="OBSERVACIONES" Style="{StaticResource FieldLabel}"/>
                         <TextBox x:Name="txtObservaciones" Height="120" Style="{StaticResource ModernInput}" 
                                  TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" Padding="10">
+
                             <TextBox.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="8"/>
                                 </Style>
                             </TextBox.Resources>
+
                         </TextBox>
                     </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
 
+            <!-- BOTONES INFERIORES -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+
+                <!-- Botón cancelar -->
                 <Button x:Name="btnCancelar" Content="Cancelar" Width="110" Height="45" 
-                        Click="btnCancelar_Click" Cursor="Hand" Background="Transparent" 
+                        Click="BtnCancelar_Click" Cursor="Hand" Background="Transparent" 
                         Foreground="#64748B" FontWeight="SemiBold" BorderThickness="0"/>
 
+                <!-- Botón guardar -->
                 <Button x:Name="btnGuardar" Content="Guardar Cita" Width="160" Height="45" 
                         Background="#E67E22" Foreground="White" FontWeight="Bold" IsDefault="True"
-                        Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
+                        Click="BtnGuardar_Click" Cursor="Hand" BorderThickness="0">
+
+                    <!-- Plantilla del botón redondeado -->
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}" CornerRadius="10">
@@ -160,8 +209,11 @@
                             </Border>
                         </ControlTemplate>
                     </Button.Template>
+
                 </Button>
+
             </StackPanel>
+
         </Grid>
     </Border>
 </Window>

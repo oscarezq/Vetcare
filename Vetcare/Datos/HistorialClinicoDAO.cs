@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using Vetcare.Entidades;
+using Vetcare.Utilidades;
 
 namespace Vetcare.Datos
 {

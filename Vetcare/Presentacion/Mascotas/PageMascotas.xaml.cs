@@ -12,416 +12,296 @@ using Vetcare.Presentacion.Mascotas;
 namespace Vetcare.Presentacion
 {
     /// <summary>
-    /// Página encargada de mostrar, filtrar, ordenar y gestionar las mascotas registradas en el sistema.
+    /// Página de presentación encargada de gestionar la visualización, filtrado,
+    /// ordenación y operaciones CRUD sobre las mascotas del sistema.
+    /// Permite listar, buscar, ordenar, crear, editar, eliminar y ver detalles de mascotas.
     /// </summary>
     public partial class PageMascotas : Page
     {
-        // Lista que almacena todas las mascotas de la tabla mascotas de la base de datos vetcare
-        private List<Mascota> listaCompleta = new List<Mascota>();
+        // Lista completa de mascotas cargadas desde la base de datos.
+        private List<Mascota> listaCompleta = new();
 
-        // Servicio de la capa de negocio para la gestión de operaciones de mascotas.
-        MascotaService ms = new MascotaService();
+        // Servicio de negocio para la gestión de mascotas.
+        private readonly MascotaService ms = new();
 
         /// <summary>
-        /// Inicializa una nueva instancia de la clase <see cref="PageMascotas"/>.
+        /// Constructor de la página de mascotas.
+        /// Inicializa la vista y carga los datos iniciales.
         /// </summary>
         public PageMascotas()
         {
             InitializeComponent();
-
-            // Mostrar los datos en la tabla
             CargarDatos();
         }
 
         /// <summary>
-        /// Recupera la información de las mascotas desde la Capa de Negocio.
+        /// Carga todas las mascotas desde la base de datos.
         /// </summary>
         private void CargarDatos()
         {
             try
             {
-                // Invocación al servicio para obtener la colección completa
                 listaCompleta = ms.ObtenerTodas();
-
-                // Refresca la UI con los datos obtenidos
                 ActualizarTabla();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar mascotas: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al cargar mascotas: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Método que procesa la lista de mascotas aplicando los filtros de texto, rangos numéricos y los criterios de ordenación.
+        /// Actualiza la tabla aplicando filtros, búsquedas y ordenación.
         /// </summary>
         private void ActualizarTabla()
         {
+            // Verificación para evitar errores durante la inicialización
+            if (listaCompleta == null || dgMascotas == null)
+                return;
+
             try
             {
-                // Verificamos que la lista original no sea nula
-                if (listaCompleta == null)
-                    return;
+                // --- FILTRADO ---
+                var filtrado = listaCompleta.AsEnumerable();
 
-                // Verificamos que los controles de la interfaz existan para evitar errores al iniciar
-                if (rbAsc == null || cbOrdenarPor == null || dgMascotas == null)
-                    return;
+                // Filtro por nombre
+                if (!string.IsNullOrEmpty(txtBuscaNombre.Text))
+                    filtrado = filtrado.Where(m => m.Nombre!.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
 
-                // FILTRADO
-                List<Mascota> listaFiltrada = new List<Mascota>();
+                // Filtro por número de chip
+                if (!string.IsNullOrEmpty(txtBuscaNumeroChip.Text))
+                    filtrado = filtrado.Where(m => m.NumeroChip!.ToLower().Contains(txtBuscaNumeroChip.Text.ToLower()));
 
-                string estadoBusca = "";
-                if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado)
+                // Filtro por especie
+                if (!string.IsNullOrEmpty(txtBuscaEspecie.Text))
+                    filtrado = filtrado.Where(m => m.NombreEspecie!.ToLower().Contains(txtBuscaEspecie.Text.ToLower()));
+
+                // Filtro por raza
+                if (!string.IsNullOrEmpty(txtBuscaRaza.Text))
+                    filtrado = filtrado.Where(m => m.NombreRaza!.ToLower().Contains(txtBuscaRaza.Text.ToLower()));
+
+                // Filtro por sexo
+                if (cbBuscaSexo.SelectedItem is ComboBoxItem itemSexo &&
+                    itemSexo.Content.ToString() != "Todos")
                 {
-                    estadoBusca = itemEstado.Content.ToString();
+                    filtrado = filtrado.Where(m =>
+                        m.Sexo != null &&
+                        m.Sexo.ToLower().Contains(itemSexo.Content.ToString()!.ToLower()));
                 }
 
-                // Recorremos todas las mascotas de la lista completa
-                foreach (Mascota m in listaCompleta)
+                // Filtro por estado (activo/inactivo)
+                if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado &&
+                    itemEstado.Content.ToString() != "Todos")
                 {
-                    // Convertimos a minúsculas los campos de texto
-                    string nombreBusca = txtBuscaNombre.Text.ToLower();
-                    string numeroChipBusca = txtBuscaNumeroChip.Text.ToLower();
-                    string especieBusca = txtBuscaEspecie.Text.ToLower();
-                    string razaBusca = txtBuscaRaza.Text.ToLower();
-                    string sexoBusca = "";
-                    ComboBoxItem itemSexo = (ComboBoxItem)cbBuscaSexo.SelectedItem;
-                    if (itemSexo != null && itemSexo.Content != null)
-                    {
-                        sexoBusca = itemSexo.Content.ToString().ToLower();
-                    }
-
-                    // Comprobamos cada filtro de texto
-                    if (!string.IsNullOrEmpty(nombreBusca) && !m.Nombre.ToLower().Contains(nombreBusca)) continue;
-                    if (!string.IsNullOrEmpty(numeroChipBusca) && !m.NumeroChip.ToLower().Contains(numeroChipBusca)) continue;
-                    if (!string.IsNullOrEmpty(especieBusca) && !m.NombreEspecie.ToLower().Contains(especieBusca)) continue;
-                    if (!string.IsNullOrEmpty(razaBusca) && !m.NombreRaza.ToLower().Contains(razaBusca)) continue;
-                    if (sexoBusca != "" && sexoBusca != "todos")
-                    {
-                        if (m.Sexo == null || !m.Sexo.ToLower().Contains(sexoBusca)) continue;
-                    }
-                    if (estadoBusca != "Todos")
-                    {
-                        bool buscarActivos = (estadoBusca == "Activo");
-                        // Si la mascota no coincide con el estado buscado, saltar
-                        if (m.Activo != buscarActivos) continue;
-                    }
-
-                    // Filtro para la Fecha de Nacimiento (Desde - Hasta)
-                    if (dtpBuscaFechaDesde.SelectedDate.HasValue && m.FechaNacimiento.Date < dtpBuscaFechaDesde.SelectedDate.Value.Date) continue;
-                    if (dtpBuscaFechaHasta.SelectedDate.HasValue && m.FechaNacimiento.Date > dtpBuscaFechaHasta.SelectedDate.Value.Date) continue;
-
-                    // Si cumple todo, se añade
-                    listaFiltrada.Add(m);
+                    bool activos = itemEstado.Content.ToString() == "Activo";
+                    filtrado = filtrado.Where(m => m.Activo == activos);
                 }
 
-                // ORDENACIÓN
-                ComboBoxItem itemSeleccionado = (ComboBoxItem)cbOrdenarPor.SelectedItem;
+                // Filtro por fecha (desde)
+                if (dtpBuscaFechaDesde.SelectedDate.HasValue)
+                    filtrado = filtrado.Where(m =>
+                        m.FechaNacimiento.Date >= dtpBuscaFechaDesde.SelectedDate.Value.Date);
 
-                if (itemSeleccionado != null && dgMascotas != null)
+                // Filtro por fecha (hasta)
+                if (dtpBuscaFechaHasta.SelectedDate.HasValue)
+                    filtrado = filtrado.Where(m =>
+                        m.FechaNacimiento.Date <= dtpBuscaFechaHasta.SelectedDate.Value.Date);
+
+                // --- ORDENACIÓN ---
+                string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Nombre";
+                bool asc = rbAsc.IsChecked == true;
+
+                filtrado = criterio switch
                 {
-                    string criterio = itemSeleccionado.Content.ToString();
-                    bool esAscendente = (bool)rbAsc.IsChecked;
+                    "Nombre" => asc ? filtrado.OrderBy(m => m.Nombre) : filtrado.OrderByDescending(m => m.Nombre),
+                    "Especie" => asc ? filtrado.OrderBy(m => m.NombreEspecie) : filtrado.OrderByDescending(m => m.NombreEspecie),
+                    "Raza" => asc ? filtrado.OrderBy(m => m.NombreRaza) : filtrado.OrderByDescending(m => m.NombreRaza),
+                    "Sexo" => asc ? filtrado.OrderBy(m => m.Sexo) : filtrado.OrderByDescending(m => m.Sexo),
+                    "Peso" => asc ? filtrado.OrderBy(m => m.Peso) : filtrado.OrderByDescending(m => m.Peso),
+                    "Dueño" => asc ? filtrado.OrderBy(m => m.NombreDueno) : filtrado.OrderByDescending(m => m.NombreDueno),
+                    _ => asc ? filtrado.OrderBy(m => m.FechaNacimiento) : filtrado.OrderByDescending(m => m.FechaNacimiento),
+                };
 
-                    switch (criterio)
-                    {
-                        case "Nombre":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Nombre.CompareTo(y.Nombre) : y.Nombre.CompareTo(x.Nombre));
-                            break;
-                        case "Especie":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.NombreEspecie.CompareTo(y.NombreEspecie) : y.NombreEspecie.CompareTo(x.NombreEspecie));
-                            break;
-                        case "Raza":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.NombreRaza.CompareTo(y.NombreRaza) : y.NombreRaza.CompareTo(x.NombreRaza));
-                            break;
-                        case "Sexo":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Sexo.CompareTo(y.Sexo) : y.Sexo.CompareTo(x.Sexo));
-                            break;
-                        case "Peso":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.Peso.CompareTo(y.Peso) : y.Peso.CompareTo(x.Peso));
-                            break;
-                        case "Dueño":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.NombreDueno.CompareTo(y.NombreDueno) : y.NombreDueno.CompareTo(x.NombreDueno));
-                            break;
-                        case "Fecha de Nacimiento":
-                            listaFiltrada.Sort((x, y) => esAscendente ? x.FechaNacimiento.CompareTo(y.FechaNacimiento) : y.FechaNacimiento.CompareTo(x.FechaNacimiento));
-                            break;
-                    }
-                }
-
-                // Enviamos la lista resultante a la tabla
-                dgMascotas.ItemsSource = listaFiltrada;
+                dgMascotas.ItemsSource = filtrado.ToList();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al actualizar tabla: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al actualizar tabla: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        // --- EVENTOS DE INTERFAZ ---
+        // --- EVENTOS DE FILTROS ---
 
-        private void FiltroAvanzado_Changed(object sender, TextChangedEventArgs e) => ActualizarTabla();
-        private void dtpBuscaFechaDesde_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
-        private void dtpBuscaFechaHasta_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
-        private void cbOrdenarPor_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
-        private void cbSexo_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
-        private void OrdenDirection_Checked(object sender, RoutedEventArgs e) => ActualizarTabla();
-        private void cbBuscaEstado_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
+        /// <summary>
+        /// Evento que se ejecuta cuando cambia algún filtro de texto.
+        /// </summary>
+        private void FiltroAvanzado_Changed(object sender, EventArgs e) => ActualizarTabla();
 
-
-        private void btnLimpiar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Limpia todos los filtros aplicados.
+        /// </summary>
+        private void BtnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtBuscaNombre.Clear();
+            txtBuscaNumeroChip.Clear();
             txtBuscaEspecie.Clear();
             txtBuscaRaza.Clear();
+
             cbBuscaSexo.SelectedIndex = 0;
+            cbBuscaEstado.SelectedIndex = 0;
+
             dtpBuscaFechaDesde.SelectedDate = null;
             dtpBuscaFechaHasta.SelectedDate = null;
+
             cbOrdenarPor.SelectedIndex = 0;
-            cbBuscaEstado.SelectedIndex = 0;
             rbAsc.IsChecked = true;
+
             ActualizarTabla();
         }
 
-        // --- ACCIONES CRUD ---
-
-        private void btnNuevaMascota_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear una nueva mascota.
+        /// </summary>
+        private void BtnNuevaMascota_Click(object sender, RoutedEventArgs e)
         {
-            try
+            WindowMascota ventana = new()
             {
-                WindowMascota ventanaMascota = new WindowMascota();
-                ventanaMascota.ShowDialog();
+                Owner = Window.GetWindow(this)
+            };
+
+            ventana.ShowDialog();
+            CargarDatos();
+        }
+
+        /// <summary>
+        /// Abre la ventana para editar una mascota existente.
+        /// </summary>
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is Mascota m)
+            {
+                WindowMascota ventana = new(m)
+                {
+                    Owner = Window.GetWindow(this)
+                };
+
+                ventana.ShowDialog();
                 CargarDatos();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al añadir mascota: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
-        private void btnEditar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Da de baja (desactiva) una mascota.
+        /// </summary>
+        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (sender is Button btn && btn.DataContext is Mascota m)
             {
-                Button botonPulsado = sender as Button;
-                Mascota mascotaDeLaFila = botonPulsado.DataContext as Mascota;
-
-                if (mascotaDeLaFila != null)
-                {
-                    WindowMascota ventanaEdicion = new WindowMascota(mascotaDeLaFila);
-                    ventanaEdicion.ShowDialog();
-                    CargarDatos();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al editar mascota: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void btnEliminar_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Button botonPulsado = sender as Button;
-                Mascota mascotaDeLaFila = botonPulsado.DataContext as Mascota;
-
-                if (mascotaDeLaFila != null)
-                {
-                    MessageBoxResult confirmacion = MessageBox.Show(
-                        $"¿Dar de baja a {mascotaDeLaFila.Nombre}?",
-                        "Confirmar acción",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    if (confirmacion == MessageBoxResult.Yes)
-                    {
-                        if (ms.Desactivar(mascotaDeLaFila.IdMascota))
-                        {
-                            MessageBox.Show("Mascota dada de baja correctamente.", "Información",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
-
-                            CargarDatos();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al dar de baja mascota: {ex.Message}",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void btnEliminarVarios_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (dgMascotas.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show("Debes seleccionar al menos una mascota.",
-                        "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                MessageBoxResult confirmacion = MessageBox.Show(
-                    $"¿Dar de baja {dgMascotas.SelectedItems.Count} mascota(s)?",
+                var confirmacion = MessageBox.Show(
+                    $"¿Dar de baja a {m.Nombre}?",
                     "Confirmar acción",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning);
 
-                if (confirmacion == MessageBoxResult.Yes)
+                if (confirmacion == MessageBoxResult.Yes && ms.Desactivar(m.IdMascota))
                 {
-                    List<int> ids = new List<int>();
+                    MessageBox.Show("Mascota dada de baja correctamente.",
+                        "Información",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
 
-                    foreach (Mascota m in dgMascotas.SelectedItems)
-                    {
-                        ids.Add(m.IdMascota);
-                    }
-
-                    if (ms.DesactivarVarios(ids))
-                    {
-                        MessageBox.Show("Mascotas dadas de baja correctamente.",
-                            "Información", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                        CargarDatos();
-                    }
+                    CargarDatos();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
-        // Ver ficha de la MASCOTA
-        private void btnVerFichaMascota_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ficha de una mascota.
+        /// </summary>
+        private void BtnVerFichaMascota_Click(object sender, RoutedEventArgs e)
         {
-            var mascotaSeleccionada = (sender as Hyperlink).DataContext as Mascota;
-            if (mascotaSeleccionada != null)
-            {
-                WindowFichaMascota win = new WindowFichaMascota(mascotaSeleccionada.IdMascota);
-                win.Owner = Window.GetWindow(this); // Para que se centre respecto a la principal
-                win.ShowDialog();
-
-                // Recargar grid si hubo cambios
-                CargarDatos();
-            }
+            if (sender is Hyperlink { DataContext: Mascota m })
+                AbrirVentanaDetalles(m.IdMascota);
         }
 
-        // Ver ficha del CLIENTE (Dueño)
-        private void btnVerFichaCliente_Click(object sender, RoutedEventArgs e)
-        {
-            var mascotaSeleccionada = (sender as Hyperlink).DataContext as Mascota;
-            if (mascotaSeleccionada != null)
-            {
-                WindowFichaCliente win = new WindowFichaCliente(mascotaSeleccionada.IdCliente);
-                win.Owner = Window.GetWindow(this);
-                win.ShowDialog();
 
-                // Recargar grid si hubo cambios
-                CargarDatos();
-            }
+        /// <summary>
+        /// Abre la ficha de la mascota al hacer doble clic en la tabla.
+        /// </summary>
+        private void DgMascotas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (dgMascotas.SelectedItem is Mascota m)
+                AbrirVentanaDetalles(m.IdMascota);
         }
 
-        private void dgMascotas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        /// <summary>
+        /// Botón para ver detalles de una mascota.
+        /// </summary>
+        private void BtnVerDetalle_Click(object sender, RoutedEventArgs e)
         {
-            if (dgMascotas.SelectedItem is Mascota mascotaSeleccionada)
-            {
-                abrirVentanaDetalles(mascotaSeleccionada.IdMascota);
-            }
+            if (sender is Button btn && btn.DataContext is Mascota m)
+                AbrirVentanaDetalles(m.IdMascota);
         }
 
-        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana de ficha de mascota.
+        /// </summary>
+        private void AbrirVentanaDetalles(int idMascota)
         {
-            Button botonPulsado = sender as Button;
-            Mascota mascotaDeLaFila = botonPulsado.DataContext as Mascota;
-
-            if (mascotaDeLaFila != null)
+            WindowFichaMascota win = new(idMascota)
             {
-                abrirVentanaDetalles(mascotaDeLaFila.IdMascota);
-            }
-        }
+                Owner = Window.GetWindow(this)
+            };
 
-        private void abrirVentanaDetalles(int idMascota)
-        {
-            WindowFichaMascota win = new WindowFichaMascota(idMascota);
-            win.Owner = Window.GetWindow(this);
             win.ShowDialog();
-
             CargarDatos();
         }
 
-        private void btnReactivar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Reactiva una mascota previamente dada de baja.
+        /// Valida que el cliente esté activo antes de permitir la acción.
+        /// </summary>
+        private void BtnReactivar_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (sender is Button btn && btn.DataContext is Mascota m)
             {
-                Button botonPulsado = sender as Button;
-                Mascota mascota = botonPulsado.DataContext as Mascota;
+                ClienteService cs = new();
+                Cliente? cliente = cs.ObtenerPorId(m.IdCliente);
 
-                if (mascota == null) return;
-
-                ClienteService cs = new ClienteService();
-
-                Cliente cliente = cs.ObtenerPorId(mascota.IdCliente);
-                bool clienteActivo = cliente.Activo;
-
-                // 🔴 CASO: Cliente inactivo
-                if (!clienteActivo)
+                // Si el cliente está inactivo, se solicita reactivarlo primero
+                if (cliente != null && !cliente.Activo)
                 {
-                    MessageBoxResult resultado = MessageBox.Show(
-                                    $"No se puede reactivar a {mascota.Nombre} porque su dueño ({cliente.NombreCompleto}) está inactivo.\n\n" +
-                                    $"Para continuar, es obligatorio reactivar primero al dueño.\n" +
-                                    $"¿Deseas reactivar a {cliente.NombreCompleto} ahora mismo?",
-                                    "Requisito de Dueño Activo",
-                                    MessageBoxButton.YesNo,
-                                    MessageBoxImage.Warning);
+                    var resultado = MessageBox.Show(
+                        $"El dueño ({cliente.NombreCompleto}) está inactivo.\n¿Deseas reactivarlo?",
+                        "Requisito",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
 
-                    if (resultado == MessageBoxResult.Yes)
-                    {
-                        // Activar cliente
-                        if (!cs.Reactivar(mascota.IdCliente))
-                        {
-                            MessageBox.Show("No se pudo reactivar el dueño.",
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-                    }
-                    else if (resultado == MessageBoxResult.No)
-                    {
-                        // Solo cancelar operación
+                    if (resultado != MessageBoxResult.Yes || !cs.Reactivar(m.IdCliente))
                         return;
-                    }
                 }
 
-                // ✅ Reactivar mascota
-                MessageBoxResult confirmacion = MessageBox.Show(
-                    $"¿Deseas reactivar a {mascota.Nombre}?",
+                var confirmacion = MessageBox.Show(
+                    $"¿Deseas reactivar a {m.Nombre}?",
                     "Confirmar acción",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
 
-                if (confirmacion == MessageBoxResult.Yes)
+                if (confirmacion == MessageBoxResult.Yes && ms.Reactivar(m.IdMascota))
                 {
-                    if (ms.Reactivar(mascota.IdMascota))
-                    {
-                        MessageBox.Show("Mascota reactivada correctamente.",
-                            "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Mascota reactivada correctamente.",
+                        "Información",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
 
-                        CargarDatos();
-                    }
-                    else
-                    {
-                        MessageBox.Show("No se pudo reactivar la mascota.",
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    CargarDatos();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al reactivar mascota: {ex.Message}",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

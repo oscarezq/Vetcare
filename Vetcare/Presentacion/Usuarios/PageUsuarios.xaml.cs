@@ -10,17 +10,32 @@ using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Usuarios
 {
+    /// <summary>
+    /// Página de presentación encargada de gestionar la visualización, filtrado,
+    /// ordenación y operaciones sobre los usuarios del sistema.
+    /// Permite listar, buscar, ordenar, crear, editar, activar/desactivar y ver detalles de usuarios.
+    /// </summary>
     public partial class PageUsuarios : Page
     {
-        private List<Usuario> listaCompleta = new List<Usuario>();
-        private UsuarioService us = new UsuarioService();
+        // Lista completa de usuarios cargados desde la base de datos.
+        private List<Usuario> listaCompleta = new();
 
+        // Servicio de negocio para la gestión de usuarios.
+        private readonly UsuarioService us = new();
+
+        /// <summary>
+        /// Constructor de la página de usuarios.
+        /// Inicializa la vista y carga los datos iniciales.
+        /// </summary>
         public PageUsuarios()
         {
             InitializeComponent();
             CargarDatos();
         }
 
+        /// <summary>
+        /// Carga todos los usuarios desde la base de datos.
+        /// </summary>
         private void CargarDatos()
         {
             try
@@ -30,169 +45,235 @@ namespace Vetcare.Presentacion.Usuarios
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar usuarios: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al cargar usuarios: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
+        /// <summary>
+        /// Actualiza la tabla aplicando filtros, búsquedas y ordenación.
+        /// </summary>
         private void ActualizarTabla()
         {
-            if (dgUsuarios == null || rbAsc == null || cbBuscaRol == null || cbBuscaEstado == null) return;
+            // Verificación para evitar errores durante la inicialización
+            if (listaCompleta == null || dgUsuarios == null)
+                return;
 
-            var filtrados = listaCompleta.AsEnumerable();
+            // --- FILTRADO ---
+            var filtrado = listaCompleta.AsEnumerable();
 
-            // 1. Filtros de texto
+            // Filtro por username
             if (!string.IsNullOrWhiteSpace(txtBuscaUsername.Text))
-                filtrados = filtrados.Where(u => u.Username.ToLower().Contains(txtBuscaUsername.Text.ToLower()));
+                filtrado = filtrado.Where(u => u.Username!.ToLower().Contains(txtBuscaUsername.Text.ToLower()));
 
+            // Filtro por nombre completo
             if (!string.IsNullOrWhiteSpace(txtBuscaNombre.Text))
-                filtrados = filtrados.Where(u => u.NombreCompleto.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
+                filtrado = filtrado.Where(u => u.NombreCompleto!.ToLower().Contains(txtBuscaNombre.Text.ToLower()));
 
-            // 2. Filtro por Rol (Corregido)
-            if (cbBuscaRol.SelectedItem is ComboBoxItem itemRol)
+            // Filtro por rol
+            if (cbBuscaRol.SelectedItem is ComboBoxItem itemRol &&
+                itemRol.Content.ToString() != "Todos")
             {
-                string rolSeleccionado = itemRol.Content.ToString();
-                if (rolSeleccionado != "Todos")
-                {
-                    filtrados = filtrados.Where(u => u.NombreRol == rolSeleccionado);
-                }
+                filtrado = filtrado.Where(u => u.NombreRol == itemRol.Content.ToString());
             }
 
-            // 3. Filtro por Estado (Corregido)
+            // Filtro por estado (activo/inactivo)
             if (cbBuscaEstado.SelectedItem is ComboBoxItem itemEstado)
             {
-                string estadoSeleccionado = itemEstado.Content.ToString();
-                if (estadoSeleccionado == "Activo")
-                    filtrados = filtrados.Where(u => u.Activo == true);
-                else if (estadoSeleccionado == "Inactivo")
-                    filtrados = filtrados.Where(u => u.Activo == false);
-                // Si es "Todos", no añadimos ninguna restricción Where
+                string estado = itemEstado.Content.ToString()!;
+
+                if (estado == "Activo")
+                    filtrado = filtrado.Where(u => u.Activo);
+                else if (estado == "Inactivo")
+                    filtrado = filtrado.Where(u => !u.Activo);
             }
 
-            // 4. Filtro por Fechas
+            // Filtro por fecha (desde)
             if (dpBuscaFechaDesde.SelectedDate.HasValue)
-                filtrados = filtrados.Where(u => u.FechaAlta.Date >= dpBuscaFechaDesde.SelectedDate.Value.Date);
+                filtrado = filtrado.Where(u =>
+                    u.FechaAlta.Date >= dpBuscaFechaDesde.SelectedDate.Value.Date);
 
+            // Filtro por fecha (hasta)
             if (dpBuscaFechaHasta.SelectedDate.HasValue)
-                filtrados = filtrados.Where(u => u.FechaAlta.Date <= dpBuscaFechaHasta.SelectedDate.Value.Date);
+                filtrado = filtrado.Where(u =>
+                    u.FechaAlta.Date <= dpBuscaFechaHasta.SelectedDate.Value.Date);
 
-            // 5. Ordenación
-            List<Usuario> listaFinal = filtrados.ToList();
-            // ... (resto de tu código de ordenación igual)
-            string campoOrden = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString();
-            bool esAsc = rbAsc.IsChecked == true;
+            // --- ORDENACIÓN ---
+            string criterio = (cbOrdenarPor.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Username";
+            bool asc = rbAsc.IsChecked == true;
 
-            switch (campoOrden)
+            filtrado = criterio switch
             {
-                case "Username": listaFinal = esAsc ? listaFinal.OrderBy(u => u.Username).ToList() : listaFinal.OrderByDescending(u => u.Username).ToList(); break;
-                case "Nombre": listaFinal = esAsc ? listaFinal.OrderBy(u => u.Nombre).ToList() : listaFinal.OrderByDescending(u => u.Nombre).ToList(); break;
-                case "Rol": listaFinal = esAsc ? listaFinal.OrderBy(u => u.NombreRol).ToList() : listaFinal.OrderByDescending(u => u.NombreRol).ToList(); break;
-                case "Fecha Alta": listaFinal = esAsc ? listaFinal.OrderBy(u => u.FechaAlta).ToList() : listaFinal.OrderByDescending(u => u.FechaAlta).ToList(); break;
-            }
+                "Username" => asc ? filtrado.OrderBy(u => u.Username) : filtrado.OrderByDescending(u => u.Username),
+                "Nombre" => asc ? filtrado.OrderBy(u => u.NombreCompleto) : filtrado.OrderByDescending(u => u.NombreCompleto),
+                "Rol" => asc ? filtrado.OrderBy(u => u.NombreRol) : filtrado.OrderByDescending(u => u.NombreRol),
+                _ => asc ? filtrado.OrderBy(u => u.FechaAlta) : filtrado.OrderByDescending(u => u.FechaAlta),
+            };
 
-            dgUsuarios.ItemsSource = listaFinal;
+            dgUsuarios.ItemsSource = filtrado.ToList();
         }
 
+        /// <summary>
+        /// Evento que se ejecuta cuando cambia algún filtro.
+        /// </summary>
         private void FiltroUsuario_Changed(object sender, EventArgs e) => ActualizarTabla();
-        private void FiltroUsuario_Changed(object sender, SelectionChangedEventArgs e) => ActualizarTabla();
 
-        private void btnLimpiar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Limpia todos los filtros aplicados.
+        /// </summary>
+        private void BtnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtBuscaUsername.Clear();
             txtBuscaNombre.Clear();
+
             dpBuscaFechaDesde.SelectedDate = null;
             dpBuscaFechaHasta.SelectedDate = null;
+
             cbBuscaRol.SelectedIndex = 0;
             cbBuscaEstado.SelectedIndex = 0;
             cbOrdenarPor.SelectedIndex = 0;
+
             rbAsc.IsChecked = true;
+
             ActualizarTabla();
         }
 
-        private void btnNuevoUsuario_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear un nuevo usuario.
+        /// </summary>
+        private void BtnNuevoUsuario_Click(object sender, RoutedEventArgs e)
         {
-            WindowUsuario win = new WindowUsuario { Owner = Window.GetWindow(this) };
-            if (win.ShowDialog() == true) CargarDatos();
+            WindowUsuario win = new()
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            if (win.ShowDialog() == true)
+                CargarDatos();
         }
 
-        private void btnEditar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para editar un usuario existente.
+        /// </summary>
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is Usuario u)
             {
-                WindowUsuario win = new WindowUsuario(u) { Owner = Window.GetWindow(this) };
+                WindowUsuario win = new(u)
+                {
+                    Owner = Window.GetWindow(this)
+                };
 
-                if (win.ShowDialog() == true) CargarDatos();
+                if (win.ShowDialog() == true)
+                    CargarDatos();
             }
         }
 
-        private void btnEliminar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Activa o desactiva un usuario.
+        /// </summary>
+        private void BtnEliminar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is Usuario u)
             {
                 string accion = u.Activo ? "desactivar" : "activar";
-                if (MessageBox.Show($"¿Desea {accion} al usuario {u.Username}?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    if (us.Eliminar(u.IdUsuario)) CargarDatos();
-                }
+
+                var confirmacion = MessageBox.Show(
+                    $"¿Desea {accion} al usuario {u.Username}?",
+                    "Confirmar",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (confirmacion == MessageBoxResult.Yes && us.Eliminar(u.IdUsuario))
+                    CargarDatos();
             }
         }
 
+        /// <summary>
+        /// Abre la ficha de un usuario.
+        /// </summary>
         private void HyperlinkUsuario_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Hyperlink hl && hl.DataContext is Usuario u) AbrirFichaUsuario(u.IdUsuario);
+            if (sender is Hyperlink hl && hl.DataContext is Usuario u)
+                AbrirFichaUsuario(u.IdUsuario);
         }
 
-        private void btnVerDetalle_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Botón para ver detalles de un usuario.
+        /// </summary>
+        private void BtnVerDetalle_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is Usuario u) AbrirFichaUsuario(u.IdUsuario);
+            if (sender is Button btn && btn.DataContext is Usuario u)
+                AbrirFichaUsuario(u.IdUsuario);
         }
 
+        /// <summary>
+        /// Abre la ficha del usuario al hacer doble clic en la tabla.
+        /// </summary>
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgUsuarios.SelectedItem is Usuario u) AbrirFichaUsuario(u.IdUsuario);
+            if (dgUsuarios.SelectedItem is Usuario u)
+                AbrirFichaUsuario(u.IdUsuario);
         }
 
+        /// <summary>
+        /// Abre la ventana de ficha de usuario.
+        /// </summary>
         private void AbrirFichaUsuario(int idUsuario)
         {
-            WindowFichaUsuario ficha = new WindowFichaUsuario(idUsuario) { Owner = Window.GetWindow(this) };
+            WindowFichaUsuario ficha = new(idUsuario)
+            {
+                Owner = Window.GetWindow(this)
+            };
+
             ficha.ShowDialog();
             CargarDatos();
         }
 
-        private void btnReactivar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Reactiva un usuario previamente desactivado.
+        /// </summary>
+        private void BtnReactivar_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                Button botonPulsado = sender as Button;
-                Usuario usuarioDeLaFila = botonPulsado.DataContext as Usuario;
-
-                if (usuarioDeLaFila != null)
+                if (sender is Button btn && btn.DataContext is Usuario u)
                 {
-                    MessageBoxResult confirmacion = MessageBox.Show(
-                        $"¿Deseas reactivar a {usuarioDeLaFila.Nombre}?",
+                    var confirmacion = MessageBox.Show(
+                        $"¿Deseas reactivar a {u.NombreCompleto}?",
                         "Confirmar acción",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
                     if (confirmacion == MessageBoxResult.Yes)
                     {
-                        if (us.Reactivar(usuarioDeLaFila.IdUsuario))
+                        if (us.Reactivar(u.IdUsuario))
                         {
-                            MessageBox.Show("Usuario reactivado correctamente.", "Información",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show("Usuario reactivado correctamente.",
+                                "Información",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
 
                             CargarDatos();
                         }
                         else
                         {
-                            MessageBox.Show("No se pudo reactivar el usuario.", "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show("No se pudo reactivar el usuario.",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al reactivar el usuario: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al reactivar el usuario: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
     }

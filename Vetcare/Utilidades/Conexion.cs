@@ -1,7 +1,7 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 
-namespace Vetcare.Datos
+namespace Vetcare.Utilidades
 {
     /// <summary>
     /// Clase encargada de gestionar la conexión con la base de datos MySQL.

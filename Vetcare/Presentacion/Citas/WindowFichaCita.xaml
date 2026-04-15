@@ -8,13 +8,20 @@
         Background="#F4F6F7">
 
     <Grid Margin="40">
+
+        <!-- DEFINICIÓN DE FILAS PRINCIPALES -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <!-- Cabecera -->
             <RowDefinition Height="30"/>
+            <!-- Separador visual -->
             <RowDefinition Height="*"/>
+            <!-- Contenido principal -->
             <RowDefinition Height="Auto"/>
+            <!-- Botonera inferior -->
         </Grid.RowDefinitions>
 
+        <!-- CABECERA PRINCIPAL DE LA CITA -->
         <Border Background="White" CornerRadius="10" Padding="25,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -22,163 +29,278 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Bloque de Información Izquierda -->
+                <!-- INFORMACIÓN PRINCIPAL (FECHA Y DURACIÓN) -->
                 <StackPanel VerticalAlignment="Center">
+
+                    <!-- FECHA Y HORA DE LA CITA -->
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Cita Médica:" FontSize="13" Foreground="#7F8C8D" Margin="0,0,10,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding FechaHora, StringFormat=dd/MM/yyyy HH:mm}" 
-                           FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+                                   FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
                     </StackPanel>
 
+                    <!-- DURACIÓN ESTIMADA -->
                     <StackPanel Orientation="Horizontal" Margin="0,7,0,0">
                         <TextBlock Text="Duración estimada:" FontSize="12" Foreground="#95A5A6" Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding DuracionEstimada}" FontSize="12" FontWeight="SemiBold" Foreground="#34495E"/>
                         <TextBlock Text=" minutos" FontSize="12" Foreground="#34495E"/>
                     </StackPanel>
+
                 </StackPanel>
 
-                <!-- Botón de Estado (Altura Reducida) -->
+                <!-- ESTADO DE LA CITA -->
                 <Border x:Name="borderEstado" 
-                Grid.Column="1" 
-                VerticalAlignment="Center"
-                Padding="12,3" 
-                CornerRadius="12" 
-                Background="#3498DB">
+                        Grid.Column="1" 
+                        VerticalAlignment="Center"
+                        Padding="12,3" 
+                        CornerRadius="12" 
+                        Background="#3498DB">
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="#BDC3C7"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                    <Setter Property="Background" Value="#F1C40F"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Estado}" Value="Completada">
+                                    <Setter Property="Background" Value="#2ECC71"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Estado}" Value="Atendida">
+                                    <Setter Property="Background" Value="#2ECC71"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
+                                    <Setter Property="Background" Value="#E74C3C"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
                     <TextBlock Text="{Binding Estado}" 
-                       Foreground="White" 
-                       FontSize="12"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"/>
+                               Foreground="White" 
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
                 </Border>
             </Grid>
         </Border>
 
+        <!-- CONTENIDO PRINCIPAL -->
         <Grid Grid.Row="2">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <!-- Cliente y Mascota -->
                 <RowDefinition Height="25"/>
+                <!-- Espaciado -->
                 <RowDefinition Height="Auto"/>
+                <!-- Veterinario -->
                 <RowDefinition Height="35"/>
+                <!-- Espaciado -->
                 <RowDefinition Height="*"/>
+                <!-- Motivo y observaciones -->
             </Grid.RowDefinitions>
 
+            <!-- BLOQUE CLIENTE Y MASCOTA -->
             <Grid Grid.Row="0">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="25"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- CLIENTE -->
                 <Border Background="White" Padding="18,12" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="CLIENTE" FontSize="11" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,8"/>
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
+
+                            <!-- NOMBRE DEL CLIENTE -->
                             <TextBlock Text="{Binding NombreDueno}" FontSize="16" Foreground="#2C3E50" VerticalAlignment="Center" FontWeight="Medium"/>
-                            <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="btnBuscarCliente_Click"/>
+
+                            <!-- BOTÓN BUSCAR CLIENTE -->
+                            <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="BtnBuscarCliente_Click"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
+                <!-- MASCOTA -->
                 <Border Grid.Column="2" Background="White" Padding="18,12" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="MASCOTA" FontSize="11" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,8"/>
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
+
+                            <!-- NOMBRE DE LA MASCOTA -->
                             <TextBlock Text="{Binding NombreMascota}" FontSize="16" Foreground="#2C3E50" VerticalAlignment="Center" FontWeight="Medium"/>
-                            <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="btnBuscarMascota_Click"/>
+
+                            <!-- BOTÓN BUSCAR MASCOTA -->
+                            <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="BtnBuscarMascota_Click"/>
                         </Grid>
                     </StackPanel>
                 </Border>
             </Grid>
 
+            <!-- VETERINARIO ASIGNADO -->
             <Border Grid.Row="2" Background="White" Padding="18,12" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="VETERINARIO ASIGNADO" FontSize="11" FontWeight="Black" Foreground="#95A5A6" Margin="0,0,0,8"/>
+
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+
+                        <!-- NOMBRE DEL VETERINARIO -->
                         <TextBlock Text="{Binding NombreVeterinario}" FontSize="16" Foreground="#2C3E50" VerticalAlignment="Center" FontWeight="Medium"/>
-                        <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="btnBuscarVeterinario_Click"/>
+
+                        <!-- BOTÓN BUSCAR VETERINARIO -->
+                        <Button Grid.Column="1" Width="32" Height="32" Background="#3498DB" BorderBrush="Transparent" Foreground="White" Content="🔍" Click="BtnBuscarVeterinario_Click"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
+            <!-- MOTIVO Y OBSERVACIONES -->
             <Border Grid.Row="4" Background="White" Padding="25" CornerRadius="10" BorderBrush="#D5DBDB" BorderThickness="1">
+
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
+
+                        <!-- MOTIVO -->
                         <StackPanel Margin="0,0,0,25">
                             <TextBlock Text="Motivo de la Cita" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
                             <Border Height="1" Background="#ECF0F1" Margin="0,0,0,10"/>
                             <TextBlock Text="{Binding Motivo}" TextWrapping="Wrap" FontSize="15" LineHeight="22" Foreground="#34495E"/>
                         </StackPanel>
 
+                        <!-- OBSERVACIONES -->
                         <StackPanel>
                             <TextBlock Text="Observaciones Médicas" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
                             <Border Height="1" Background="#ECF0F1" Margin="0,0,0,10"/>
                             <TextBlock Text="{Binding Observaciones}" TextWrapping="Wrap" FontSize="15" LineHeight="22" Foreground="#34495E"/>
                         </StackPanel>
+
                     </StackPanel>
                 </ScrollViewer>
             </Border>
         </Grid>
 
+        <!-- BOTONERA INFERIOR -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+
+            <!-- DESCARGAR DOCUMENTO -->
             <Button x:Name="btnDescargarDocumento"
-        Content="Descargar"
-        Width="200"
-        Height="42"
-        Background="#8E44AD"
-        Foreground="White"
-        BorderBrush="Transparent"
-        FontWeight="SemiBold"
-        Margin="0,0,12,0"
-        Visibility="Collapsed"
-        Click="btnDescargarDocumento_Click"
-        Cursor="Hand">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
+                    Width="200"
+                    Height="42"
+                    Background="#8E44AD"
+                    Foreground="White"
+                    BorderBrush="Transparent"
+                    FontWeight="SemiBold"
+                    Margin="0,0,12,0"
+                    Click="BtnDescargarDocumento_Click"
+                    Cursor="Hand">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content" Value="Descargar"/>
+                        <Setter Property="Visibility" Value="Visible"/>
+
+                        <!-- Control botón de descargar documento -->
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                <Setter Property="Content" Value="Descargar recordatorio"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Estado}" Value="Completada">
+                                <Setter Property="Content" Value="Descargar justificante"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
-            <Button x:Name="btnCancelarCita" Content="Cancelar Cita" Width="140" Height="42" Background="#E74C3C" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Visibility="Collapsed" Click="btnCancelarCita_Click" Cursor="Hand">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
+
+            <!-- CANCELAR CITA -->
+            <Button x:Name="btnCancelarCita"
+                    Content="Cancelar Cita"
+                    Width="140"
+                    Height="42"
+                    Background="#E74C3C"
+                    Foreground="White"
+                    BorderBrush="Transparent"
+                    FontWeight="SemiBold"
+                    Margin="0,0,12,0"
+                    Click="BtnCancelarCita_Click"
+                    Cursor="Hand">
+                
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+
+                        <!-- Control botón de cancelar cita: solo si está pendiente -->
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
-            <Button x:Name="btnRegistrarConsulta" Content="Registrar Consulta" Width="180" Height="42" Background="#27AE60" Foreground="White" BorderBrush="Transparent" FontWeight="SemiBold" Margin="0,0,12,0" Click="btnRegistrarConsulta_Click" Cursor="Hand">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
+
+            <!-- REGISTRAR CONSULTA -->
+            <Button x:Name="btnRegistrarConsulta"
+                    Width="180"
+                    Height="42"
+                    Foreground="White"
+                    BorderBrush="Transparent"
+                    FontWeight="SemiBold"
+                    Margin="0,0,12,0"
+                    Click="BtnRegistrarConsulta_Click"
+                    Cursor="Hand">
+
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content" Value="Registrar Consulta"/>
+                        <Setter Property="Background" Value="#27AE60"/>
+                        <Setter Property="Visibility" Value="Visible"/>
+
+                        <!-- Control botón de registrar consulta -->
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Estado}" Value="Completada">
+                                <Setter Property="Content" Value="Ver Consulta"/>
+                                <Setter Property="Background" Value="#3498DB"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
-            <Button Content="Cerrar" Width="120" Height="42" Background="#BDC3C7" Foreground="White" BorderBrush="Transparent" Click="btnCerrar_Click" Cursor="Hand">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+            
+            <!-- CERRAR VENTANA -->
+            <Button Content="Cerrar"
+                    Width="120"
+                    Height="42"
+                    Background="#BDC3C7"
+                    Foreground="White"
+                    BorderBrush="Transparent"
+                    Click="BtnCerrar_Click"
+                    Cursor="Hand"/>
+
         </StackPanel>
+
     </Grid>
 </Window>

@@ -74,6 +74,10 @@ namespace Vetcare.Negocio
             return usuarioDAO.ComprobarHayUsuarios();
         }
 
+        /// <summary>
+        /// Inserta en la base de datos el usuario admin.
+        /// </summary>
+        /// <returns>True si se ha insertado correctamente, false si no se ha insertado</returns>
         public bool InsertarUsuarioAdmin(string hash, string salt)
         {
             return usuarioDAO.InsertarUsuarioAdmin(hash, salt);

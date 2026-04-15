@@ -78,21 +78,19 @@ namespace Vetcare.Presentacion
             }
         }
 
+        /// <summary>
+        /// Método que inserta en la base de datos el usuario Admin si no hay ninguno creado
+        /// </summary>
         private void CrearUsuarioAdminSiNoExiste()
         {
-            Conexion conexion = new();
+            if (!_usuarioService.ComprobarHayUsuarios())
+            {
+                // Generar hash y salt
+                string salt = Seguridad.GenerarSalt();
+                string hash = Seguridad.Encriptar("admin", salt);
 
-            using MySqlConnection con = conexion.ObtenerConexion();
-            con.Open();
-
-            if (_usuarioService.ComprobarHayUsuarios())
-                return; // Si ya hay usuarios, no hacemos nada
-
-            // Generar seguridad
-            string salt = Seguridad.GenerarSalt();
-            string hash = Seguridad.Encriptar("admin", salt);
-
-           _usuarioService.InsertarUsuarioAdmin(hash, salt);
+                _usuarioService.InsertarUsuarioAdmin(hash, salt);
+            }
         }
     }
 }

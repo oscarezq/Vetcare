@@ -14,335 +14,317 @@ using Vetcare.Service;
 namespace Vetcare.Presentacion.Citas
 {
     /// <summary>
-    /// Lógica de interacción para WindowFichaCita.xaml
+    /// Lógica de interacción para la ventana de detalles y gestión de una cita médica.
+    /// Permite la visualización de datos, cancelación de citas, gestión de consultas clínicas 
+    /// y generación de documentos PDF (recordatorios y justificantes).
     /// </summary>
     public partial class WindowFichaCita : Window
     {
+        // Capa de servicio para la persistencia y lógica de negocio de citas
         private readonly CitaService citaService;
-        private Cita citaActual;
 
+        // Entidad que contiene los datos de la cita cargada actualmente
+        private Cita? citaActual;
+
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase <see cref="WindowFichaCita"/>.
+        /// </summary>
+        /// <param name="idCita">Identificador único de la cita a consultar.</param>
         public WindowFichaCita(int idCita)
         {
             InitializeComponent();
+
             citaService = new CitaService();
+
+            // Recuperación inicial de datos desde el origen de datos
             CargarCita(idCita);
         }
 
         /// <summary>
-        /// Carga la cita desde la base de datos y la asigna al DataContext.
+        /// Recupera la información de la cita desde la base de datos y actualiza el contexto de datos de la interfaz.
         /// </summary>
+        /// <param name="idCita">ID de la cita a cargar.</param>
         private void CargarCita(int idCita)
         {
             try
             {
+                // Consulta a la capa de negocio
                 citaActual = citaService.ObtenerPorId(idCita);
 
                 if (citaActual != null)
                 {
+                    // Asignación del modelo a la vista para habilitar el Data Binding
                     this.DataContext = citaActual;
+
+                    // Ajuste de visibilidad y estados de controles según el flujo de trabajo
                     ActualizarInterfazSegunEstado();
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo cargar la cita.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("No se pudo cargar la información de la cita.", "Error de Carga", MessageBoxButton.OK, MessageBoxImage.Error);
                     this.Close();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar la cita:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Ocurrió un error crítico al recuperar la cita:\n" + ex.Message, "Error del Sistema", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
             }
         }
 
         /// <summary>
-        /// Botón Editar.
+        /// Controlador de evento para el botón de registro o visualización de consultas.
+        /// Determina si debe crear una nueva entrada clínica o permitir la edición de una existente.
         /// </summary>
-        private void btnEditar_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                WindowCita ventanaEditar = new WindowCita(citaActual);
-                ventanaEditar.Owner = this;
-
-                if (ventanaEditar.ShowDialog() == true)
-                {
-                    CargarCita(citaActual.IdCita);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al editar la cita:\n" + ex.Message,
-                                "Error",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-            }
-        }
-
-        private void btnRegistrarConsulta_Click(object sender, RoutedEventArgs e)
+        private void BtnRegistrarConsulta_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (citaActual == null) return;
 
-                // 1. MODO CREACIÓN: Si la cita está pendiente, registramos una nueva consulta
+                // Caso: Registro de una nueva consulta (Cita aún no atendida)
                 if (citaActual.Estado == "Pendiente")
                 {
-                    WindowConsulta ventana = new WindowConsulta(citaActual);
-                    ventana.Owner = this;
+                    WindowConsulta ventana = new(citaActual)
+                    {
+                        Owner = Window.GetWindow(this)
+                    };
 
                     if (ventana.ShowDialog() == true)
                     {
-                        CargarCita(citaActual.IdCita); // Recargar para ver el cambio de estado a "Completada"
+                        CargarCita(citaActual.IdCita);
                         this.DialogResult = true;
+                        this.Close();
                     }
                 }
-                // 2. MODO EDICIÓN/VISTA: Si ya está completada, buscamos el historial para editarlo
+                // Caso: Visualización/Edición de registro clínico existente (Cita finalizada)
                 else if (citaActual.Estado == "Completada" || citaActual.Estado == "Atendida")
                 {
                     var historialService = new HistorialClinicoService();
-                    // Buscamos el registro clínico asociado a esta cita
-                    HistorialClinico historial = historialService.ObtenerPorIdCita(citaActual.IdCita);
+
+                    // Obtención del registro clínico vinculado mediante el ID de la cita
+                    HistorialClinico? historial = historialService.ObtenerPorIdCita(citaActual.IdCita);
 
                     if (historial != null)
                     {
-                        // Usamos el nuevo constructor de edición que creamos antes
-                        WindowConsulta ventana = new WindowConsulta(historial, citaActual);
-                        ventana.Owner = this;
+                        WindowConsulta ventana = new(historial, citaActual)
+                        {
+                            Owner = Window.GetWindow(this)
+                        };
 
                         if (ventana.ShowDialog() == true)
                         {
                             CargarCita(citaActual.IdCita);
                             this.DialogResult = true;
+                            this.Close();
                         }
                     }
                     else
                     {
-                        MessageBox.Show("No se encontró el registro clínico de esta consulta.",
-                                        "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("No se ha encontrado un historial clínico asociado a esta cita finalizada.",
+                                        "Información", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al gestionar la consulta:\n" + ex.Message,
+                MessageBox.Show("Error al procesar la gestión de la consulta:\n" + ex.Message,
                                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Botón Cerrar.
+        /// Cierra la ventana actual de detalles de cita.
         /// </summary>
-        private void btnCerrar_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        private void BtnCerrar_Click(object sender, RoutedEventArgs e) => this.Close();
 
         /// <summary>
-        /// Lupita Cliente → abre ficha del cliente.
+        /// Navega hacia la ficha detallada del propietario vinculado a la cita.
         /// </summary>
-        private void btnBuscarCliente_Click(object sender, RoutedEventArgs e)
+        private void BtnBuscarCliente_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (citaActual != null && citaActual.IdUsuarioDueno > 0)
                 {
-                    var ventanaCliente = new WindowFichaCliente(citaActual.IdUsuarioDueno);
-                    ventanaCliente.Owner = this;
+                    var ventanaCliente = new WindowFichaCliente(citaActual.IdUsuarioDueno)
+                    {
+                        Owner = Window.GetWindow(this)
+                    };
+
                     ventanaCliente.ShowDialog();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al abrir la ficha del cliente:\n" + ex.Message,
-                                "Error",
+                MessageBox.Show("No se pudo acceder a la ficha del cliente:\n" + ex.Message,
+                                "Error de Navegación",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Lupita Mascota → abre ficha de la mascota.
+        /// Navega hacia la ficha detallada de la mascota vinculada a la cita.
         /// </summary>
-        private void btnBuscarMascota_Click(object sender, RoutedEventArgs e)
+        private void BtnBuscarMascota_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (citaActual != null && citaActual.IdMascota > 0)
                 {
-                    var ventanaMascota = new WindowFichaMascota(citaActual.IdMascota);
-                    ventanaMascota.Owner = this;
+                    var ventanaMascota = new WindowFichaMascota(citaActual.IdMascota)
+                    {
+                        Owner = Window.GetWindow(this)
+                    };
+
                     ventanaMascota.ShowDialog();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al abrir la ficha de la mascota:\n" + ex.Message,
-                                "Error",
+                MessageBox.Show("No se pudo acceder a la ficha de la mascota:\n" + ex.Message,
+                                "Error de Navegación",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Lupita Veterinario → abre ficha del veterinario.
+        /// Navega hacia la ficha detallada del veterinario responsable de la cita.
         /// </summary>
-        private void btnBuscarVeterinario_Click(object sender, RoutedEventArgs e)
+        private void BtnBuscarVeterinario_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (citaActual != null && citaActual.IdUsuarioVeterinario > 0)
                 {
-                    var ventanaVet = new WindowFichaUsuario(citaActual.IdUsuarioVeterinario);
-                    ventanaVet.Owner = this;
+                    WindowFichaUsuario ventanaVet = new(citaActual.IdUsuarioVeterinario)
+                    {
+                        Owner = Window.GetWindow(this)
+                    };
+
                     ventanaVet.ShowDialog();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al abrir la ficha del veterinario:\n" + ex.Message,
-                                "Error",
+                MessageBox.Show("No se pudo acceder a la ficha del profesional:\n" + ex.Message,
+                                "Error de Navegación",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
             }
         }
 
+        /// <summary>
+        /// Aplica restricciones de seguridad y lógica de negocio sobre los controles 
+        /// de la interfaz basándose en el estado de la cita y privilegios de usuario.
+        /// </summary>
         private void ActualizarInterfazSegunEstado()
         {
             if (citaActual == null) return;
-            var bc = new System.Windows.Media.BrushConverter();
 
-            // Verificamos si el usuario tiene permiso (Admin o el Veterinario de la cita)
+            // Validación de permisos según el rol y asignación del usuario en sesión
             bool tienePermiso = ValidarPermisosAccion();
 
-            switch (citaActual.Estado)
+            // Restricción de edición para usuarios sin privilegios específicos en citas pendientes
+            if (!tienePermiso && citaActual.Estado == "Pendiente")
             {
-                case "Pendiente":
-                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#F1C40F");
-
-                    // Solo se muestra si está pendiente Y tiene permiso
-                    btnRegistrarConsulta.Visibility = tienePermiso ? Visibility.Visible : Visibility.Collapsed;
-                    btnCancelarCita.Visibility = tienePermiso ? Visibility.Visible : Visibility.Collapsed;
-
-                    btnRegistrarConsulta.Content = "Registrar consulta";
-                    btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#27AE60");
-
-                    btnDescargarDocumento.Visibility = Visibility.Visible;
-                    btnDescargarDocumento.Content = "Descargar recordatorio";
-                    break;
-                case "Completada":
-                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#2ecc71");
-
-                    // "Ver consulta" lo dejamos visible para todos (lectura), 
-                    // pero podrías restringirlo también con 'tienePermiso' si quisieras.
-                    btnRegistrarConsulta.Visibility = Visibility.Visible;
-                    btnRegistrarConsulta.Content = "Ver consulta";
-                    btnRegistrarConsulta.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#3498DB");
-
-                    btnCancelarCita.Visibility = Visibility.Collapsed;
-
-                    btnDescargarDocumento.Visibility = Visibility.Visible;
-                    btnDescargarDocumento.Content = "Descargar justificante";
-                    break;
-
-                case "Cancelada":
-                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#E74C3C");
-                    btnRegistrarConsulta.Visibility = Visibility.Collapsed;
-                    btnCancelarCita.Visibility = Visibility.Collapsed;
-
-                    btnDescargarDocumento.Visibility = Visibility.Collapsed;
-                    break;
-
-                default:
-                    borderEstado.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#BDC3C7");
-                    btnCancelarCita.Visibility = Visibility.Collapsed;
-                    break;
+                btnRegistrarConsulta.IsEnabled = false;
+                btnCancelarCita.IsEnabled = false;
             }
         }
 
+        /// <summary>
+        /// Verifica si el usuario actual tiene autoridad para realizar modificaciones.
+        /// El acceso se permite a Administradores o al Veterinario asignado específicamente a la cita.
+        /// </summary>
+        /// <returns>Verdadero si el usuario está autorizado; de lo contrario, falso.</returns>
         private bool ValidarPermisosAccion()
         {
-            // 1. Obtener el usuario de la sesión global
             var usuarioLogueado = Sesion.UsuarioActual;
 
             if (usuarioLogueado == null) return false;
 
-            // 2. Si es Administrador, tiene permiso total para gestionar cualquier cita
+            // Nivel de acceso: Administrador (ID Rol 1)
             if (usuarioLogueado.IdRol == 1)
-            {
                 return true;
-            }
 
-            // 3. Si es Veterinario, solo puede gestionar si es el veterinario asignado a esta cita específica
+            // Nivel de acceso: Veterinario (ID Rol 2) - Requiere coincidencia de asignación
             if (usuarioLogueado.IdRol == 2)
-            {
-                // Comparamos el ID del usuario logueado con el ID del veterinario en la cita
-                return usuarioLogueado.IdUsuario == citaActual.IdUsuarioVeterinario;
-            }
+                return usuarioLogueado.IdUsuario == citaActual!.IdUsuarioVeterinario;
 
             return false;
         }
 
-        private void btnCancelarCita_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Ejecuta el proceso de cancelación de la cita tras confirmación del usuario.
+        /// </summary>
+        private void BtnCancelarCita_Click(object sender, RoutedEventArgs e)
         {
-            var resultado = MessageBox.Show("¿Está seguro que desea cancelar esta cita?", "Confirmar",
+            var resultado = MessageBox.Show("¿Está seguro de que desea cancelar esta cita de forma permanente?",
+                                            "Confirmar Cancelación",
                                             MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (resultado == MessageBoxResult.Yes)
             {
                 try
                 {
-                    // Actualizamos el estado en el objeto y en la base de datos
-                    citaActual.Estado = "Cancelada";
-                    bool actualizado = citaService.Actualizar(citaActual); // Asegúrate que este método exista en tu Service
+                    citaActual!.Estado = "Cancelada";
+
+                    // Actualización de estado en persistencia
+                    bool actualizado = citaService.Actualizar(citaActual);
 
                     if (actualizado)
                     {
-                        MessageBox.Show("Cita cancelada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                        CargarCita(citaActual.IdCita); // Recargamos para actualizar colores y botones
-                        this.DialogResult = true; // Avisamos a la ventana padre que hubo cambios
+                        MessageBox.Show("La cita ha sido cancelada correctamente.", "Operación Exitosa",
+                                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        CargarCita(citaActual.IdCita);
+                        this.DialogResult = true;
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error al cancelar: " + ex.Message);
+                    MessageBox.Show("Ocurrió un error al intentar cancelar la cita: " + ex.Message, "Error");
                 }
             }
         }
 
-        private void btnDescargarDocumento_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Determina y ejecuta la generación del documento PDF apropiado basándose en el estado actual.
+        /// </summary>
+        private void BtnDescargarDocumento_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (citaActual == null) return;
 
+                // Recordatorio para citas futuras o Justificante para pasadas
                 if (citaActual.Estado == "Pendiente")
-                {
                     GenerarRecordatorio();
-                }
-                else if (citaActual.Estado == "Completada" || citaActual.Estado == "Atendida")
-                {
+                else if (citaActual.Estado == "Completada")
                     GenerarJustificante();
-                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al generar el documento:\n" + ex.Message,
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Error al intentar procesar el documento solicitado:\n" + ex.Message,
+                                "Error de Documentación", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+        /// <summary>
+        /// Genera y exporta un archivo PDF con el recordatorio de la cita pendiente.
+        /// </summary>
         private void GenerarRecordatorio()
         {
             try
             {
-                if (citaActual == null) return;
-
-                SaveFileDialog saveFileDialog = new SaveFileDialog
+                SaveFileDialog saveFileDialog = new()
                 {
-                    Filter = "PDF Files (*.pdf)|*.pdf",
-                    FileName = $"Recordatorio_{citaActual.NombreMascota}_{citaActual.FechaHora:yyyyMMdd}.pdf",
-                    Title = "Guardar Recordatorio"
+                    Filter = "Archivos PDF (*.pdf)|*.pdf",
+                    FileName = $"Recordatorio_{citaActual!.NombreMascota}_{citaActual.FechaHora:yyyyMMdd}.pdf",
+                    Title = "Exportar Recordatorio de Cita"
                 };
 
                 if (saveFileDialog.ShowDialog() == true)
@@ -350,32 +332,31 @@ namespace Vetcare.Presentacion.Citas
                     var documento = new RecordatorioDocumento(citaActual);
                     documento.GeneratePdf(saveFileDialog.FileName);
 
-                    MessageBox.Show("¡Recordatorio generado con éxito!",
-                                    "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("El recordatorio se ha generado correctamente.", "PDF Creado");
 
-                    System.Diagnostics.Process.Start(
-                        new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName)
-                        { UseShellExecute = true });
+                    // Apertura automática del documento generado mediante el visor predeterminado
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName)
+                    { UseShellExecute = true });
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al generar el recordatorio: " + ex.Message,
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Error al generar el recordatorio PDF: " + ex.Message);
             }
         }
 
+        /// <summary>
+        /// Genera y exporta un archivo PDF con el justificante de asistencia para citas atendidas.
+        /// </summary>
         private void GenerarJustificante()
         {
             try
             {
-                if (citaActual == null) return;
-
-                SaveFileDialog saveFileDialog = new SaveFileDialog
+                SaveFileDialog saveFileDialog = new()
                 {
-                    Filter = "PDF Files (*.pdf)|*.pdf",
-                    FileName = $"Justificante_{citaActual.NombreMascota}_{DateTime.Now:yyyyMMdd}.pdf",
-                    Title = "Guardar Justificante"
+                    Filter = "Archivos PDF (*.pdf)|*.pdf",
+                    FileName = $"Justificante_{citaActual!.NombreMascota}_{DateTime.Now:yyyyMMdd}.pdf",
+                    Title = "Exportar Justificante Médico"
                 };
 
                 if (saveFileDialog.ShowDialog() == true)
@@ -383,18 +364,16 @@ namespace Vetcare.Presentacion.Citas
                     var documento = new JustificanteDocumento(citaActual);
                     documento.GeneratePdf(saveFileDialog.FileName);
 
-                    MessageBox.Show("¡Justificante generado con éxito!",
-                                    "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("El justificante médico se ha generado correctamente.", "PDF Creado");
 
-                    System.Diagnostics.Process.Start(
-                        new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName)
-                        { UseShellExecute = true });
+                    // Apertura automática del documento generado mediante el visor predeterminado
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(saveFileDialog.FileName)
+                    { UseShellExecute = true });
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al generar el justificante: " + ex.Message,
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Error al generar el justificante PDF: " + ex.Message);
             }
         }
     }

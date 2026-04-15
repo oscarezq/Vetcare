@@ -197,6 +197,12 @@ namespace Vetcare.Datos
             }
         }
 
+        /// <summary>
+        /// Inserta el usuario admin en la base de datos.
+        /// </summary>
+        /// <param name="hash">Hash de la contraseña.</param>
+        /// <param name="salt">Salt de la contraseña.</param>
+        /// <returns>True si se ha insertado el usuario correctamente.</returns>
         public bool InsertarUsuarioAdmin(string hash, string salt)
         {
             using MySqlConnection con = conexion.ObtenerConexion();

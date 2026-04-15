@@ -45,7 +45,7 @@
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Sexo" FontSize="10" Foreground="#7F8C8D"/>
-                        <ComboBox x:Name="cbBuscaSexo" Height="28" VerticalContentAlignment="Center" SelectionChanged="cbSexo_SelectionChanged">
+                        <ComboBox x:Name="cbBuscaSexo" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                             <ComboBoxItem Content="Todos" IsSelected="True"/>
                             <ComboBoxItem Content="Macho"/>
                             <ComboBoxItem Content="Hembra"/>
@@ -53,15 +53,15 @@
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nacimiento - Desde" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="dtpBuscaFechaDesde_SelectedDateChanged"/>
+                        <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nacimiento - Hasta" FontSize="10" Foreground="#7F8C8D"/>
-                        <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="dtpBuscaFechaHasta_SelectedDateChanged"/>
+                        <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
-                        <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="cbBuscaEstado_SelectionChanged">
+                        <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                             <ComboBoxItem Content="Todos"/>
                             <ComboBoxItem Content="Activo" IsSelected="True"/>
                             <ComboBoxItem Content="Inactivo"/>
@@ -73,7 +73,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
-                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="cbOrdenarPor_SelectionChanged">
+                    <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                         <ComboBoxItem Content="Nombre" IsSelected="True"/>
                         <ComboBoxItem Content="Especie"/>
                         <ComboBoxItem Content="Raza"/>
@@ -83,10 +83,10 @@
                         <ComboBoxItem Content="Dueño"/>
                     </ComboBox>
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
-                        <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="OrdenDirection_Checked"/>
-                        <RadioButton x:Name="rbDesc" Content="Descendente" Checked="OrdenDirection_Checked"/>
+                        <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroAvanzado_Changed"/>
+                        <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroAvanzado_Changed"/>
                     </StackPanel>
-                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="btnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+                    <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="BtnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -101,7 +101,7 @@
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Listado de mascotas" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
-                    <Button DockPanel.Dock="Right" x:Name="btnNuevaMascota" Content="+ Nueva Mascota" Click="btnNuevaMascota_Click"
+                    <Button DockPanel.Dock="Right" x:Name="btnNuevaMascota" Content="+ Nueva Mascota" Click="BtnNuevaMascota_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
                         <Button.Style>
                             <Style TargetType="Button">
@@ -122,7 +122,7 @@
                 </DockPanel>
 
                 <DataGrid x:Name="dgMascotas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
-                          MouseDoubleClick="dgMascotas_MouseDoubleClick" GridLinesVisibility="None" BorderThickness="0" CanUserResizeColumns="False"
+                          MouseDoubleClick="DgMascotas_MouseDoubleClick" GridLinesVisibility="None" BorderThickness="0" CanUserResizeColumns="False"
                           HeadersVisibility="Column" CanUserSortColumns="False" CanUserReorderColumns="False" Background="White" 
                           FontSize="14" RowHeight="45" ColumnHeaderHeight="40" SelectionMode="Extended" SelectionUnit="FullRow" HorizontalScrollBarVisibility="Auto">
 
@@ -208,7 +208,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock VerticalAlignment="Center">
-                                        <Hyperlink Click="btnVerFichaMascota_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
+                                        <Hyperlink Click="BtnVerFichaMascota_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
                                             <Run Text="{Binding Nombre}" FontWeight="SemiBold"/>
                                         </Hyperlink>
                                     </TextBlock>
@@ -232,10 +232,10 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="btnVerDetalle_Click" Margin="2,0" 
+                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
 
-                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="btnEditar_Click" Margin="2,0" 
+                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="BtnEditar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
@@ -252,7 +252,7 @@
                                             </Button.Style>
                                         </Button>
 
-                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Dar de baja" Click="btnEliminar_Click" Margin="2,0" 
+                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Dar de baja" Click="BtnEliminar_Click" Margin="2,0" 
                                                 Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
@@ -269,7 +269,7 @@
                                             </Button.Style>
                                         </Button>
 
-                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="btnReactivar_Click" Margin="2,0" 
+                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="BtnReactivar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
