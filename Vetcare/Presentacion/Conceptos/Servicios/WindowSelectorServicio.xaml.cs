@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
@@ -21,68 +14,124 @@ namespace Vetcare.Presentacion.Servicios
     /// </summary>
     public partial class WindowSelectorServicio : Window
     {
-        private List<Concepto> listaServicios;
-        public Concepto ServicioSeleccionado { get; set; }
-        private ConceptoService servicioService = new ConceptoService();
+        // Lista en memoria de todos los servicios cargados
+        private List<Concepto>? listaServicios;
+
+        // Servicio seleccionado que se devolverá a la ventana padre
+        public Concepto? ServicioSeleccionado;
+
+        // Servicio de acceso a datos (negocio)
+        private readonly ConceptoService servicioService = new();
 
         public WindowSelectorServicio()
         {
             InitializeComponent();
+
+            // Carga inicial de datos
             CargarLista();
         }
 
+        /// <summary>
+        /// Carga todos los servicios desde la base de datos
+        /// </summary>
         private void CargarLista()
         {
             try
             {
+                // Obtener lista de servicios desde la capa de negocio
                 listaServicios = servicioService.ObtenerServicios();
+
+                // Asignar al DataGrid
                 dgServicios.ItemsSource = listaServicios;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar servicios: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Mostrar error si falla la carga
+                MessageBox.Show(
+                    "Error al cargar servicios: " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        private void txtBuscaServicio_TextChanged(object sender, TextChangedEventArgs e)
+        /// <summary>
+        /// Filtra servicios por nombre o descripción mientras se escribe
+        /// </summary>
+        private void TxtBuscaServicio_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (listaServicios == null) return;
 
-            string busqueda = txtBuscaServicio.Text.ToLower().Trim();
+            // Texto de búsqueda normalizado
+            string? busqueda = txtBuscaServicio.Text.ToLower().Trim();
 
-            // Filtrado por Nombre y Descripción
+            // Filtrado en memoria
             var filtrados = listaServicios.Where(s =>
                 (s.Nombre != null && s.Nombre.ToLower().Contains(busqueda)) ||
                 (s.Descripcion != null && s.Descripcion.ToLower().Contains(busqueda))
             ).ToList();
 
+            // Actualizar DataGrid con resultados
             dgServicios.ItemsSource = filtrados;
         }
 
+        /// <summary>
+        /// Finaliza la selección del servicio
+        /// </summary>
         private void FinalizarSeleccion()
         {
             if (dgServicios.SelectedItem is Concepto serv)
             {
+                // Guardar servicio seleccionado
                 ServicioSeleccionado = serv;
+
+                // Cerrar ventana devolviendo OK
                 this.DialogResult = true;
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Por favor, seleccione un servicio de la lista.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                // Avisar si no hay selección
+                MessageBox.Show(
+                    "Por favor, seleccione un servicio de la lista.",
+                    "Aviso",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
         }
 
-        private void dgServicios_MouseDoubleClick(object sender, MouseButtonEventArgs e) => FinalizarSeleccion();
-        private void btnSeleccionar_Click(object sender, RoutedEventArgs e) => FinalizarSeleccion();
-        private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
+        /// <summary>
+        /// Doble click en grid selecciona servicio
+        /// </summary>
+        private void DgServicios_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+            => FinalizarSeleccion();
 
-        private void btnNuevoServicio_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Botón seleccionar
+        /// </summary>
+        private void BtnSeleccionar_Click(object sender, RoutedEventArgs e)
+            => FinalizarSeleccion();
+
+        /// <summary>
+        /// Botón cancelar
+        /// </summary>
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
+            => this.Close();
+
+        /// <summary>
+        /// Crear nuevo servicio y recargar lista
+        /// </summary>
+        private void BtnNuevoServicio_Click(object sender, RoutedEventArgs e)
         {
-            // Ajusta el nombre de tu ventana de edición de servicios si es diferente
-            WindowServicio win = new WindowServicio();
+            // Abrir ventana de creación de servicio
+            WindowServicio win = new()
+            {
+                Owner = Window.GetWindow(this)
+            };
+
             if (win.ShowDialog() == true)
             {
+                // Recargar lista si se ha creado correctamente
                 CargarLista();
             }
         }

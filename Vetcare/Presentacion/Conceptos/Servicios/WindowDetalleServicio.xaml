@@ -6,7 +6,10 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- RECURSOS VISUALES REUTILIZABLES -->
     <Window.Resources>
+
+        <!-- Estilo para etiquetas (títulos de campo) -->
         <Style x:Key="DetailLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -14,6 +17,7 @@
             <Setter Property="Margin" Value="0,0,0,4"/>
         </Style>
 
+        <!-- Estilo para valores mostrados -->
         <Style x:Key="DetailValue" TargetType="TextBlock">
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Foreground" Value="#1E293B"/>
@@ -21,82 +25,180 @@
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
 
+        <!-- Espaciado estándar entre bloques de información -->
         <Style x:Key="InfoGroup" TargetType="StackPanel">
             <Setter Property="Margin" Value="0,0,0,20"/>
         </Style>
+
     </Window.Resources>
 
+    <!-- CONTENEDOR PRINCIPAL -->
     <Grid Margin="30">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- TÍTULO SUPERIOR -->
         <StackPanel Grid.Row="0" Margin="0,0,0,25">
-            <TextBlock Text="DETALLES DEL SERVICIO" FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
-            <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
+
+            <TextBlock Text="DETALLES DEL SERVICIO" 
+                       FontSize="22" 
+                       FontWeight="Bold" 
+                       Foreground="#2C3E50"/>
+
+            <!-- Línea decorativa -->
+            <Rectangle Height="3" 
+                       Fill="#E67E22" 
+                       HorizontalAlignment="Left" 
+                       Width="40" 
+                       Margin="2,5,0,0"/>
+
         </StackPanel>
 
+        <!-- CONTENIDO SCROLL -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Border Background="White" CornerRadius="12" Padding="25" BorderBrush="#E2E8F0" BorderThickness="1">
+
+            <Border Background="White" 
+                    CornerRadius="12" 
+                    Padding="25" 
+                    BorderBrush="#E2E8F0" 
+                    BorderThickness="1">
+
                 <StackPanel>
 
+                    <!-- NOMBRE DEL SERVICIO -->
                     <StackPanel Style="{StaticResource InfoGroup}">
-                        <TextBlock Text="NOMBRE DEL SERVICIO" Style="{StaticResource DetailLabel}"/>
-                        <TextBlock x:Name="txtNombre" Text="Consulta General" Style="{StaticResource DetailValue}" FontSize="20" Foreground="#E67E22"/>
+
+                        <TextBlock Text="NOMBRE DEL SERVICIO" 
+                                   Style="{StaticResource DetailLabel}"/>
+
+                        <TextBlock x:Name="txtNombre" 
+                                   Text="Consulta General" 
+                                   Style="{StaticResource DetailValue}" 
+                                   FontSize="20" 
+                                   Foreground="#E67E22"/>
+
                     </StackPanel>
 
+                    <!-- DESCRIPCIÓN -->
                     <StackPanel Style="{StaticResource InfoGroup}">
-                        <TextBlock Text="DESCRIPCIÓN / OBSERVACIONES" Style="{StaticResource DetailLabel}"/>
+
+                        <TextBlock Text="DESCRIPCIÓN / OBSERVACIONES" 
+                                   Style="{StaticResource DetailLabel}"/>
+
                         <TextBlock x:Name="txtDescripcion" 
                                    Text="No hay descripción disponible para este servicio." 
                                    Style="{StaticResource DetailValue}" 
                                    FontWeight="Normal" 
                                    Foreground="#475569"
                                    FontStyle="Normal"/>
+
                     </StackPanel>
 
+                    <!-- SEPARADOR VISUAL -->
                     <Separator Margin="0,5,0,25" Background="#F1F5F9"/>
 
+                    <!-- PRECIO E IVA -->
                     <UniformGrid Columns="2" Margin="0,0,0,20">
+
+                        <!-- PRECIO SIN IVA -->
                         <StackPanel Margin="0,0,10,0">
-                            <TextBlock Text="PRECIO SIN IVA" Style="{StaticResource DetailLabel}"/>
+
+                            <TextBlock Text="PRECIO SIN IVA" 
+                                       Style="{StaticResource DetailLabel}"/>
+
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="txtPrecio" Text="45.00" Style="{StaticResource DetailValue}"/>
-                                <TextBlock Text=" €" Style="{StaticResource DetailValue}"/>
+
+                                <TextBlock x:Name="txtPrecio" 
+                                           Text="45.00" 
+                                           Style="{StaticResource DetailValue}"/>
+
+                                <TextBlock Text=" €" 
+                                           Style="{StaticResource DetailValue}"/>
+
                             </StackPanel>
+
                         </StackPanel>
 
+                        <!-- IVA -->
                         <StackPanel Margin="10,0,0,0">
-                            <TextBlock Text="IVA APLICADO" Style="{StaticResource DetailLabel}"/>
+
+                            <TextBlock Text="IVA APLICADO" 
+                                       Style="{StaticResource DetailLabel}"/>
+
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="txtIva" Text="21" Style="{StaticResource DetailValue}"/>
-                                <TextBlock Text=" %" Style="{StaticResource DetailValue}"/>
+
+                                <TextBlock x:Name="txtIva" 
+                                           Text="21" 
+                                           Style="{StaticResource DetailValue}"/>
+
+                                <TextBlock Text=" %" 
+                                           Style="{StaticResource DetailValue}"/>
+
                             </StackPanel>
+
                         </StackPanel>
+
                     </UniformGrid>
 
-                    <Border Background="#FFF7ED" Padding="15" CornerRadius="8" Margin="0,10,0,0" BorderBrush="#FED7AA" BorderThickness="1">
+                    <!-- PRECIO FINAL DESTACADO -->
+                    <Border Background="#FFF7ED" 
+                            Padding="15" 
+                            CornerRadius="8" 
+                            Margin="0,10,0,0" 
+                            BorderBrush="#FED7AA" 
+                            BorderThickness="1">
+
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="PRECIO CON IVA: " FontWeight="Bold" Foreground="#C2410C" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="txtTotal" Text="54.45 €" FontSize="20" FontWeight="Bold" Foreground="#EA580C" Margin="10,0,0,0"/>
+
+                            <TextBlock Text="PRECIO CON IVA: " 
+                                       FontWeight="Bold" 
+                                       Foreground="#C2410C" 
+                                       VerticalAlignment="Center"/>
+
+                            <TextBlock x:Name="txtTotal" 
+                                       Text="54.45 €" 
+                                       FontSize="20" 
+                                       FontWeight="Bold" 
+                                       Foreground="#EA580C" 
+                                       Margin="10,0,0,0"/>
+
                         </StackPanel>
+
                     </Border>
 
                 </StackPanel>
+
             </Border>
+
         </ScrollViewer>
 
-        <Button Grid.Row="2" x:Name="btnCerrar" Content="Cerrar" Margin="0,20,0,0"
-                Height="40" Width="120" HorizontalAlignment="Right"
-                Background="#64748B" Foreground="White" FontWeight="Bold"
-                BorderThickness="0" Cursor="Hand" Click="btnCerrar_Click">
+        <!-- BOTÓN CERRAR -->
+        <Button Grid.Row="2" 
+                x:Name="btnCerrar" 
+                Content="Cerrar" 
+                Margin="0,20,0,0"
+                Height="40" 
+                Width="120" 
+                HorizontalAlignment="Right"
+                Background="#64748B" 
+                Foreground="White" 
+                FontWeight="Bold"
+                BorderThickness="0" 
+                Cursor="Hand" 
+                Click="BtnCerrar_Click">
+
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="8"/>
                 </Style>
             </Button.Resources>
+
         </Button>
+
     </Grid>
+
 </Window>

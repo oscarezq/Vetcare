@@ -11,24 +11,44 @@ using Vetcare.Presentacion.Facturas;
 
 namespace Vetcare.Presentacion.Clientes
 {
+    /// <summary>
+    /// UserControl encargado de mostrar y gestionar las facturas asociadas a un cliente.
+    /// Permite visualizar facturas, calcular deuda y crear nuevas facturas.
+    /// </summary>
     public partial class UC_FacturasCliente : UserControl
     {
-        private Cliente _clienteActual;
-        private FacturaService _facturaService = new FacturaService();
+        // Cliente actualmente seleccionado
+        private readonly Cliente _clienteActual;
 
+        // Servicio de negocio para operaciones con facturas
+        private readonly FacturaService _facturaService = new();
+
+        /// <summary>
+        /// Constructor del control de facturas del cliente
+        /// </summary>
         public UC_FacturasCliente(Cliente clienteActual)
         {
             InitializeComponent();
+
+            // Se asigna el cliente recibido
             _clienteActual = clienteActual;
 
+            // Carga inicial de datos
             CargarDatos();
         }
 
+        /// <summary>
+        /// Carga las facturas del cliente y calcula la deuda total
+        /// </summary>
         private void CargarDatos()
         {
+            // Obtiene facturas del cliente
             var facturas = _facturaService.ObtenerPorCliente(_clienteActual.IdCliente);
+
+            // Calcula la deuda total del cliente
             decimal deudaTotal = _facturaService.CalcularDeudaCliente(_clienteActual.IdCliente);
 
+            // Si no hay facturas, se muestra panel alternativo
             if (facturas == null || facturas.Count == 0)
             {
                 dgFacturas.Visibility = Visibility.Collapsed;
@@ -36,56 +56,74 @@ namespace Vetcare.Presentacion.Clientes
             }
             else
             {
+                // Se muestran las facturas en el DataGrid
                 dgFacturas.ItemsSource = facturas;
                 dgFacturas.Visibility = Visibility.Visible;
                 pnlSinFacturas.Visibility = Visibility.Collapsed;
             }
 
+            // Se muestra la deuda formateada
             lblDeuda.Text = string.Format("{0:N2} €", deudaTotal);
 
-            // Si no debe nada, ocultamos el panel de deuda o cambiamos color
+            // Si no hay deuda, se cambia el color a gris
             if (deudaTotal <= 0)
             {
                 lblDeuda.Foreground = System.Windows.Media.Brushes.Gray;
             }
         }
 
-        private void btnVerFactura_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana de detalle de una factura seleccionada
+        /// </summary>
+        private void BtnVerFactura_Click(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
+            // Obtiene el botón pulsado
 
-            if (btn != null && btn.DataContext is Factura facturaSeleccionada)
+            // Verifica que tenga una factura asociada
+            if (sender is Button btn && btn.DataContext is Factura facturaSeleccionada)
             {
                 try
                 {
-                    DetalleFacturaDAO detalleDAO = new DetalleFacturaDAO();
+                    // DAO de detalles de factura
+                    DetalleFacturaDAO detalleDAO = new();
+
+                    // Carga los detalles de la factura
                     facturaSeleccionada.Detalles = detalleDAO
                         .ObtenerDetallesPorFactura(facturaSeleccionada.IdFactura);
 
-                    WindowDetalleFactura win = new WindowDetalleFactura(facturaSeleccionada);
-                    win.Owner = Window.GetWindow(this);
+                    // Abre ventana de detalle
+                    WindowDetalleFactura win = new(facturaSeleccionada)
+                    {
+                        Owner = Window.GetWindow(this)
+                    };
+
                     win.ShowDialog();
                 }
                 catch (Exception ex)
                 {
+                    // Muestra error si falla la carga
                     MessageBox.Show("Error al cargar la factura: " + ex.Message,
                         "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
-        private void btnNuevaFactura_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear una nueva factura del cliente
+        /// </summary>
+        private void BtnNuevaFactura_Click(object sender, RoutedEventArgs e)
         {
-            // Aquí abrimos la ventana de creación de factura
-            // Pasamos el cliente para que la factura ya esté asociada a él
-            WindowFactura win = new WindowFactura(_clienteActual);
-            win.Owner = Window.GetWindow(this);
+            // Abre ventana de creación de factura asociada al cliente
+            WindowFactura win = new(_clienteActual)
+            {
+                Owner = Window.GetWindow(this)
+            };
 
+            // Si se crea correctamente, se recargan datos
             if (win.ShowDialog() == true)
             {
                 CargarDatos();
             }
         }
-
     }
 }

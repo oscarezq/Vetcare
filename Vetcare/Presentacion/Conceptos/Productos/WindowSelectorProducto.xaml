@@ -4,7 +4,9 @@
         Title="Seleccionar Producto" Height="550" Width="800"
         WindowStartupLocation="CenterOwner" Background="#F4F6F7">
 
+    <!-- CONTENEDOR PRINCIPAL -->
     <Grid Margin="15">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -13,16 +15,20 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Margin="5,0,5,15" LastChildFill="False">
+
+            <!-- TÍTULO -->
             <TextBlock Text="BUSCADOR DE PRODUCTOS" 
                        FontSize="18" FontWeight="Bold" Foreground="#2C3E50" 
                        VerticalAlignment="Center" DockPanel.Dock="Left"/>
 
+            <!-- BOTÓN CREAR PRODUCTO -->
             <Button x:Name="btnNuevoProducto" 
                     Content="+ NUEVO PRODUCTO" 
-                    Click="btnNuevoProducto_Click" 
+                    Click="BtnNuevoProducto_Click" 
                     DockPanel.Dock="Right" 
                     Background="#1ABC9C" Foreground="White" FontWeight="Bold" 
                     Padding="20,5" BorderThickness="0" Cursor="Hand">
+
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -31,20 +37,41 @@
             </Button>
         </DockPanel>
 
+        <!-- PANEL DE BÚSQUEDA -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+
             <StackPanel>
-                <TextBlock Text="FILTRAR POR NOMBRE O DESCRIPCIÓN" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D"/>
-                <TextBox x:Name="txtBuscaProducto" Height="32" Margin="0,5,0,0" VerticalContentAlignment="Center" 
+                
+                <TextBlock Text="FILTRAR POR NOMBRE O DESCRIPCIÓN" 
+                           FontSize="10" FontWeight="Bold" Foreground="#7F8C8D"/>
+
+                <TextBox x:Name="txtBuscaProducto" Height="32" Margin="0,5,0,0" 
+                         VerticalContentAlignment="Center" 
                          Padding="10,0" BorderBrush="#D5DBDB"
-                         TextChanged="txtBuscaProducto_TextChanged"/>
+                         TextChanged="TxtBuscaProducto_TextChanged"/>
+
             </StackPanel>
         </Border>
 
+        <!-- TABLA DE PRODUCTOS -->
         <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="5">
-            <DataGrid x:Name="dgProductos" AutoGenerateColumns="False" IsReadOnly="True" 
-                      CanUserAddRows="False" GridLinesVisibility="None" HeadersVisibility="Column"
-                      MouseDoubleClick="dgProductos_MouseDoubleClick" SelectionMode="Single"
-                      Background="White" BorderThickness="0" FontSize="13" CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False">
+
+            <DataGrid x:Name="dgProductos" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True" 
+                      CanUserAddRows="False" 
+                      GridLinesVisibility="None" 
+                      HeadersVisibility="Column"
+                      MouseDoubleClick="DgProductos_MouseDoubleClick" 
+                      SelectionMode="Single"
+                      Background="White" 
+                      BorderThickness="0" 
+                      FontSize="13" 
+                      CanUserSortColumns="False" 
+                      CanUserResizeColumns="False" 
+                      CanUserReorderColumns="False">
+
+                <!-- ESTILO DE CABECERA -->
                 <DataGrid.Resources>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="White"/>
@@ -56,11 +83,18 @@
                     </Style>
                 </DataGrid.Resources>
 
+                <!-- COLUMNAS -->
                 <DataGrid.Columns>
+
+                    <!-- NOMBRE -->
                     <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="2*"/>
+
+                    <!-- DESCRIPCIÓN -->
                     <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion}" Width="2*"/>
 
+                    <!-- STOCK -->
                     <DataGridTextColumn Header="STOCK" Binding="{Binding Stock}" Width="80">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -68,9 +102,14 @@
                                 <Setter Property="FontWeight" Value="Bold"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
+
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="PRECIO" Binding="{Binding PrecioBase, StringFormat={}{0:N2} €}" Width="100">
+                    <!-- PRECIO -->
+                    <DataGridTextColumn Header="PRECIO" 
+                                        Binding="{Binding PrecioBase, StringFormat={}{0:N2} €}" 
+                                        Width="100">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#27AE60"/>
@@ -80,17 +119,30 @@
                                 <Setter Property="VerticalAlignment" Value="Center"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
+
                     </DataGridTextColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Cancelar" Click="btnCancelar_Click" Width="100" Height="35" Margin="0,0,10,0" 
-                    Background="#BDC3C7" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+        <!-- BOTONES INFERIORES -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" 
+                    HorizontalAlignment="Right" Margin="0,15,0,0">
 
-            <Button Content="Seleccionar" Click="btnSeleccionar_Click" Width="130" Height="35" 
-                    Background="#1ABC9C" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+            <!-- CANCELAR -->
+            <Button Content="Cancelar" Click="BtnCancelar_Click" 
+                    Width="100" Height="35" Margin="0,0,10,0" 
+                    Background="#BDC3C7" Foreground="White" 
+                    BorderThickness="0" Cursor="Hand"/>
+
+            <!-- SELECCIONAR -->
+            <Button Content="Seleccionar" Click="BtnSeleccionar_Click" 
+                    Width="130" Height="35" 
+                    Background="#1ABC9C" Foreground="White" 
+                    FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+
         </StackPanel>
+
     </Grid>
 </Window>

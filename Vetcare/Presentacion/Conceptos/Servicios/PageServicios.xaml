@@ -3,12 +3,12 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:util="clr-namespace:Vetcare.Entidades"
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="1100"
       Title="Gestión de Servicios">
 
     <Grid Margin="20">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -25,27 +25,37 @@
                             <Setter Property="Height" Value="28"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                         </Style>
+
                         <Style TargetType="TextBox" BasedOn="{StaticResource ControlBaseStyle}">
                             <Setter Property="Padding" Value="5,0"/>
                         </Style>
+
                         <Style TargetType="ComboBox" BasedOn="{StaticResource ControlBaseStyle}"/>
                     </UniformGrid.Resources>
 
+                    <!-- Filtro por nombre -->
                     <StackPanel Margin="5,2">
                         <TextBlock Text="Nombre del Servicio" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroServicio_Changed"/>
                     </StackPanel>
 
+                    <!-- Filtro precio mínimo -->
                     <StackPanel Margin="5,2">
-                        <TextBlock FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"><Run Text="Precio Mín"/><Run Language="es-es" Text="."/><Run Text=" (€)"/></TextBlock>
+                        <TextBlock FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3">
+                            <Run Text="Precio Mín"/><Run Language="es-es" Text="."/><Run Text=" (€)"/>
+                        </TextBlock>
                         <TextBox x:Name="txtPrecioMin" TextChanged="FiltroServicio_Changed"/>
                     </StackPanel>
 
+                    <!-- Filtro precio máximo -->
                     <StackPanel Margin="5,2">
-                        <TextBlock FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"><Run Text="Precio Máx"/><Run Language="es-es" Text="."/><Run Text=" (€)"/></TextBlock>
+                        <TextBlock FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3">
+                            <Run Text="Precio Máx"/><Run Language="es-es" Text="."/><Run Text=" (€)"/>
+                        </TextBlock>
                         <TextBox x:Name="txtPrecioMax" TextChanged="FiltroServicio_Changed"/>
                     </StackPanel>
 
+                    <!-- Filtro por estado -->
                     <StackPanel Margin="5,2">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <ComboBox x:Name="cbBuscaEstado" SelectionChanged="FiltroServicio_Changed">
@@ -54,58 +64,94 @@
                             <ComboBoxItem Content="Inactivo"/>
                         </ComboBox>
                     </StackPanel>
+
                 </UniformGrid>
 
                 <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
 
+                <!-- Ordenación -->
                 <StackPanel Orientation="Horizontal">
+
+                    <!-- Label de ordenación -->
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
+
+                    <!-- ComboBox de orden -->
                     <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroServicio_Changed">
                         <ComboBoxItem Content="Nombre" IsSelected="True"/>
                         <ComboBoxItem Content="Precio"/>
                     </ComboBox>
 
+                    <!-- Orden asc/desc -->
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
                         <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroServicio_Changed"/>
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroServicio_Changed"/>
                     </StackPanel>
 
+                    <!-- Botón limpiar filtros -->
                     <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="BtnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
+
                 </StackPanel>
+
             </StackPanel>
         </Border>
 
         <!-- SECCIÓN DE LISTADO -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
+
             <Grid>
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- HEADER CON TÍTULO Y BOTÓN NUEVO -->
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
+
                     <TextBlock Text="Catálogo de Servicios" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
-                    <!-- MODIFICADO: Eliminado el trigger que ocultaba el botón al Recepcionista -->
+                    <!-- Botón nuevo servicio -->
                     <Button DockPanel.Dock="Right" x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Click="BtnNuevoServicio_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
+
                         <Button.Resources>
+                            <!-- Bordes redondeados del botón -->
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
                             </Style>
                         </Button.Resources>
+
                     </Button>
+
                 </DockPanel>
 
-                <DataGrid x:Name="dgServicios" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" MouseDoubleClick="DgServicios_MouseDoubleClick"
-                          Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40" CanUserSortColumns="False" CanUserReorderColumns="False"
-                          SelectionMode="Single" SelectionUnit="FullRow" CanUserResizeColumns="False">
+                <!-- DATAGRID PRINCIPAL -->
+                <DataGrid x:Name="dgServicios"
+                          Grid.Row="1"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          HeadersVisibility="Column"
+                          MouseDoubleClick="DgServicios_MouseDoubleClick"
+                          Background="White"
+                          FontSize="14"
+                          RowHeight="50"
+                          ColumnHeaderHeight="40"
+                          CanUserSortColumns="False"
+                          CanUserReorderColumns="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          CanUserResizeColumns="False">
 
                     <DataGrid.Resources>
+
+                        <!-- Colores de selección personalizados -->
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
 
+                        <!-- Estilo de cabecera -->
                         <Style x:Key="HeaderStyleComun" TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
@@ -116,6 +162,7 @@
                             <Setter Property="BorderBrush" Value="#E67E22"/>
                         </Style>
 
+                        <!-- Estilo de celda -->
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="Template">
@@ -130,93 +177,148 @@
                         </Style>
 
                         <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}"/>
+
                     </DataGrid.Resources>
 
+                    <!-- Estilo de filas -->
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="Transparent"/>
                             <Setter Property="BorderBrush" Value="#EBEDEF"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
+
                             <Style.Triggers>
+
+                                <!-- Hover -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="#F4F6F7"/>
                                 </Trigger>
+
+                                <!-- Selección -->
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="#EBF5FB"/>
                                     <Setter Property="Foreground" Value="#2E86C1"/>
                                 </Trigger>
+
                             </Style.Triggers>
+
                         </Style>
                     </DataGrid.RowStyle>
 
+                    <!-- COLUMNAS -->
                     <DataGrid.Columns>
-                        <!-- ESTADO -->
+
+                        <!-- Estado activo/inactivo -->
                         <DataGridTemplateColumn Header="ESTADO" Width="100">
+
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTemplateColumn.HeaderStyle>
+
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+
                                     <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center">
                                         <TextBlock x:Name="txtEstado" FontSize="11" FontWeight="Bold" TextAlignment="Center"/>
                                     </Border>
+
+                                    <!-- Cambios visuales según estado -->
                                     <DataTemplate.Triggers>
+
+                                        <!-- Activo -->
                                         <DataTrigger Binding="{Binding Activo}" Value="True">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
                                             <Setter TargetName="txtEstado" Property="Text" Value="Activo"/>
                                         </DataTrigger>
+
+                                        <!-- Inactivo -->
                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#CB4335"/>
                                             <Setter TargetName="txtEstado" Property="Text" Value="Inactivo"/>
                                         </DataTrigger>
+
                                     </DataTemplate.Triggers>
+
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
+
                         </DataGridTemplateColumn>
 
+                        <!-- Nombre del servicio con link -->
                         <DataGridTemplateColumn Header="NOMBRE DEL SERVICIO" Width="*">
+
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+
                                     <TextBlock VerticalAlignment="Center">
+
+                                        <!-- Link para ver detalle -->
                                         <Hyperlink Click="BtnVerDetalle_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
                                             <Run Text="{Binding Nombre}" FontWeight="SemiBold"/>
                                         </Hyperlink>
+
                                     </TextBlock>
+
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
+
                         </DataGridTemplateColumn>
 
+                        <!-- Descripción -->
                         <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion}" Width="1.5*" />
+
+                        <!-- Precio sin IVA -->
                         <DataGridTextColumn Header="PRECIO SIN IVA" Binding="{Binding PrecioSinIva, StringFormat=\{0:N2\} €}" Width="150" />
+
+                        <!-- IVA -->
                         <DataGridTextColumn Header="IVA" Binding="{Binding IvaPorcentaje, StringFormat=\{0\}%}" Width="100" />
 
+                        <!-- Precio con IVA -->
                         <DataGridTemplateColumn Header="PRECIO CON IVA" Width="150">
+
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Precio, StringFormat=\{0:N2\} €}" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center"/>
+
+                                    <TextBlock Text="{Binding Precio, StringFormat=\{0:N2\} €}"
+                                               FontWeight="Bold"
+                                               Foreground="#2E86C1"
+                                               VerticalAlignment="Center"/>
+
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
+
                         </DataGridTemplateColumn>
 
-                        <!-- ACCIONES -->
+                        <!-- Acciones -->
                         <DataGridTemplateColumn Header="ACCIONES" Width="150">
+
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTemplateColumn.HeaderStyle>
+
                             <DataGridTemplateColumn.CellTemplate>
+
                                 <DataTemplate>
+
+                                    <!-- Botones de acciones -->
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <!-- BOTÓN DETALLE: Siempre visible -->
-                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
 
-                                        <!-- BOTÓN EDITAR: Modificado para acceso de Recepcionista -->
-                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="BtnEditarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
+                                        <!-- Ver detalle -->
+                                        <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click"
+                                                Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1"
+                                                Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
+
+                                        <!-- Editar -->
+                                        <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="BtnEditarServicio_Click"
+                                                Margin="2,0" Background="#EBF5FB" Foreground="#2E86C1"
+                                                Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
+
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -227,10 +329,14 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
+
                                         </Button>
 
-                                        <!-- BOTÓN ELIMINAR: Modificado para acceso de Recepcionista -->
-                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Eliminar" Click="BtnEliminarServicio_Click" Margin="2,0" Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
+                                        <!-- Eliminar -->
+                                        <Button x:Name="btnEliminar" Content="❌" ToolTip="Eliminar" Click="BtnEliminarServicio_Click"
+                                                Margin="2,0" Background="#FDEDEC" Foreground="#CB4335"
+                                                Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
+
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -241,10 +347,14 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
+
                                         </Button>
 
-                                        <!-- BOTÓN REACTIVAR: Modificado para acceso de Recepcionista -->
-                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="BtnReactivarServicio_Click" Margin="2,0" Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
+                                        <!-- Reactivar -->
+                                        <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="BtnReactivarServicio_Click"
+                                                Margin="2,0" Background="#EBF5FB" Foreground="#27AE60"
+                                                Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
+
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -255,14 +365,24 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
+
                                         </Button>
+
                                     </StackPanel>
+
                                 </DataTemplate>
+
                             </DataGridTemplateColumn.CellTemplate>
+
                         </DataGridTemplateColumn>
+
                     </DataGrid.Columns>
+
                 </DataGrid>
+
             </Grid>
+
         </Border>
+
     </Grid>
 </Page>

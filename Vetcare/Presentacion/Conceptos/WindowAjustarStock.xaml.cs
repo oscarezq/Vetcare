@@ -6,96 +6,146 @@ using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Conceptos
 {
+    /// <summary>
+    /// Lógica de interacción para WindowAjustarStock.xaml
+    /// </summary>
     public partial class WindowAjustarStock : Window
     {
-        private ConceptoService conceptoService = new ConceptoService();
-        private Concepto producto;
+        // Servicio de lógica de negocio para productos/servicios
+        private readonly ConceptoService conceptoService = new();
+
+        // Producto actualmente cargado en la ventana
+        private Concepto? producto;
+
+        // Cantidad que se suma o resta al stock original
         private int cantidadAjuste = 0;
 
+        /// <summary>
+        /// Constructor que recibe el ID del producto a modificar
+        /// </summary>
         public WindowAjustarStock(int idProducto)
         {
             InitializeComponent();
+
+            // Carga inicial del producto en pantalla
             CargarProducto(idProducto);
         }
 
+        /// <summary>
+        /// Carga el producto desde base de datos y lo muestra en la UI
+        /// </summary>
         private void CargarProducto(int id)
         {
             producto = conceptoService.ObtenerPorId(id);
+
             if (producto != null)
             {
+                // Nombre del producto
                 lblNombreProducto.Text = producto.Nombre;
+
+                // Stock actual (si es null, se considera 0)
                 txtStockActual.Text = (producto.Stock ?? 0).ToString();
+
+                // Calcula el nuevo stock inicial
                 ActualizarCalculo();
             }
         }
 
+        /// <summary>
+        /// Recalcula el stock nuevo en función del ajuste
+        /// </summary>
         private void ActualizarCalculo()
         {
             if (producto == null) return;
 
             int stockOriginal = producto.Stock ?? 0;
+
+            // Aplicamos el ajuste
             int nuevoStock = stockOriginal + cantidadAjuste;
 
-            // Evitar stock negativo (opcional, según tu negocio)
-            if (nuevoStock < 0) nuevoStock = 0;
+            // Evita valores negativos (regla de negocio básica)
+            if (nuevoStock < 0)
+                nuevoStock = 0;
 
             txtStockNuevo.Text = nuevoStock.ToString();
         }
 
-        private void btnSumar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Incrementa el ajuste de stock (+1)
+        /// </summary>
+        private void BtnSumar_Click(object sender, RoutedEventArgs e)
         {
             cantidadAjuste++;
             txtCantidad.Text = cantidadAjuste.ToString();
         }
 
-        private void btnRestar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Decrementa el ajuste de stock (-1)
+        /// </summary>
+        private void BtnRestar_Click(object sender, RoutedEventArgs e)
         {
             cantidadAjuste--;
             txtCantidad.Text = cantidadAjuste.ToString();
         }
 
-        private void txtCantidad_TextChanged(object sender, TextChangedEventArgs e)
+        /// <summary>
+        /// Detecta cambios manuales en el textbox de cantidad
+        /// </summary>
+        private void TxtCantidad_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Intenta convertir el texto en número
             if (int.TryParse(txtCantidad.Text, out int result))
             {
                 cantidadAjuste = result;
             }
+            // Permite estados intermedios como vacío o "-"
             else if (string.IsNullOrEmpty(txtCantidad.Text) || txtCantidad.Text == "-")
             {
                 cantidadAjuste = 0;
             }
 
+            // Recalcula el stock
             ActualizarCalculo();
         }
 
-        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Guarda el nuevo stock en la base de datos
+        /// </summary>
+        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if(producto != null)
             {
-                int nuevoStock = int.Parse(txtStockNuevo.Text);
-
-                // Actualizamos el objeto y enviamos a la base de datos
-                producto.Stock = nuevoStock;
-                bool exito = conceptoService.Actualizar(producto);
-
-                if (exito)
+                try
                 {
-                    this.DialogResult = true; // Esto cierra la ventana y avisa éxito
+                    // Convertimos el resultado final
+                    int nuevoStock = int.Parse(txtStockNuevo.Text);
+
+                    // Actualizamos el objeto
+                    producto.Stock = nuevoStock;
+
+                    // Persistimos cambios
+                    bool exito = conceptoService.Actualizar(producto);
+
+                    if (exito)
+                    {
+                        // Cierra ventana indicando éxito
+                        this.DialogResult = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo actualizar el stock en la base de datos.");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("No se pudo actualizar el stock en la base de datos.");
+                    MessageBox.Show("Error al guardar: " + ex.Message);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al guardar: " + ex.Message);
             }
         }
 
-        private void btnCancelar_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        /// <summary>
+        /// Cierra la ventana sin guardar cambios
+        /// </summary>
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
     }
 }

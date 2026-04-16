@@ -6,6 +6,7 @@
         Background="#F4F6F7" AllowsTransparency="False" WindowStyle="ThreeDBorderWindow"
         FontFamily="Segoe UI">
 
+    <!-- RECURSOS VISUALES DE LA VENTANA -->
     <Window.Resources>
         <Style x:Key="ColumnTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="16"/>
@@ -29,12 +30,15 @@
         <Style TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
+
             <Style.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#EBF5FB"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#2C3E50"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#EBF5FB"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#2C3E50"/>
             </Style.Resources>
+
+            <!-- Efectos hover y selección -->
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="#EBF5FB"/>
@@ -45,10 +49,12 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Estilo de celdas del DataGrid -->
         <Style TargetType="DataGridCell">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridCell}">
@@ -58,6 +64,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="Transparent"/>
@@ -78,9 +85,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
+    <!-- CONTENEDOR PRINCIPAL -->
     <Grid Margin="25">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -88,12 +98,15 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- TÍTULO PRINCIPAL -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
             <TextBlock Text="SELECCIONAR CONCEPTO / SERVICIO" FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
             <Rectangle Height="4" Fill="#E67E22" HorizontalAlignment="Left" Width="60" Margin="2,5,0,0"/>
         </StackPanel>
 
+        <!-- ZONA DE FILTROS -->
         <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -101,60 +114,125 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- BUSCADOR -->
                 <StackPanel Grid.Column="0" Margin="0,0,15,0">
                     <TextBlock Text="BUSCAR POR NOMBRE" FontSize="11" FontWeight="Bold" Foreground="#85929E" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtBusqueda" TextChanged="Filtro_Changed" Height="38" VerticalContentAlignment="Center" Padding="10,0" FontSize="15"/>
+                    <TextBox x:Name="txtBusqueda" TextChanged="Filtro_Changed"
+                             Height="38" VerticalContentAlignment="Center"
+                             Padding="10,0" FontSize="15"/>
                 </StackPanel>
 
+                <!-- FILTRO POR TIPO -->
                 <StackPanel Grid.Column="1" Margin="0,0,15,0">
                     <TextBlock Text="TIPO DE CONCEPTO" FontSize="11" FontWeight="Bold" Foreground="#85929E" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="cbTipoFiltro" Height="38" SelectionChanged="Filtro_Changed" VerticalContentAlignment="Center" FontSize="15">
+                    <ComboBox x:Name="cbTipoFiltro" Height="38"
+                              SelectionChanged="Filtro_Changed"
+                              VerticalContentAlignment="Center" FontSize="15">
                         <ComboBoxItem Content="Todos" IsSelected="True"/>
                         <ComboBoxItem Content="Producto"/>
                         <ComboBoxItem Content="Servicio"/>
                     </ComboBox>
                 </StackPanel>
 
+                <!-- BOTONES DE NUEVO -->
                 <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Orientation="Horizontal">
-                    <Button x:Name="btnNuevoProducto" Style="{StaticResource RoundedButtonStyle}" Click="btnNuevoProducto_Click" Content="+ Producto" Background="#27AE60" Foreground="White" Width="100" Height="38" Margin="0,0,8,0" Cursor="Hand" FontWeight="Bold"/>
-                    <Button x:Name="btnNuevoServicio" Style="{StaticResource RoundedButtonStyle}" Click="btnNuevoServicio_Click" Content="+ Servicio" Background="#27AE60" Foreground="White" Width="100" Height="38" Cursor="Hand" FontWeight="Bold"/>
+
+                    <Button x:Name="btnNuevoProducto"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Click="BtnNuevoProducto_Click"
+                            Content="+ Producto"
+                            Background="#27AE60"
+                            Foreground="White"
+                            Width="100"
+                            Height="38"
+                            Margin="0,0,8,0"
+                            Cursor="Hand"
+                            FontWeight="Bold"/>
+
+                    <Button x:Name="btnNuevoServicio"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Click="BtnNuevoServicio_Click"
+                            Content="+ Servicio"
+                            Background="#27AE60"
+                            Foreground="White"
+                            Width="100"
+                            Height="38"
+                            Cursor="Hand"
+                            FontWeight="Bold"/>
+
                 </StackPanel>
+
             </Grid>
         </Border>
 
+        <!-- LISTADO DE CONCEPTOS -->
         <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="#D5DBDB" BorderThickness="1" Padding="5">
-            <DataGrid x:Name="dgConceptos" AutoGenerateColumns="False" IsReadOnly="True" 
-                      SelectionMode="Single" MouseDoubleClick="dgConceptos_MouseDoubleClick"
-                      HeadersVisibility="Column" GridLinesVisibility="None" 
-                      Background="White" BorderThickness="0"
-                      RowHeight="50" ColumnHeaderStyle="{StaticResource HeaderStyle}"
-                      SelectionUnit="FullRow" Focusable="False" CanUserResizeColumns="False" CanUserReorderColumns="False">
+
+            <DataGrid x:Name="dgConceptos"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      MouseDoubleClick="DgConceptos_MouseDoubleClick"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="None"
+                      Background="White"
+                      BorderThickness="0"
+                      RowHeight="50"
+                      ColumnHeaderStyle="{StaticResource HeaderStyle}"
+                      SelectionUnit="FullRow"
+                      Focusable="False"
+                      CanUserResizeColumns="False"
+                      CanUserReorderColumns="False">
 
                 <DataGrid.Columns>
+
+                    <!-- TIPO (PRODUCTO / SERVICIO) -->
                     <DataGridTemplateColumn Header="TIPO" Width="130">
+
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border x:Name="brdTipo" CornerRadius="6" Padding="10,4" 
-                                        HorizontalAlignment="Center" VerticalAlignment="Center" 
+
+                                <Border x:Name="brdTipo"
+                                        CornerRadius="6"
+                                        Padding="10,4"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
                                         Background="#BDC3C7">
-                                    <TextBlock Text="{Binding Tipo}" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+
+                                    <TextBlock Text="{Binding Tipo}"
+                                               FontSize="13"
+                                               FontWeight="SemiBold"
+                                               Foreground="White"/>
                                 </Border>
+
+                                <!-- Colores según tipo -->
                                 <DataTemplate.Triggers>
+
                                     <DataTrigger Binding="{Binding Tipo}" Value="Producto">
                                         <Setter TargetName="brdTipo" Property="Background" Value="#3498DB"/>
                                     </DataTrigger>
+
                                     <DataTrigger Binding="{Binding Tipo}" Value="Servicio">
                                         <Setter TargetName="brdTipo" Property="Background" Value="#9B59B6"/>
                                     </DataTrigger>
+
                                 </DataTemplate.Triggers>
+
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
+
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="NOMBRE DEL CONCEPTO" Binding="{Binding Nombre}" Width="*" 
+                    <!-- NOMBRE -->
+                    <DataGridTextColumn Header="NOMBRE DEL CONCEPTO"
+                                        Binding="{Binding Nombre}"
+                                        Width="*"
                                         ElementStyle="{StaticResource ColumnTextStyle}"/>
 
-                    <DataGridTextColumn Header="IVA" Binding="{Binding IvaPorcentaje, StringFormat={}{0}%}" Width="80">
+                    <!-- IVA -->
+                    <DataGridTextColumn Header="IVA"
+                                        Binding="{Binding IvaPorcentaje, StringFormat={}{0}%}"
+                                        Width="80">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -162,7 +240,10 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="PRECIO" Binding="{Binding Precio, StringFormat={}{0:N2}€}" Width="140">
+                    <!-- PRECIO -->
+                    <DataGridTextColumn Header="PRECIO"
+                                        Binding="{Binding Precio, StringFormat={}{0:N2}€}"
+                                        Width="140">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -170,20 +251,43 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
+
         </Border>
 
+        <!-- BOTONES FINALES -->
         <Grid Grid.Row="3" Margin="0,20,0,0">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="15"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="CANCELAR" Style="{StaticResource RoundedButtonStyle}" Click="btnCancelar_Click" Height="45" Background="#BDC3C7" Foreground="Black" FontWeight="SemiBold" Cursor="Hand"/>
+            <Button Grid.Column="0"
+                    Content="CANCELAR"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Click="BtnCancelar_Click"
+                    Height="45"
+                    Background="#BDC3C7"
+                    Foreground="Black"
+                    FontWeight="SemiBold"
+                    Cursor="Hand"/>
 
-            <Button Grid.Column="2" x:Name="btnSeleccionar" Style="{StaticResource RoundedButtonStyle}" Content="SELECCIONAR Y AÑADIR A FACTURA" Click="btnSeleccionar_Click" Height="45" Background="#2E86C1" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+            <Button Grid.Column="2"
+                    x:Name="btnSeleccionar"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Content="SELECCIONAR CONCEPTO"
+                    Click="BtnSeleccionar_Click"
+                    Height="45"
+                    Background="#2E86C1"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    Cursor="Hand"/>
+
         </Grid>
+
     </Grid>
 </Window>

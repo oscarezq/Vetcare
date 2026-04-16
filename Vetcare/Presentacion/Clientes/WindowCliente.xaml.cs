@@ -21,6 +21,27 @@ namespace Vetcare.Presentacion.Clientes
         // Indica si la ventana está en modo edición
         private readonly bool esEdicion = false;
 
+        // EXPRESIONES REGULARES
+        // DNI: 8 números + 1 letra (ej: 12345678A)
+        [GeneratedRegex(@"^\d{8}[A-Z]$")]
+        private static partial Regex DniRegex();
+
+        // NIE: empieza por X/Y/Z + 7 números + 1 letra (ej: X1234567L)
+        [GeneratedRegex(@"^[XYZ]\d{7}[A-Z]$")]
+        private static partial Regex NieRegex();
+
+        // Teléfono: exactamente 9 dígitos
+        [GeneratedRegex(@"^\d{9}$")]
+        private static partial Regex TelefonoRegex();
+
+        // Email: [...]@[...].[...]
+        [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
+        private static partial Regex EmailRegex();
+
+        // Código Postal: 5 dígitos
+        [GeneratedRegex(@"^\d{5}$")]
+        private static partial Regex CodigoPostalRegex();
+
         /// <summary>
         /// Constructor: crear nuevo cliente
         /// </summary>
@@ -172,7 +193,7 @@ namespace Vetcare.Presentacion.Clientes
             switch (tipoDoc)
             {
                 case "DNI":
-                    if (!Regex.IsMatch(numeroDoc, @"^\d{8}[A-Z]$"))
+                    if (!DniRegex().IsMatch(numeroDoc))
                         return MostrarError("El DNI debe tener 8 números y 1 letra.");
 
                     if (!EsLetraDniValida(numeroDoc))
@@ -180,7 +201,7 @@ namespace Vetcare.Presentacion.Clientes
                     break;
 
                 case "NIE":
-                    if (!Regex.IsMatch(numeroDoc, @"^[XYZ]\d{7}[A-Z]$"))
+                    if (!NieRegex().IsMatch(numeroDoc))
                         return MostrarError("El NIE no tiene un formato válido.");
                     break;
             }
@@ -192,11 +213,10 @@ namespace Vetcare.Presentacion.Clientes
             if (string.IsNullOrWhiteSpace(txtApellidos.Text))
                 return MostrarError("Los apellidos son obligatorios.");
 
-            if (!Regex.IsMatch(txtTelefono.Text.Trim(), @"^\d{9}$"))
+            if (!TelefonoRegex().IsMatch(txtTelefono.Text.Trim()))
                 return MostrarError("El teléfono debe contener 9 dígitos.");
 
-            if (!Regex.IsMatch(txtEmail.Text.Trim(),
-                @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            if (!EmailRegex().IsMatch(txtEmail.Text.Trim()))
                 return MostrarError("El formato del email no es válido.");
 
             // DIRECCIÓN
@@ -209,7 +229,7 @@ namespace Vetcare.Presentacion.Clientes
             if (string.IsNullOrWhiteSpace(txtLocalidad.Text))
                 return MostrarError("La localidad es obligatoria.");
 
-            if (!Regex.IsMatch(txtCP.Text.Trim(), @"^\d{5}$"))
+            if (!CodigoPostalRegex().IsMatch(txtCP.Text.Trim()))
                 return MostrarError("El Código Postal debe tener 5 dígitos.");
 
             return true;

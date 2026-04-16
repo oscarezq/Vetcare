@@ -7,17 +7,18 @@
       d:DesignHeight="650" d:DesignWidth="1100"
       Title="Gestión de Facturas">
 
+    <!-- Contenedor principal -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- BLOQUE DE FILTROS -->
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
-                <!-- Cambia Columns de 4 a 5 para que quepa el nuevo campo -->
                 <UniformGrid Columns="4" Margin="0,0,0,15">
                     <UniformGrid.Resources>
                         <Style TargetType="TextBox">
@@ -27,28 +28,31 @@
                         </Style>
                     </UniformGrid.Resources>
 
-                    <!-- CAMPO 1: Cliente -->
+                    <!-- Filtro por cliente -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Cliente" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaCliente" TextChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
-                    <!-- CAMPO 2: Nº Factura -->
+                    <!-- Filtro por número de factura -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nº Factura" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaNumero" TextChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
+                    <!-- Filtro por fecha desde -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Fecha - Desde" FontSize="10" Foreground="#7F8C8D"/>
                         <DatePicker x:Name="dpDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
+                    <!-- Filtro por fecha hasta -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Fecha - Hasta" FontSize="10" Foreground="#7F8C8D"/>
                         <DatePicker x:Name="dpHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroFactura_Changed"/>
                     </StackPanel>
 
+                    <!-- Filtro por estado -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroFactura_Changed">
@@ -62,6 +66,7 @@
 
                 <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
 
+                <!-- Bloque de ordenación -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
 
@@ -81,6 +86,7 @@
             </StackPanel>
         </Border>
 
+        <!-- BLOQUE DE TABLA -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
@@ -88,6 +94,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Cabecera -->
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Historial de Facturación" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
@@ -101,27 +108,28 @@
                     </Button>
                 </DockPanel>
 
+                <!-- DATA GRID -->
                 <DataGrid x:Name="dgFacturas"
-          Grid.Row="1"
-          AutoGenerateColumns="False"
-          CanUserAddRows="False"
-          IsReadOnly="True"
-          MouseDoubleClick="DgFacturas_MouseDoubleClick"
-          GridLinesVisibility="None"
-          BorderThickness="0"
-          HeadersVisibility="Column"
-          CanUserSortColumns="False"
-          CanUserReorderColumns="False"
-          Background="White"
-          FontSize="14"
-          RowHeight="50"
-          ColumnHeaderHeight="40"
-          SelectionMode="Single"
-          SelectionUnit="FullRow"
-          HorizontalScrollBarVisibility="Auto" CanUserResizeColumns="False">
+                          Grid.Row="1"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          MouseDoubleClick="DgFacturas_MouseDoubleClick"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          HeadersVisibility="Column"
+                          CanUserSortColumns="False"
+                          CanUserReorderColumns="False"
+                          Background="White"
+                          FontSize="14"
+                          RowHeight="50"
+                          ColumnHeaderHeight="40"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          HorizontalScrollBarVisibility="Auto" CanUserResizeColumns="False">
 
+                    <!-- Recursos del DataGrid -->
                     <DataGrid.Resources>
-                        <!-- Selección limpia -->
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
@@ -188,6 +196,7 @@
                                 </Style>
                             </DataGridTemplateColumn.HeaderStyle>
 
+                            <!-- Colores según estado -->
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center">
@@ -195,16 +204,19 @@
                                     </Border>
 
                                     <DataTemplate.Triggers>
+                                        <!-- Pagada -->
                                         <DataTrigger Binding="{Binding Estado}" Value="Pagada">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#27AE60"/>
                                         </DataTrigger>
 
+                                        <!-- Pendiente -->
                                         <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#FEF9E7"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#F1C40F"/>
                                         </DataTrigger>
 
+                                        <!-- Anulada -->
                                         <DataTrigger Binding="{Binding Estado}" Value="Anulada">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#FDEDEC"/>
                                             <Setter TargetName="txtEstado" Property="Foreground" Value="#E74C3C"/>
@@ -243,7 +255,6 @@
                             FontWeight="Bold"/>
 
                         <!-- ACCIONES -->
-                        <!-- ACCIONES -->
                         <DataGridTemplateColumn Header="ACCIONES" Width="180">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
@@ -279,7 +290,7 @@
                                                 BorderBrush="#A3E4D7"
                                                 Cursor="Hand"/>
 
-                                        <!-- ANULAR: solo visible si está pendiente -->
+                                        <!-- ANULAR: solo visible si la cita está pendiente -->
                                         <Button Content="❌"
                                                 ToolTip="Anular Factura"
                                                 Click="BtnAnular_Click"

@@ -5,102 +5,107 @@ using Vetcare.Negocio;
 
 namespace Vetcare.Presentacion.Conceptos.Productos
 {
+    /// <summary>
+    /// Lógica de interacción para WindowDetalleProducto.xaml
+    /// </summary>
     public partial class WindowDetalleProducto : Window
     {
-        private ConceptoService conceptoService = new ConceptoService();
-        private Concepto productoActual;
-        private int _idProducto; // Guardamos el ID para refrescar después
+        // Servicio para acceder a datos del producto
+        private readonly ConceptoService conceptoService = new();
 
+        // Producto cargado actualmente en pantalla
+        private Concepto? productoActual;
+
+        // ID del producto que se quiere mostrar
+        private readonly int _idProducto;
+
+        /// <summary>
+        /// Constructor: recibe el ID del producto a mostrar
+        /// </summary>
         public WindowDetalleProducto(int idProducto)
         {
             InitializeComponent();
+
             _idProducto = idProducto;
+
+            // Carga inicial de datos
             CargarDetalles(_idProducto);
         }
 
+        /// <summary>
+        /// Carga los datos del producto desde la base de datos y los muestra en pantalla
+        /// </summary>
         private void CargarDetalles(int id)
         {
             try
             {
+                // Obtener producto desde la capa de negocio
                 productoActual = conceptoService.ObtenerPorId(id);
 
                 if (productoActual != null)
                 {
+                    // Rellenar campos básicos
                     txtNombre.Text = productoActual.Nombre;
+
+                    // Stock (si es null se muestra 0)
                     txtStock.Text = productoActual.Stock?.ToString() ?? "0";
+
+                    // IVA en formato entero
                     txtIva.Text = productoActual.IvaPorcentaje.ToString("N0");
+
+                    // Descripción con fallback si está vacía
                     txtDescripcion.Text = !string.IsNullOrWhiteSpace(productoActual.Descripcion)
                                             ? productoActual.Descripcion
                                             : "Sin descripción registrada.";
 
-                    if (productoActual.Activo == false)
-                    {
-                        btnAjustarStock.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        btnAjustarStock.Visibility = Visibility.Visible;
-
-                        // Mantener tu lógica visual de stock existente
-                        if (productoActual.Stock <= 5)
-                            txtStock.Foreground = System.Windows.Media.Brushes.Red;
-                        else
-                            txtStock.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#15803D");
-                    }
-
-                    // 1. El total es directamente el precio que viene de la BD (ya tiene IVA)
+                    // Precio total con IVA
                     txtTotal.Text = productoActual.Precio.ToString("N2") + " €";
 
-                    // 2. El precio mostrado en 'txtPrecio' será la Base Imponible (Precio sin IVA)
+                    // Cálculo del precio sin IVA
                     decimal factorIva = 1 + (productoActual.IvaPorcentaje / 100m);
                     decimal precioSinIva = productoActual.Precio / factorIva;
-                    txtPrecio.Text = precioSinIva.ToString("N2");
 
-                    // --- Lógica Visual de Stock ---
-                    if (productoActual.Stock <= 5)
-                    {
-                        txtStock.Foreground = System.Windows.Media.Brushes.Red;
-                    }
-                    else
-                    {
-                        txtStock.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#15803D");
-                    }
+                    txtPrecio.Text = precioSinIva.ToString("N2");
                 }
             }
             catch (Exception ex)
             {
+                // Error controlado de carga
                 MessageBox.Show("Error al cargar detalles: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void btnEditarStock_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para editar el stock del producto
+        /// </summary>
+        private void BtnEditarStock_Click(object sender, RoutedEventArgs e)
         {
             if (productoActual == null) return;
 
-            // 1. Abrimos la ventana de ajuste pasando el ID del producto actual
+            // Abrimos la ventana de ajuste de stock pasando el ID del producto actual
             var ventanaStock = new WindowAjustarStock(productoActual.IdConcepto);
 
-            // 2. Si se guardaron los cambios (DialogResult = true)
+            // Si el usuario confirma cambios
             if (ventanaStock.ShowDialog() == true)
             {
-                // 3. Refrescamos los datos volviendo a llamar a CargarDetalles
+                // Recargar datos después del cambio de stock
                 CargarDetalles(_idProducto);
 
                 MessageBox.Show(
-                    "El stock se ha actualizado correctamente en la base de datos.", // Mensaje
-                    "Inventario Actualizado",                                         // Título de la ventana
-                    MessageBoxButton.OK,                                             // Botón de Aceptar
-                    MessageBoxImage.Information                                      // Icono azul de información
+                    "El stock se ha actualizado correctamente en la base de datos.",
+                    "Inventario Actualizado",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
                 );
 
-                // Opcional: Avisar al usuario que la ventana principal también debe refrescarse
+                // Cierra la ventana indicando éxito
                 this.DialogResult = true;
             }
         }
 
-        private void btnCerrar_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        /// <summary>
+        /// Cierra la ventana de detalle
+        /// </summary>
+        private void BtnCerrar_Click(object sender, RoutedEventArgs e) => this.Close();
     }
 }

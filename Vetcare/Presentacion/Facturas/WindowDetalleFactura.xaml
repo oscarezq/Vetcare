@@ -4,6 +4,7 @@
         Title="Detalle de Factura" Height="750" Width="950"
         WindowStartupLocation="CenterScreen" Background="#F4F6F7">
 
+    <!-- Contenedor principal -->
     <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -12,41 +13,167 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- HEADER FACTURA -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
             <DockPanel>
-                <TextBlock x:Name="lblNumFactura" Text="FACTURA: #0000" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
-                <Border x:Name="brdEstado" CornerRadius="12" Padding="15,5" HorizontalAlignment="Right" Background="#27AE60" VerticalAlignment="Center">
-                    <TextBlock x:Name="txtEstado" Text="PAGADA" Foreground="White" FontSize="13" FontWeight="Bold"/>
-                </Border>
+                <TextBlock Text="{Binding NumeroFactura, StringFormat=FACTURA: #{0}}"
+               FontSize="24"
+               FontWeight="Bold"
+               Foreground="#2C3E50"/>
+
+                <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+
+                    <!-- BOTÓN IMPRIMIR -->
+                    <Button Content="🖨 Imprimir factura"
+                            Click="BtnImprimir_Click"
+                            Cursor="Hand"
+                            Margin="0,0,20,0"
+                            Padding="10,4"
+                            Background="#EBF5FB"
+                            Foreground="#2980B9"
+                            BorderThickness="0"/>
+
+                                <!-- ESTADO -->
+                                <Border x:Name="brdEstado"
+                            CornerRadius="12"
+                            Padding="15,5"
+                            VerticalAlignment="Center">
+
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="Gray"/>
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Estado}" Value="Pagada">
+                                        <Setter Property="Background" Value="#27AE60"/>
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
+                                        <Setter Property="Background" Value="#F39C12"/>
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding Estado}" Value="Anulada">
+                                        <Setter Property="Background" Value="#E74C3C"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <TextBlock Text="{Binding Estado}"
+                       Foreground="White"
+                       FontSize="13"
+                       FontWeight="Bold"/>
+                    </Border>
+
+                </StackPanel>
             </DockPanel>
+
             <Rectangle Height="4" Fill="#E67E22" HorizontalAlignment="Left" Width="60" Margin="2,5,0,0"/>
         </StackPanel>
 
+        <!-- DATOS DE FACTURA -->
         <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
-            <UniformGrid Columns="3">
-                <StackPanel>
+
+            <!-- Grid de información cliente/fecha/pago -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Cliente -->
+                <StackPanel Grid.Column="0">
                     <TextBlock Text="CLIENTE" FontSize="11" FontWeight="Bold" Foreground="#85929E"/>
-                    <TextBlock x:Name="txtCliente" Text="Nombre del Cliente" FontSize="16" Foreground="#2C3E50" Margin="0,5,0,0" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding NombreApellidosCliente}"
+                   FontSize="16"
+                   Foreground="#2C3E50"
+                   Margin="0,5,0,0"
+                   FontWeight="SemiBold"/>
                 </StackPanel>
-                <StackPanel>
+
+                <!-- Fecha -->
+                <StackPanel Grid.Column="1">
                     <TextBlock Text="FECHA DE EMISIÓN" FontSize="11" FontWeight="Bold" Foreground="#85929E"/>
-                    <TextBlock x:Name="txtFecha" Text="01/01/2026" FontSize="16" Foreground="#2C3E50" Margin="0,5,0,0" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding FechaEmision, StringFormat=dd/MM/yyyy}"
+                   FontSize="16"
+                   Foreground="#2C3E50"
+                   Margin="0,5,0,0"
+                   FontWeight="SemiBold"/>
                 </StackPanel>
-                <StackPanel>
+
+                <!-- Método de pago -->
+                <StackPanel Grid.Column="2">
                     <TextBlock Text="MÉTODO DE PAGO" FontSize="11" FontWeight="Bold" Foreground="#85929E"/>
-                    <TextBlock x:Name="txtMetodoPago" Text="Efectivo" FontSize="16" Foreground="#2C3E50" Margin="0,5,0,0" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding MetodoPago}"
+                   FontSize="16"
+                   Foreground="#2C3E50"
+                   Margin="0,5,0,0"
+                   FontWeight="SemiBold"/>
                 </StackPanel>
-            </UniformGrid>
+            </Grid>
         </Border>
 
+        <!-- TABLA DE DETALLES -->
         <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="#D5DBDB" BorderThickness="1" Padding="10">
-            <DataGrid x:Name="dgDetalles" AutoGenerateColumns="False" IsReadOnly="True"
+
+            <!-- DataGrid de líneas de factura -->
+            <DataGrid x:Name="dgDetalles" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow"
                       HeadersVisibility="Column" GridLinesVisibility="Horizontal" CanUserSortColumns="False"
                       HorizontalGridLinesBrush="#F2F4F4" Background="White" BorderThickness="0" 
                       RowHeight="60" FontSize="16" CanUserResizeColumns="False" CanUserReorderColumns="False">
 
+                <!-- Estilos del DataGrid -->
                 <DataGrid.Resources>
+                    <!-- ESTILO SELECCIÓN FILA -->
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="#2C3E50"/>
+
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#D6EAF8"/>
+                                <Setter Property="Foreground" Value="#2C3E50"/>
+                            </Trigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F2F4F4"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <!-- ESTILO CELDAS (ESTO ES LO QUE FALTABA) -->
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#2C3E50"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Padding" Value="10,0"/>
+
+                        <Style.Triggers>
+
+                            <!-- 👇 IMPORTANTE: selección primero (prioridad alta) -->
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected}" Value="True">
+                                <Setter Property="Background" Value="#EBF5FB"/>
+                                <Setter Property="Foreground" Value="#2C3E50"/>
+                            </DataTrigger>
+
+                            <!-- hover SOLO si NO está seleccionado -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+
+                                <Setter Property="Background" Value="#F4F6F7"/>
+                            </MultiDataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+
                     <Style TargetType="DataGridColumnHeader">
+
                         <Setter Property="Background" Value="#F8F9F9"/>
                         <Setter Property="Foreground" Value="#566573"/>
                         <Setter Property="FontWeight" Value="Bold"/>
@@ -66,11 +193,16 @@
                     </Style>
                 </DataGrid.Resources>
 
+                <!-- Columnas -->
                 <DataGrid.Columns>
+
+                    <!-- Concepto -->
                     <DataGridTextColumn Header="CONCEPTO / SERVICIO" Binding="{Binding NombreConcepto}" Width="*" 
                                         ElementStyle="{StaticResource ColumnTextStyle}"/>
 
+                    <!-- Cantidad -->
                     <DataGridTextColumn Header="CANTIDAD" Binding="{Binding Cantidad}" Width="110">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -78,7 +210,9 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
+                    <!-- IVA -->
                     <DataGridTextColumn Header="IVA (%)" Binding="{Binding IvaPorcentaje, StringFormat={}{0}%}" Width="100">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -86,7 +220,9 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
+                    <!-- Precio unitario -->
                     <DataGridTextColumn Header="PRECIO U." Binding="{Binding PrecioUnitario, StringFormat={}{0:N2}€}" Width="130">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -94,7 +230,9 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
+                    <!-- Subtotal -->
                     <DataGridTextColumn Header="SUBTOTAL" Binding="{Binding TotalLinea, StringFormat={}{0:N2}€}" Width="140">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource ColumnTextStyle}">
                                 <Setter Property="Foreground" Value="#2E86C1"/>
@@ -108,54 +246,43 @@
             </DataGrid>
         </Border>
 
+        <!-- FOOTER / TOTALES -->
         <Grid Grid.Row="3" Margin="0,15,0,0">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- Observaciones -->
             <StackPanel Grid.Column="0">
                 <TextBlock Text="OBSERVACIONES" FontSize="11" FontWeight="SemiBold" Foreground="#566573"/>
-                <TextBlock x:Name="txtObservaciones" Text="Sin observaciones." Margin="0,5,20,0" TextWrapping="Wrap" Foreground="#566573" FontSize="14" FontStyle="Italic"/>
+                <TextBlock Text="{Binding Observaciones}" TextWrapping="Wrap" Foreground="#566573" FontSize="14" FontStyle="Italic"/>
             </StackPanel>
 
+            <!-- Panel derecho -->
             <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
-                <Button x:Name="btnImprimir"
-            Click="btnImprimir_Click"
-            Cursor="Hand"
-            BorderThickness="0"
-            Padding="14,6"
-            FontWeight="SemiBold"
-            FontSize="13"
-            HorizontalAlignment="Right"
-            Margin="0,0,0,10">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="#EBF5FB"/>
-                            <Setter Property="Foreground" Value="#2980B9"/>
-                            <Setter Property="Content" Value="🖨 Imprimir Factura"/>
-                        </Style>
-                    </Button.Style>
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="20">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-                
+
+                <!-- Resumen económico -->
                 <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,10" BorderBrush="#D5DBDB" BorderThickness="1">
+
                     <StackPanel>
+
+                        <!-- Base imponible -->
                         <Grid Margin="0,0,0,8">
                             <TextBlock Text="Base Imponible:" Foreground="#566573" FontSize="14"/>
                             <TextBlock x:Name="lblBaseImponible" Text="0,00 €" HorizontalAlignment="Right" Foreground="#2C3E50" FontWeight="Bold" FontSize="15"/>
                         </Grid>
+
+                        <!-- IVA -->
                         <Grid Margin="0,0,0,8">
                             <TextBlock Text="IVA:" Foreground="#566573" FontSize="14"/>
                             <TextBlock x:Name="lblIva" Text="0,00 €" HorizontalAlignment="Right" Foreground="#2C3E50" FontWeight="Bold" FontSize="15"/>
                         </Grid>
+
                         <Separator Background="#EBEDEF" Margin="0,5"/>
+
+                        <!-- Total -->
                         <Grid Margin="0,10,0,0">
                             <TextBlock Text="TOTAL FACTURA:" Foreground="#2C3E50" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock x:Name="lblTotal" Text="0,00 €" Foreground="#E67E22" FontSize="26" FontWeight="Bold" HorizontalAlignment="Right"/>
@@ -163,38 +290,47 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Botón marcar pagada -->
                 <Button x:Name="btnMarcarPagada"
-        Click="btnMarcarPagada_Click"
-        Cursor="Hand"
-        BorderThickness="0"
-        Padding="14,6"
-        FontWeight="SemiBold"
-        FontSize="13"
-        HorizontalAlignment="Right">
+                        Click="BtnMarcarPagada_Click"
+                        Cursor="Hand"
+                        BorderThickness="0"
+                        Padding="14,6"
+                        FontWeight="SemiBold"
+                        FontSize="13"
+                        HorizontalAlignment="Right">
 
                     <Button.Style>
                         <Style TargetType="Button">
+
+                            <Setter Property="Visibility" Value="Visible"/>
                             <Setter Property="Background" Value="#E8F8F5"/>
                             <Setter Property="Foreground" Value="#16A085"/>
                             <Setter Property="Content" Value="✔ Marcar como pagada"/>
 
                             <Style.Triggers>
+
+                                <!-- Pagada -->
                                 <DataTrigger Binding="{Binding Estado}" Value="Pagada">
-                                    <Setter Property="Background" Value="#EAFAF1"/>
-                                    <Setter Property="Foreground" Value="#27AE60"/>
-                                    <Setter Property="Content" Value="✔ Factura pagada"/>
-                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
+
+                                <!-- Anulada -->
+                                <DataTrigger Binding="{Binding Estado}" Value="Anulada">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+
                             </Style.Triggers>
+
                         </Style>
                     </Button.Style>
 
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}"
-                    CornerRadius="20">
+                                    CornerRadius="20">
                                 <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"/>
+                                                  VerticalAlignment="Center"/>
                             </Border>
                         </ControlTemplate>
                     </Button.Template>

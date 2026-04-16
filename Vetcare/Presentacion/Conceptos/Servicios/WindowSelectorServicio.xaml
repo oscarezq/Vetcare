@@ -4,7 +4,9 @@
         Title="Seleccionar Servicio" Height="550" Width="750"
         WindowStartupLocation="CenterOwner" Background="#F4F6F7">
 
+    <!-- CONTENEDOR PRINCIPAL -->
     <Grid Margin="15">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -12,7 +14,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- CABECERA + BOTÓN NUEVO -->
         <DockPanel Grid.Row="0" Margin="5,0,5,15" LastChildFill="False">
+
+            <!-- TÍTULO -->
             <TextBlock Text="BUSCADOR DE SERVICIOS" 
                        FontSize="18" 
                        FontWeight="Bold" 
@@ -20,9 +25,10 @@
                        VerticalAlignment="Center"
                        DockPanel.Dock="Left"/>
 
+            <!-- BOTÓN NUEVO SERVICIO -->
             <Button x:Name="btnNuevoServicio" 
                     Content="+ NUEVO SERVICIO" 
-                    Click="btnNuevoServicio_Click" 
+                    Click="BtnNuevoServicio_Click" 
                     DockPanel.Dock="Right" 
                     Background="#1ABC9C" 
                     Foreground="White" 
@@ -31,29 +37,60 @@
                     BorderThickness="0" 
                     Cursor="Hand"
                     VerticalAlignment="Center">
+
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
                     </Style>
                 </Button.Resources>
+
             </Button>
+
         </DockPanel>
 
+        <!-- FILTRO DE BÚSQUEDA -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+
             <StackPanel>
-                <TextBlock Text="FILTRAR POR NOMBRE O DESCRIPCIÓN" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D"/>
-                <TextBox x:Name="txtBuscaServicio" Height="32" Margin="0,5,0,0" VerticalContentAlignment="Center" 
-                         Padding="10,0" BorderBrush="#D5DBDB"
-                         TextChanged="txtBuscaServicio_TextChanged"/>
+
+                <TextBlock Text="FILTRAR POR NOMBRE O DESCRIPCIÓN" 
+                           FontSize="10" 
+                           FontWeight="Bold" 
+                           Foreground="#7F8C8D"/>
+
+                <TextBox x:Name="txtBuscaServicio" 
+                         Height="32" 
+                         Margin="0,5,0,0" 
+                         VerticalContentAlignment="Center" 
+                         Padding="10,0" 
+                         BorderBrush="#D5DBDB"
+                         TextChanged="TxtBuscaServicio_TextChanged"/>
+
             </StackPanel>
+
         </Border>
 
+        <!-- LISTADO SERVICIOS -->
         <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="5">
-            <DataGrid x:Name="dgServicios" AutoGenerateColumns="False" IsReadOnly="True" 
-                      CanUserAddRows="False" GridLinesVisibility="None" HeadersVisibility="Column"
-                      MouseDoubleClick="dgServicios_MouseDoubleClick" SelectionMode="Single" CanUserResizeColumns="False"
-                      Background="White" BorderThickness="0" FontSize="13" CanUserSortColumns="False" CanUserReorderColumns="False">
+
+            <DataGrid x:Name="dgServicios" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True" 
+                      CanUserAddRows="False" 
+                      GridLinesVisibility="None" 
+                      HeadersVisibility="Column"
+                      MouseDoubleClick="DgServicios_MouseDoubleClick" 
+                      SelectionMode="Single" 
+                      CanUserResizeColumns="False"
+                      Background="White" 
+                      BorderThickness="0" 
+                      FontSize="13" 
+                      CanUserSortColumns="False" 
+                      CanUserReorderColumns="False">
+
+                <!-- ESTILOS CABECERA -->
                 <DataGrid.Resources>
+
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="White"/>
                         <Setter Property="Foreground" Value="#566573"/>
@@ -63,10 +100,17 @@
                         <Setter Property="BorderThickness" Value="0,0,0,2"/>
                         <Setter Property="BorderBrush" Value="#E67E22"/>
                     </Style>
+
                 </DataGrid.Resources>
 
+                <!-- COLUMNAS -->
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="NOMBRE DEL SERVICIO" Binding="{Binding Nombre}" Width="2*">
+
+                    <!-- NOMBRE SERVICIO -->
+                    <DataGridTextColumn Header="NOMBRE DEL SERVICIO" 
+                                        Binding="{Binding Nombre}" 
+                                        Width="2*">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontWeight" Value="SemiBold"/>
@@ -74,11 +118,19 @@
                                 <Setter Property="Margin" Value="10,0"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
+
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion}" Width="3*"/>
+                    <!-- DESCRIPCIÓN -->
+                    <DataGridTextColumn Header="DESCRIPCIÓN" 
+                                        Binding="{Binding Descripcion}" 
+                                        Width="3*"/>
 
-                    <DataGridTextColumn Header="PRECIO" Binding="{Binding PrecioBase, StringFormat={}{0:N2} €}" Width="1*">
+                    <!-- PRECIO -->
+                    <DataGridTextColumn Header="PRECIO" 
+                                        Binding="{Binding PrecioBase, StringFormat={}{0:N2} €}" 
+                                        Width="1*">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#27AE60"/>
@@ -88,17 +140,41 @@
                                 <Setter Property="VerticalAlignment" Value="Center"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
+
                     </DataGridTextColumn>
+
                 </DataGrid.Columns>
+
             </DataGrid>
+
         </Border>
 
+        <!-- BOTONES ACCIÓN -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Cancelar" Click="btnCancelar_Click" Width="100" Height="35" Margin="0,0,10,0" 
-                    Background="#BDC3C7" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
 
-            <Button Content="Seleccionar" Click="btnSeleccionar_Click" Width="130" Height="35" 
-                    Background="#E67E22" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+            <!-- CANCELAR -->
+            <Button Content="Cancelar" 
+                    Click="BtnCancelar_Click" 
+                    Width="100" Height="35" 
+                    Margin="0,0,10,0" 
+                    Background="#BDC3C7" 
+                    Foreground="White" 
+                    FontWeight="Bold" 
+                    BorderThickness="0" 
+                    Cursor="Hand"/>
+
+            <!-- SELECCIONAR -->
+            <Button Content="Seleccionar" 
+                    Click="BtnSeleccionar_Click" 
+                    Width="130" Height="35" 
+                    Background="#E67E22" 
+                    Foreground="White" 
+                    FontWeight="Bold" 
+                    BorderThickness="0" 
+                    Cursor="Hand"/>
+
         </StackPanel>
+
     </Grid>
+
 </Window>

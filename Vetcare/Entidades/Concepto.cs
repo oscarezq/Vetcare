@@ -33,6 +33,17 @@ namespace Vetcare.Entidades
         public decimal Precio { get; set; }
 
         /// <summary>
+        /// Precio (sin IVA) del concepto.
+        /// </summary>
+        public decimal PrecioSinIva
+        {
+            get
+            {
+                return Precio / (1 + (IvaPorcentaje / 100m));
+            }
+        }
+
+        /// <summary>
         /// Porcentaje de IVA que se aplica al concepto ('4', '10', '21').
         /// </summary>
         public decimal IvaPorcentaje { get; set; }

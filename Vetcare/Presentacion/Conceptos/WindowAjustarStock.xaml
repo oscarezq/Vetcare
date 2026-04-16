@@ -6,86 +6,164 @@
         ResizeMode="NoResize" ShowInTaskbar="False">
 
     <Grid Margin="25">
+
+        <!-- Definición de filas: cabecera, contenido y botones -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- CABECERA -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
             <TextBlock Text="AJUSTAR STOCK" FontSize="18" FontWeight="Bold" Foreground="#1E293B"/>
+
+            <!-- Nombre del producto seleccionado -->
             <TextBlock x:Name="lblNombreProducto" Text="Nombre del Producto" FontSize="14" Foreground="#64748B" Margin="0,2,0,0"/>
         </StackPanel>
 
+        <!-- CONTENEDOR PRINCIPAL -->
         <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="20" BorderBrush="#E2E8F0" BorderThickness="1">
+
             <StackPanel VerticalAlignment="Center">
 
+                <!-- BLOQUE DE STOCK ACTUAL Y NUEVO -->
                 <Grid Margin="0,0,0,20">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- STOCK ACTUAL -->
                     <StackPanel Grid.Column="0" HorizontalAlignment="Center">
                         <TextBlock Text="STOCK ACTUAL" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" HorizontalAlignment="Center"/>
                         <TextBlock x:Name="txtStockActual" Text="24" FontSize="28" FontWeight="Bold" Foreground="#475569"/>
                     </StackPanel>
 
+                    <!-- STOCK NUEVO -->
                     <StackPanel Grid.Column="1" HorizontalAlignment="Center">
                         <TextBlock Text="NUEVO STOCK" FontSize="11" FontWeight="Bold" Foreground="#0284C7" HorizontalAlignment="Center"/>
                         <TextBlock x:Name="txtStockNuevo" Text="24" FontSize="28" FontWeight="Bold" Foreground="#0284C7"/>
                     </StackPanel>
-                </Grid>
 
+                </Grid>
+                
                 <Separator Background="#F1F5F9" Margin="0,0,0,20"/>
 
-                <TextBlock Text="CANTIDAD A SUMAR / RESTAR" FontSize="11" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <!-- TEXTO INDICATIVO -->
+                <TextBlock Text="CANTIDAD A SUMAR / RESTAR"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Foreground="#64748B"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"/>
 
+                <!-- CONTROLES DE AJUSTE -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="btnRestar" Content="-" Width="45" Height="45" FontSize="20" FontWeight="Bold" 
-                            Background="#EF4444" Foreground="White" BorderThickness="0" Cursor="Hand" Click="btnRestar_Click">
+
+                    <!-- BOTÓN RESTAR -->
+                    <Button x:Name="btnRestar"
+                            Content="-"
+                            Width="45"
+                            Height="45"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Background="#EF4444"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnRestar_Click">
+
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="8"/>
                             </Style>
                         </Button.Resources>
+
                     </Button>
 
-                    <TextBox x:Name="txtCantidad" Text="0" Width="100" Height="45" Margin="15,0" 
-                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
-                             FontSize="20" FontWeight="Bold" BorderBrush="#CBD5E1" 
-                             TextChanged="txtCantidad_TextChanged"/>
+                    <!-- CANTIDAD -->
+                    <TextBox x:Name="txtCantidad"
+                             Text="0"
+                             Width="100"
+                             Height="45"
+                             Margin="15,0"
+                             VerticalContentAlignment="Center"
+                             HorizontalContentAlignment="Center"
+                             FontSize="20"
+                             FontWeight="Bold"
+                             BorderBrush="#CBD5E1"
+                             TextChanged="TxtCantidad_TextChanged"/>
 
-                    <Button x:Name="btnSumar" Content="+" Width="45" Height="45" FontSize="20" FontWeight="Bold" 
-                            Background="#22C55E" Foreground="White" BorderThickness="0" Cursor="Hand" Click="btnSumar_Click">
+                    <!-- BOTÓN SUMAR -->
+                    <Button x:Name="btnSumar"
+                            Content="+"
+                            Width="45"
+                            Height="45"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Background="#22C55E"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnSumar_Click">
+
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="8"/>
                             </Style>
                         </Button.Resources>
+
                     </Button>
+
                 </StackPanel>
+
             </StackPanel>
+
         </Border>
 
+        <!-- BOTONES FINALES -->
         <UniformGrid Grid.Row="2" Columns="2" Margin="0,20,0,0" Height="45">
-            <Button Content="CANCELAR" Background="#94A3B8" Foreground="White" FontWeight="Bold" 
-                    BorderThickness="0" Margin="0,0,5,0" Click="btnCancelar_Click" Cursor="Hand">
+
+            <!-- CANCELAR -->
+            <Button Content="CANCELAR"
+                    Background="#94A3B8"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderThickness="0"
+                    Margin="0,0,5,0"
+                    Click="BtnCancelar_Click"
+                    Cursor="Hand">
+
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="8"/>
                     </Style>
                 </Button.Resources>
+
             </Button>
 
-            <Button x:Name="btnGuardar" Content="GUARDAR CAMBIOS" Background="#0284C7" Foreground="White" 
-                    FontWeight="Bold" BorderThickness="0" Margin="5,0,0,0" Click="btnGuardar_Click" Cursor="Hand">
+            <!-- GUARDAR -->
+            <Button x:Name="btnGuardar"
+                    Content="GUARDAR CAMBIOS"
+                    Background="#0284C7"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderThickness="0"
+                    Margin="5,0,0,0"
+                    Click="BtnGuardar_Click"
+                    Cursor="Hand">
+                
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="8"/>
                     </Style>
                 </Button.Resources>
+
             </Button>
+
         </UniformGrid>
+
     </Grid>
 </Window>

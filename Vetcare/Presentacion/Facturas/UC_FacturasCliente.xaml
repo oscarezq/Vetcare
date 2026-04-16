@@ -20,7 +20,7 @@
             <Button x:Name="btnNuevaFactura" 
                     DockPanel.Dock="Right"
                     Content="+ Nueva Factura"
-                    Click="btnNuevaFactura_Click" 
+                    Click="BtnNuevaFactura_Click" 
                     Background="#27AE60" Foreground="White"
                     Width="160" Height="45" FontWeight="Bold" Cursor="Hand"/>
         </DockPanel>
@@ -165,7 +165,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Ver factura"
-                                    Click="btnVerFactura_Click"
+                                    Click="BtnVerFactura_Click"
                                     Background="#1ABC9C"
                                     Foreground="White"
                                     BorderThickness="0"

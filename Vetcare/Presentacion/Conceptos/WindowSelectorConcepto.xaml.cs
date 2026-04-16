@@ -9,23 +9,40 @@ using Vetcare.Presentacion.Servicios;
 
 namespace Vetcare.Presentacion.Facturas
 {
+    /// <summary>
+    /// Ventana de selección de conceptos (productos y servicios)
+    /// utilizada para añadir líneas a una factura.
+    /// </summary>
     public partial class WindowSelectorConcepto : Window
     {
-        public Concepto ConceptoSeleccionado { get; private set; }
-        private ConceptoService _conceptoService = new ConceptoService();
-        private List<Concepto> _listaOriginal = new List<Concepto>();
+        // Concepto seleccionado por el usuario (producto o servicio).
+        public Concepto? ConceptoSeleccionado;
 
+        // Servicio de acceso a datos de conceptos.
+        private readonly ConceptoService _conceptoService = new();
+
+        // Lista original completa sin filtrar.
+        private List<Concepto>? _listaOriginal = new();
+
+        /// <summary>
+        /// Constructor de la ventana.
+        /// </summary>
         public WindowSelectorConcepto()
         {
             InitializeComponent();
             CargarDatos();
         }
 
+        /// <summary>
+        /// Carga todos los conceptos desde la base de datos
+        /// y los muestra en el DataGrid.
+        /// </summary>
         private void CargarDatos()
         {
             try
             {
                 _listaOriginal = _conceptoService.ObtenerTodos();
+
                 dgConceptos.ItemsSource = _listaOriginal;
             }
             catch (Exception ex)
@@ -34,27 +51,46 @@ namespace Vetcare.Presentacion.Facturas
             }
         }
 
-        // Evento único para manejar ambos filtros (Texto y ComboBox)
+        // Evento único para manejar filtros (texto + tipo de concepto)
         private void Filtro_Changed(object sender, EventArgs e)
         {
             if (_listaOriginal == null || dgConceptos == null) return;
 
             string busqueda = txtBusqueda.Text.ToLower();
-            string tipoSeleccionado = (cbTipoFiltro.SelectedItem as ComboBoxItem)?.Content.ToString();
 
-            var filtrados = _listaOriginal.Where(c => {
-                bool coincideNombre = c.Nombre.ToLower().Contains(busqueda);
-                bool coincideTipo = tipoSeleccionado == "Todos" || c.Tipo.Equals(tipoSeleccionado, StringComparison.OrdinalIgnoreCase);
+            // Tipo seleccionado en el ComboBox (Todos / Producto / Servicio)
+            string tipoSeleccionado = (cbTipoFiltro.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Todos";
+
+            var filtrados = _listaOriginal.Where(c =>
+            {
+                // Coincidencia por nombre
+                bool coincideNombre = c.Nombre!.ToLower().Contains(busqueda);
+
+                // Coincidencia por tipo (o todos)
+                bool coincideTipo = tipoSeleccionado == "Todos" ||
+                                     c.Tipo!.Equals(tipoSeleccionado, StringComparison.OrdinalIgnoreCase);
+
                 return coincideNombre && coincideTipo;
             }).ToList();
 
             dgConceptos.ItemsSource = filtrados;
         }
 
-        private void btnSeleccionar_Click(object sender, RoutedEventArgs e) => SeleccionarYSalir();
+        /// <summary>
+        /// Botón seleccionar concepto.
+        /// </summary>
+        private void BtnSeleccionar_Click(object sender, RoutedEventArgs e)
+            => SeleccionarYSalir();
 
-        private void dgConceptos_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) => SeleccionarYSalir();
+        /// <summary>
+        /// Selección con doble click en el DataGrid.
+        /// </summary>
+        private void DgConceptos_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+            => SeleccionarYSalir();
 
+        /// <summary>
+        /// Valida la selección y cierra la ventana devolviendo el resultado.
+        /// </summary>
         private void SeleccionarYSalir()
         {
             if (dgConceptos.SelectedItem is Concepto seleccionado)
@@ -65,27 +101,48 @@ namespace Vetcare.Presentacion.Facturas
             }
             else
             {
-                MessageBox.Show("Por favor, seleccione un elemento de la lista.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Por favor, seleccione un elemento de la lista.",
+                                "Aviso",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
             }
         }
 
-        private void btnCancelar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Cierra la ventana sin selección.
+        /// </summary>
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
             this.Close();
         }
 
-        // Métodos para los botones de añadir (deberás llamar a tus ventanas de creación)
-        private void btnNuevoProducto_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana de creación de producto.
+        /// </summary>
+        private void BtnNuevoProducto_Click(object sender, RoutedEventArgs e)
         {
-            WindowProducto win = new WindowProducto();
-            if(win.ShowDialog() == true) CargarDatos();
+            WindowProducto win = new()
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            if (win.ShowDialog() == true)
+                CargarDatos();
         }
 
-        private void btnNuevoServicio_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana de creación de servicio.
+        /// </summary>
+        private void BtnNuevoServicio_Click(object sender, RoutedEventArgs e)
         {
-            WindowServicio win = new WindowServicio();
-            if(win.ShowDialog() == true) CargarDatos();
+            WindowServicio win = new()
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            if (win.ShowDialog() == true)
+                CargarDatos();
         }
     }
 }

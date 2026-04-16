@@ -6,6 +6,7 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- Recursos: estilos reutilizables -->
     <Window.Resources>
         <Style x:Key="DetailLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11"/>
@@ -26,41 +27,75 @@
         </Style>
     </Window.Resources>
 
+    <!-- Layout principal -->
     <Grid Margin="30">
+
+        <!-- Filas: cabecera, contenido, botones -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Cabecera -->
         <StackPanel Grid.Row="0" Margin="0,0,0,25">
             <TextBlock Text="DETALLES DEL PRODUCTO" FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
             <Rectangle Height="3" Fill="#27AE60" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
         </StackPanel>
 
+        <!-- Contenido con scroll -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Border Background="White" CornerRadius="12" Padding="25" BorderBrush="#E2E8F0" BorderThickness="1">
                 <StackPanel>
 
+                    <!-- Cabecera del producto: nombre + stock -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Nombre del producto -->
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="NOMBRE DEL PRODUCTO" Style="{StaticResource DetailLabel}"/>
                             <TextBlock x:Name="txtNombre" Text="Pienso Senior 10kg" Style="{StaticResource DetailValue}" FontSize="20" Foreground="#27AE60"/>
                         </StackPanel>
 
+                        <!-- Caja de stock -->
                         <Border Grid.Column="1" Background="#F0FDF4" CornerRadius="8" Padding="15,5" BorderBrush="#DCFCE7" BorderThickness="1" VerticalAlignment="Center">
                             <StackPanel HorizontalAlignment="Center">
                                 <TextBlock Text="STOCK DISPONIBLE" FontSize="10" FontWeight="Bold" Foreground="#166534" HorizontalAlignment="Center"/>
-                                <TextBlock x:Name="txtStock" Text="24" FontSize="18" FontWeight="Bold" Foreground="#15803D" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="txtStock"
+                                           Text="{Binding Stock}"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center">
+
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#15803D"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Stock}" Value="0">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Stock}" Value="1">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Stock}" Value="2">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Stock}" Value="3">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </StackPanel>
                         </Border>
                     </Grid>
 
+                    <!-- Descripción del producto -->
                     <StackPanel Style="{StaticResource InfoGroup}">
                         <TextBlock Text="DESCRIPCIÓN / ESPECIFICACIONES" Style="{StaticResource DetailLabel}"/>
                         <TextBlock x:Name="txtDescripcion" 
@@ -70,9 +105,13 @@
                                    Foreground="#475569"/>
                     </StackPanel>
 
+                    <!-- Separador visual -->
                     <Separator Margin="0,5,0,25" Background="#F1F5F9"/>
 
+                    <!-- Precios e IVA -->
                     <UniformGrid Columns="2" Margin="0,0,0,20">
+
+                        <!-- Precio sin IVA -->
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="PRECIO SIN IVA" Style="{StaticResource DetailLabel}"/>
                             <StackPanel Orientation="Horizontal">
@@ -81,6 +120,7 @@
                             </StackPanel>
                         </StackPanel>
 
+                        <!-- IVA -->
                         <StackPanel Margin="10,0,0,0">
                             <TextBlock Text="IVA" Style="{StaticResource DetailLabel}"/>
                             <StackPanel Orientation="Horizontal">
@@ -90,6 +130,7 @@
                         </StackPanel>
                     </UniformGrid>
 
+                    <!-- Precio total con IVA -->
                     <Border Background="#F0F9FF" Padding="15" CornerRadius="8" Margin="0,10,0,0" BorderBrush="#BAE6FD" BorderThickness="1">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="PRECIO CON IVA: " FontWeight="Bold" Foreground="#0369A1" VerticalAlignment="Center"/>
@@ -101,13 +142,26 @@
             </Border>
         </ScrollViewer>
 
+        <!-- Botones inferiores -->
         <Grid Grid.Row="2" Margin="0,20,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                <Button x:Name="btnAjustarStock" Click="btnEditarStock_Click"
+                <!-- Botón para ajustar el stock -->
+                <Button x:Name="btnAjustarStock" Click="BtnEditarStock_Click"
                         Height="40" Width="160" Margin="0,0,10,0"
                         Background="#0284C7" Foreground="White" FontWeight="Bold"
                         BorderThickness="0" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Activo}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="AJUSTAR STOCK" VerticalAlignment="Center"/>
@@ -120,10 +174,11 @@
                     </Button.Resources>
                 </Button>
 
+                <!-- Botón cerrar -->
                 <Button x:Name="btnCerrar" Content="Cerrar" 
                         Height="40" Width="100"
                         Background="#64748B" Foreground="White" FontWeight="Bold"
-                        BorderThickness="0" Cursor="Hand" Click="btnCerrar_Click">
+                        BorderThickness="0" Cursor="Hand" Click="BtnCerrar_Click">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="8"/>

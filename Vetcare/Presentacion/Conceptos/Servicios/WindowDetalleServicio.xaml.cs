@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
 
@@ -21,56 +10,78 @@ namespace Vetcare.Presentacion.Conceptos.Servicios
     /// </summary>
     public partial class WindowDetalleServicio : Window
     {
-        private ConceptoService conceptoService = new ConceptoService();
-        private Concepto servicioActual;
+        // Servicio que permite acceder a datos de conceptos (servicios)
+        private readonly ConceptoService conceptoService = new();
 
-        // Constructor que recibe el ID del servicio
+        // Objeto que guarda el servicio actualmente cargado
+        private Concepto? servicioActual;
+
+        // Constructor que recibe el ID del servicio a mostrar
         public WindowDetalleServicio(int idServicio)
         {
             InitializeComponent();
+
+            // Cargamos los datos del servicio al abrir la ventana
             CargarDetalles(idServicio);
         }
 
+        /// <summary>
+        /// Carga los detalles del servicio desde la base de datos
+        /// </summary>
         private void CargarDetalles(int id)
         {
             try
             {
+                // 1. Obtener el servicio por ID
                 servicioActual = conceptoService.ObtenerPorId(id);
 
                 if (servicioActual != null)
                 {
-                    // 1. Asignar nombre y descripción
+                    // 2. Asignar nombre y descripción
                     txtNombre.Text = servicioActual.Nombre;
                     txtDescripcion.Text = !string.IsNullOrWhiteSpace(servicioActual.Descripcion)
                                             ? servicioActual.Descripcion
                                             : "Sin descripción disponible.";
 
-                    // 2. Mostrar el IVA (solo el porcentaje)
+                    // 3. Mostrar IVA (solo porcentaje)
                     txtIva.Text = servicioActual.IvaPorcentaje.ToString();
 
-                    // 3. CALCULAR PRECIO SIN IVA (Base Imponible)
-                    // Como servicioActual.Precio ya trae el IVA, dividimos por (1 + IVA/100)
+                    // 4. Calcular precio sin IVA (base imponible)
                     decimal factorIva = 1 + (servicioActual.IvaPorcentaje / 100m);
                     decimal precioSinIva = servicioActual.Precio / factorIva;
 
-                    txtPrecio.Text = precioSinIva.ToString("N2"); // Ahora muestra el precio base
+                    txtPrecio.Text = precioSinIva.ToString("N2");
 
-                    // 4. MOSTRAR TOTAL (Ya tiene el IVA incluido)
+                    // 5. Mostrar precio final (ya incluye IVA)
                     txtTotal.Text = servicioActual.Precio.ToString("N2") + " €";
                 }
                 else
                 {
-                    MessageBox.Show("No se ha podido encontrar la información del servicio.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // Si no se encuentra el servicio, se muestra error y se cierra ventana
+                    MessageBox.Show(
+                        "No se ha podido encontrar la información del servicio.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+
                     this.Close();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar detalles: " + ex.Message, "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Error crítico al cargar datos
+                MessageBox.Show(
+                    "Error al cargar detalles: " + ex.Message,
+                    "Error Crítico",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        private void btnCerrar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Cierra la ventana de detalle
+        /// </summary>
+        private void BtnCerrar_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

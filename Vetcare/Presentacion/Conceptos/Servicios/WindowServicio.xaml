@@ -6,7 +6,9 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI" Icon="/Resources/icono.png">
 
+    <!-- Recursos reutilizables -->
     <Window.Resources>
+
         <Style x:Key="FieldLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -22,6 +24,8 @@
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="14"/>
+
+            <!-- Plantilla personalizada del TextBox -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -29,8 +33,12 @@
                                 BorderBrush="{TemplateBinding BorderBrush}" 
                                 BorderThickness="{TemplateBinding BorderThickness}" 
                                 CornerRadius="8">
+
+                            <!-- Contenedor del contenido -->
                             <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
+
+                        <!-- Trigger cuando el campo está enfocado -->
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="#E67E22"/>
@@ -42,65 +50,58 @@
             </Setter>
         </Style>
 
-        <Style x:Key="IvaButtonStyle" TargetType="RepeatButton">
-            <Setter Property="Background" Value="#F1F5F9"/>
-            <Setter Property="BorderBrush" Value="#E2E8F0"/>
-            <Setter Property="Foreground" Value="#64748B"/>
-            <Setter Property="Width" Value="28"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RepeatButton">
-                        <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#E2E8F0"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Window.Resources>
 
+    <!-- Layout principal -->
     <Grid Margin="30">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- CONTENIDO PRINCIPAL -->
         <StackPanel Grid.Row="0">
+
+            <!-- Cabecera -->
             <StackPanel Margin="0,0,0,30">
                 <TextBlock x:Name="lblTitulo" Text="NUEVO SERVICIO" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
                 <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
             </StackPanel>
 
+            <!-- Contenedor del formulario -->
             <Border Background="White" CornerRadius="12" Padding="20" BorderBrush="#E2E8F0" BorderThickness="1">
                 <StackPanel>
+
+                    <!-- Campo nombre -->
                     <StackPanel Margin="0,0,0,20">
                         <TextBlock Text="NOMBRE DEL SERVICIO" Style="{StaticResource FieldLabel}"/>
                         <TextBox x:Name="txtNombre" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
 
+                    <!-- Precio + IVA -->
                     <UniformGrid Columns="2" Margin="0,0,0,20">
+
+                        <!-- Precio -->
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="PRECIO TOTAL (€)" Style="{StaticResource FieldLabel}"/>
                             <TextBox x:Name="txtPrecio" Style="{StaticResource ModernInput}" 
-                                     PreviewTextInput="txtPrecio_PreviewTextInput"/>
+                                     PreviewTextInput="TxtPrecio_PreviewTextInput"/>
                         </StackPanel>
 
+                        <!-- IVA -->
                         <StackPanel Margin="10,0,0,0">
                             <TextBlock Text="IVA (%)" Style="{StaticResource FieldLabel}"/>
                             <ComboBox x:Name="cmbIva" Height="38" VerticalContentAlignment="Center" 
                                 Padding="12,0" Background="White" BorderBrush="#E2E8F0">
+
                                 <ComboBox.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="8"/>
                                     </Style>
                                 </ComboBox.Resources>
+
+                                <!-- Opciones de IVA -->
                                 <ComboBoxItem Content="21" IsSelected="True"/>
                                 <ComboBoxItem Content="10"/>
                                 <ComboBoxItem Content="4"/>
@@ -108,24 +109,32 @@
                         </StackPanel>
                     </UniformGrid>
 
+                    <!-- Descripción -->
                     <StackPanel>
                         <TextBlock Text="DESCRIPCIÓN / OBSERVACIONES" Style="{StaticResource FieldLabel}"/>
                         <TextBox x:Name="txtDescripcion" Style="{StaticResource ModernInput}" 
                                  Height="100" TextWrapping="Wrap" AcceptsReturn="True" 
                                  Padding="12,10" VerticalContentAlignment="Top"/>
                     </StackPanel>
+
                 </StackPanel>
             </Border>
         </StackPanel>
 
+        <!-- BOTONES -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+
+            <!-- Botón cancelar -->
             <Button x:Name="btnCancelar" Content="Cancelar" Width="100" Height="42"
-                    Click="btnCancelar_Click" Cursor="Hand" Background="Transparent" 
+                    Click="BtnCancelar_Click" Cursor="Hand" Background="Transparent" 
                     Foreground="#64748B" FontWeight="SemiBold" BorderThickness="0"/>
 
+            <!-- Botón guardar -->
             <Button x:Name="btnGuardar" Content="Guardar Servicio" Width="160" Height="42"
                     Background="#E67E22" Foreground="White" FontWeight="Bold" IsDefault="True"
-                    Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+                    Click="BtnGuardar_Click" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+
+                <!-- Plantilla personalizada -->
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10">
@@ -133,7 +142,9 @@
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
+
             </Button>
         </StackPanel>
+
     </Grid>
 </Window>

@@ -6,7 +6,10 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- Recursos: estilos reutilizables -->
     <Window.Resources>
+
+        <!-- Estilo para etiquetas (TextBlock) -->
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -14,13 +17,16 @@
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
 
+        <!-- Estilo para filas del DataGrid -->
         <Style x:Key="ModernRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Style.Triggers>
+                <!-- Color al pasar el ratón -->
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#F1F5F9"/>
                 </Trigger>
+                <!-- Estilo cuando la fila está seleccionada -->
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="#E0E7FF"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
@@ -30,6 +36,7 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Estilo tipo tarjeta (card) -->
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
             <Setter Property="CornerRadius" Value="12"/>
@@ -38,11 +45,13 @@
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
 
+        <!-- Estilo para celdas del DataGrid -->
         <Style x:Key="ModernCellStyle" TargetType="DataGridCell">
             <Setter Property="Foreground" Value="#2C3E50"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridCell">
+                        <!-- Contenedor de la celda -->
                         <Border Padding="15,8" Background="Transparent" BorderThickness="0">
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
@@ -50,12 +59,14 @@
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
+                <!-- Color del texto cuando la celda está seleccionada -->
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Foreground" Value="#2C3E50"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
+        <!-- Estilo general del DataGrid -->
         <Style x:Key="ModernDataGrid" TargetType="DataGrid">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -66,9 +77,13 @@
             <Setter Property="Foreground" Value="#2C3E50"/>
             <Setter Property="CellStyle" Value="{StaticResource ModernCellStyle}"/>
         </Style>
+
     </Window.Resources>
 
+    <!-- Layout principal -->
     <Grid Margin="30">
+
+        <!-- Filas: título, filtro, tabla, botones -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -76,18 +91,21 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Cabecera: título + botón nuevo cliente -->
         <DockPanel Grid.Row="0" Margin="0,0,0,30" LastChildFill="False">
             <StackPanel DockPanel.Dock="Left">
                 <TextBlock Text="Buscador de Clientes" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
             </StackPanel>
 
+            <!-- Botón para crear nuevo cliente -->
             <Button DockPanel.Dock="Right" 
                     Content="+ NUEVO CLIENTE" 
-                    Click="btnNuevoCliente_Click" 
+                    Click="BtnNuevoCliente_Click" 
                     Background="#1ABC9C" Foreground="White" 
                     Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
+                        <!-- Diseño visual del botón -->
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -96,9 +114,12 @@
             </Button>
         </DockPanel>
 
+        <!-- Filtro de búsqueda -->
         <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,20">
             <StackPanel>
                 <TextBlock Text="FILTRAR POR NOMBRE, APELLIDO O DNI" Style="{StaticResource LabelStyle}"/>
+
+                <!-- Caja de texto para buscar clientes -->
                 <TextBox x:Name="txtBuscaCliente" 
                          Height="40" 
                          FontSize="16"
@@ -107,8 +128,9 @@
                          Background="#F1F5F9"
                          BorderThickness="1"
                          BorderBrush="#CBD5E1"
-                         TextChanged="txtBuscaCliente_TextChanged">
+                         TextChanged="TxtBuscaCliente_TextChanged">
                     <TextBox.Resources>
+                        <!-- Bordes redondeados -->
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="6"/>
                         </Style>
@@ -117,6 +139,7 @@
             </StackPanel>
         </Border>
 
+        <!-- Tabla de clientes -->
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="10">
             <DataGrid x:Name="dgClientes" 
                       Style="{StaticResource ModernDataGrid}"
@@ -128,9 +151,11 @@
                       CanUserResizeColumns="False"
                       CanUserSortColumns="False"
                       SelectionMode="Single"
-                      MouseDoubleClick="dgClientes_MouseDoubleClick"
+                      MouseDoubleClick="DgClientes_MouseDoubleClick"
                       HorizontalScrollBarVisibility="Disabled"      
                       ColumnWidth="*">
+
+                <!-- Estilo de cabecera de columnas -->
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="Transparent"/>
@@ -142,6 +167,8 @@
                         <Setter Property="BorderBrush" Value="#E2E8F0"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
+
+                <!-- Columnas del DataGrid -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="DOCUMENTO" Binding="{Binding NumDocumento}" Width="150"/>
                     <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="*"/>
@@ -150,9 +177,12 @@
             </DataGrid>
         </Border>
 
+        <!-- Botones inferiores -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
+
+            <!-- Botón cancelar -->
             <Button Content="Cancelar" 
-                    Click="btnCancelar_Click" 
+                    Click="BtnCancelar_Click" 
                     Width="120" Height="45" 
                     Background="Transparent" 
                     Foreground="#64748B" 
@@ -160,13 +190,15 @@
                     BorderThickness="0"
                     Margin="0,0,15,0"/>
 
+            <!-- Botón seleccionar cliente -->
             <Button Content="Seleccionar" 
-                    Click="btnSeleccionar_Click" 
+                    Click="BtnSeleccionar_Click" 
                     Width="200" Height="45" 
                     Background="#E67E22" Foreground="White" 
                     FontWeight="Bold" Cursor="Hand" BorderThickness="0">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
+                        <!-- Diseño visual del botón -->
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
