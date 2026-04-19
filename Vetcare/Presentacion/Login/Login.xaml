@@ -7,36 +7,47 @@
         TextOptions.TextFormattingMode="Display"
         UseLayoutRounding="True" Icon="/Resources/icono.ico">
 
+    <!-- Contenedor principal de la ventana -->
     <Grid>
+
+        <!-- Tarjeta central del formulario de login -->
         <Border Background="White" VerticalAlignment="Center" HorizontalAlignment="Center" 
                 Padding="30" CornerRadius="10" Width="320">
+
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Direction="0" RenderingBias="Quality" ShadowDepth="1" Opacity="0.2"/>
             </Border.Effect>
 
+            <!-- Contenedor vertical de los elementos del login -->
             <StackPanel>
                 <Image Height="100" Source="/Resources/icono.png"/>
 
                 <TextBlock Text="¡BIENVENIDO!" FontSize="26" FontWeight="Bold" 
                            HorizontalAlignment="Center" Foreground="#2C3E50" Margin="0,20,0,30"/>
 
+                <!-- Campo de entrada para el usuario -->
                 <TextBlock Text="Usuario" FontWeight="SemiBold" Foreground="#34495E" Margin="0,0,0,5"/>
                 <TextBox x:Name="txtUsuario" Height="35" VerticalContentAlignment="Center" 
                          Padding="5,0" Margin="0,0,0,15"/>
 
+                <!-- Campo de entrada para la contraseña -->
                 <TextBlock Text="Contraseña" FontWeight="SemiBold" Foreground="#34495E" Margin="0,0,0,5"/>
                 <PasswordBox x:Name="txtPassword" Height="35" VerticalContentAlignment="Center" 
                              Padding="5,0" Margin="0,0,0,25"/>
 
+                <!-- Botón de inicio de sesión -->
                 <Button x:Name="btnEntrar" Content="INICIAR SESIÓN" Height="40" 
                         Background="#27AE60" Foreground="White" FontWeight="Bold" 
                         Cursor="Hand" Click="BtnEntrar_Click" IsDefault="True">
+
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="5"/>
                         </Style>
                     </Button.Resources>
+
                 </Button>
+
             </StackPanel>
         </Border>
     </Grid>

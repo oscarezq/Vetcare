@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 using Vetcare.Presentacion.Veterinarios;
 
 namespace Vetcare.Presentacion.Citas

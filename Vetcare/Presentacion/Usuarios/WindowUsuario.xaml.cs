@@ -4,55 +4,99 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 using Vetcare.Utilidades;
 
 namespace Vetcare.Presentacion.Usuarios
 {
+    /// <summary>
+    /// Ventana para crear o editar usuarios del sistema
+    /// </summary>
     public partial class WindowUsuario : Window
     {
-        private Usuario _usuario;
-        private UsuarioService _usuarioService = new UsuarioService();
-        private RolService _rolService = new RolService();
-        private VeterinarioService _veteService = new VeterinarioService();
+        // Objeto usuario que se está creando o editando
+        private readonly Usuario _usuario;
 
-        private bool _esEdicion = false;
+        // Servicios de acceso a lógica de negocio
+        private readonly UsuarioService _usuarioService = new();
+        private readonly RolService _rolService = new();
+        private readonly VeterinarioService _veteService = new();
 
+        // Indica si estamos en modo edición o creación
+        private readonly bool _esEdicion;
+
+        // Valida email
+        [System.Text.RegularExpressions.GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
+        private static partial System.Text.RegularExpressions.Regex EmailRegex();
+
+        // Valida teléfono (9 dígitos)
+        [System.Text.RegularExpressions.GeneratedRegex(@"^[0-9]{9}$")]
+        private static partial System.Text.RegularExpressions.Regex TelefonoRegex();
+
+        // Valida colegiado (9 dígitos)
+        [System.Text.RegularExpressions.GeneratedRegex(@"^[0-9]{9}$")]
+        private static partial System.Text.RegularExpressions.Regex ColegiadoRegex();
+
+        /// <summary>
+        /// Constructor para crear un nuevo usuario
+        /// </summary>
         public WindowUsuario()
         {
             InitializeComponent();
-            _usuario = new Usuario();
+
+            // Inicializamos un usuario vacío
+            _usuario = new();
+
+            // Indicamos que es creación
             _esEdicion = false;
+
+            // Cargamos los roles disponibles
             CargarRoles();
+
+            // Cambiamos el título
             lblTitulo.Text = "NUEVO USUARIO";
         }
 
+        /// <summary>
+        /// Constructor para editar un usuario existente
+        /// </summary>
         public WindowUsuario(Usuario usuarioExistente)
         {
             InitializeComponent();
+
+            // Asignamos el usuario recibido
             _usuario = usuarioExistente;
+
+            // Activamos modo edición
             _esEdicion = true;
 
+            // Cargamos roles
             CargarRoles();
 
-            // IMPORTANTE: Primero configuramos la UI de edición
+            // Deshabilitamos campos que no se deben modificar
             cbRol.IsEnabled = false;
             txtUsername.IsEnabled = false;
+
+            // Ocultamos el panel de contraseña
             panelPassword.Visibility = Visibility.Collapsed;
 
-            // Luego cargamos los datos
+            // Cargamos los datos del usuario en la UI
             CargarDatosEdicion();
 
+            // Cambiamos el título
             lblTitulo.Text = "EDITAR USUARIO";
         }
 
+        /// <summary>
+        /// Carga los roles desde la base de datos
+        /// </summary>
         private void CargarRoles()
         {
             try
             {
                 var roles = _rolService.ListarRoles();
 
-                // Solo filtramos si NO es edición
+                // Si es creación, ocultamos el rol Administrador
                 if (!_esEdicion)
                 {
                     roles = roles
@@ -60,6 +104,7 @@ namespace Vetcare.Presentacion.Usuarios
                         .ToList();
                 }
 
+                // Asignamos los roles al ComboBox
                 cbRol.ItemsSource = roles;
             }
             catch (Exception ex)
@@ -69,9 +114,12 @@ namespace Vetcare.Presentacion.Usuarios
             }
         }
 
+        /// <summary>
+        /// Carga los datos del usuario en modo edición
+        /// </summary>
         private void CargarDatosEdicion()
         {
-            // Rellenamos datos básicos
+            // Datos básicos
             txtUsername.Text = _usuario.Username;
             txtNombre.Text = _usuario.Nombre;
             txtApellidos.Text = _usuario.Apellidos;
@@ -79,14 +127,13 @@ namespace Vetcare.Presentacion.Usuarios
             txtTelefono.Text = _usuario.Telefono;
             cbRol.SelectedValue = _usuario.IdRol;
 
-            // Lógica para Veterinario
+            // Si el usuario es veterinario
             if (EsRolVeterinario())
             {
-                // 1. Forzamos que el panel sea visible
+                // Mostramos el panel profesional
                 borderVeterinario.Visibility = Visibility.Visible;
 
-                // 2. Intentamos traer los datos de la base de datos
-                // Asegúrate de que _usuario.IdUsuario tenga el valor correcto de la DB
+                // Obtenemos datos profesionales
                 var datosPro = _veteService.ObtenerPorIdUsuario(_usuario.IdUsuario);
 
                 if (datosPro != null)
@@ -96,33 +143,38 @@ namespace Vetcare.Presentacion.Usuarios
                 }
                 else
                 {
-                    // Si el servicio devuelve null, limpiamos por seguridad
+                    // Limpiamos campos si no hay datos
                     txtEspecialidad.Text = string.Empty;
                     txtColegiado.Text = string.Empty;
                 }
             }
             else
             {
-                // Si no es veterinario, nos aseguramos de que esté oculto y vacío
+                // Ocultamos panel si no es veterinario
                 borderVeterinario.Visibility = Visibility.Collapsed;
                 txtEspecialidad.Text = string.Empty;
                 txtColegiado.Text = string.Empty;
             }
         }
 
-        private void cbRol_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Mostramos u ocultamos los campos de veterinario según la selección
+        /// <summary>
+        /// Evento al cambiar el rol seleccionado
+        /// </summary>
+        private void CbRol_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+            // Mostramos u ocultamos la sección de veterinario
             borderVeterinario.Visibility = EsRolVeterinario() ? Visibility.Visible : Visibility.Collapsed;
-        }
 
-        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Evento al pulsar el botón Guardar
+        /// </summary>
+        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
+            // Validamos campos antes de continuar
             if (!ValidarCampos()) return;
 
             try
             {
-                // 1. Mapear datos del usuario
+                // Mapear datos del formulario al objeto usuario
                 _usuario.Username = txtUsername.Text.Trim();
                 _usuario.Nombre = txtNombre.Text.Trim();
                 _usuario.Apellidos = txtApellidos.Text.Trim();
@@ -130,7 +182,7 @@ namespace Vetcare.Presentacion.Usuarios
                 _usuario.Telefono = txtTelefono.Text.Trim();
                 _usuario.IdRol = (int)cbRol.SelectedValue;
 
-                // Gestión de Seguridad
+                // Gestión de contraseña
                 if (!_esEdicion || !string.IsNullOrWhiteSpace(txtPassword.Password))
                 {
                     string nuevoSalt = Seguridad.GenerarSalt();
@@ -142,29 +194,28 @@ namespace Vetcare.Presentacion.Usuarios
 
                 if (!_esEdicion)
                 {
-                    // --- MODO CREACIÓN ---
+                    // Insertar el usuario en bbdd
                     int nuevoId = _usuarioService.Insertar(_usuario);
+
                     if (nuevoId > 0)
                     {
                         operacionExitosa = true;
-                        // Si es veterinario, creamos su registro profesional vinculado al nuevo ID
+
+                        // Si es veterinario, guardamos datos profesionales
                         if (EsRolVeterinario())
-                        {
                             GuardarDatosProfesionales(nuevoId);
-                        }
                     }
                 }
                 else
                 {
-                    // --- MODO EDICIÓN ---
+                    // Actualizar usuario en la bbdd
                     operacionExitosa = _usuarioService.Actualizar(_usuario);
+
                     if (operacionExitosa && EsRolVeterinario())
-                    {
-                        // Actualizamos o creamos el perfil (por si antes no era vete)
                         GuardarDatosProfesionales(_usuario.IdUsuario);
-                    }
                 }
 
+                // Resultado final
                 if (operacionExitosa)
                 {
                     MessageBox.Show("Usuario guardado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -182,140 +233,118 @@ namespace Vetcare.Presentacion.Usuarios
             }
         }
 
+        /// <summary>
+        /// Guarda o actualiza los datos profesionales del veterinario
+        /// </summary>
         private void GuardarDatosProfesionales(int idUsuario)
         {
-            Veterinario vete = new Veterinario
+            Veterinario vete = new()
             {
                 IdUsuario = idUsuario,
                 Especialidad = txtEspecialidad.Text.Trim(),
                 NumeroColegiado = txtColegiado.Text.Trim()
             };
 
+            // Intentamos actualizar, si no existe lo insertamos
             if (!_veteService.Actualizar(vete))
-            {
                 _veteService.Insertar(vete);
-            }
         }
 
+        /// <summary>
+        /// Comprueba si el rol seleccionado es Veterinario
+        /// </summary>
         private bool EsRolVeterinario()
         {
-            // Si estamos editando, lo más fiable es mirar el objeto que vino de la lista principal
+            // En edición usamos el objeto cargado
             if (_esEdicion && _usuario != null)
             {
-                // Comprobamos por el nombre del rol (asegúrate de que tu objeto Usuario tenga esta propiedad rellena)
                 if (!string.IsNullOrEmpty(_usuario.NombreRol) &&
                     _usuario.NombreRol.Trim().Equals("Veterinario", StringComparison.OrdinalIgnoreCase))
-                {
                     return true;
-                }
-
-                // Opcional: Si conoces el ID exacto del rol veterinario en tu DB (ejemplo: 2)
-                // if (_usuario.IdRol == 2) return true;
             }
 
-            // Si es nuevo usuario o el objeto no tiene el nombre, miramos el ComboBox
+            // En creación usamos el ComboBox
             if (cbRol.SelectedItem is Rol rolSeleccionado)
-            {
-                return rolSeleccionado.NombreRol.Trim().Equals("Veterinario", StringComparison.OrdinalIgnoreCase);
-            }
+                return rolSeleccionado.NombreRol!.Trim().Equals("Veterinario", StringComparison.OrdinalIgnoreCase);
 
             return false;
         }
 
+        /// <summary>
+        /// Valida todos los campos del formulario
+        /// </summary>
         private bool ValidarCampos()
         {
-            // Validaciones de presencia
-            if (string.IsNullOrWhiteSpace(txtUsername.Text)) 
+            // Campos obligatorios
+            if (string.IsNullOrWhiteSpace(txtUsername.Text))
                 return MostrarError("El username es obligatorio.");
-            if (cbRol.SelectedValue == null) 
+            if (cbRol.SelectedValue == null)
                 return MostrarError("Debe seleccionar un rol.");
-            if (string.IsNullOrWhiteSpace(txtNombre.Text)) 
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
                 return MostrarError("El nombre es obligatorio.");
-            if (string.IsNullOrWhiteSpace(txtApellidos.Text)) 
+            if (string.IsNullOrWhiteSpace(txtApellidos.Text))
                 return MostrarError("Los apellidos son obligatorios.");
-            if (string.IsNullOrWhiteSpace(txtEmail.Text)) 
+            if (string.IsNullOrWhiteSpace(txtEmail.Text))
                 return MostrarError("El email es obligatorio.");
-            if (string.IsNullOrWhiteSpace(txtTelefono.Text)) 
+            if (string.IsNullOrWhiteSpace(txtTelefono.Text))
                 return MostrarError("El teléfono es obligatorio.");
 
-            // Validaciones de Formato y Lógica
-            if (!EsEmailValido(txtEmail.Text))
+            // Validaciones de formato
+            if (!EmailRegex().IsMatch(txtEmail.Text))
                 return MostrarError("El formato del email no es válido (ejemplo@dominio.com).");
 
-            if (!EsTelefonoValido(txtTelefono.Text))
+            if (!TelefonoRegex().IsMatch(txtTelefono.Text))
                 return MostrarError("El teléfono debe tener exactamente 9 dígitos numéricos.");
 
             if (VerificarUsernameRepetido(txtUsername.Text))
                 return MostrarError("El nombre de usuario ya está en uso por otra persona.");
 
-            // 3. Validación de Password
+            // Password obligatoria en creación
             if (!_esEdicion)
             {
                 if (string.IsNullOrWhiteSpace(txtPassword.Password))
                     return MostrarError("Debe asignar una contraseña inicial.");
             }
 
-            // 4. Validaciones específicas de Veterinario
+            // Validaciones de veterinario
             if (EsRolVeterinario())
             {
                 if (string.IsNullOrWhiteSpace(txtEspecialidad.Text))
                     return MostrarError("La especialidad es obligatoria para veterinarios.");
 
-                if (!EsColegiadoValido(txtColegiado.Text))
+                if (string.IsNullOrWhiteSpace(txtColegiado.Text))
+                    return MostrarError("El número de colegiado es obligatorio.");
+
+                if (!ColegiadoRegex().IsMatch(txtColegiado.Text))
                     return MostrarError("El número de colegiado debe tener 9 dígitos numéricos.");
             }
 
             return true;
         }
 
-        // Verifica si el username ya existe en la base de datos
+        /// <summary>
+        /// Comprueba si el username ya existe
+        /// </summary>
         private bool VerificarUsernameRepetido(string username)
         {
-            if (_esEdicion && username == _usuario.Username) 
+            if (_esEdicion && username == _usuario.Username)
                 return false;
 
             return _usuarioService.ExisteUsername(username);
         }
 
-        private bool EsEmailValido(string email)
-        {
-            // Regex estándar para email
-            string expresion = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            return Regex.IsMatch(email, expresion);
-        }
-
-        private bool EsTelefonoValido(string telefono)
-        {
-            // Verifica que sean exactamente 9 números
-            return Regex.IsMatch(telefono, @"^[0-9]{9}$");
-        }
-
-        private bool EsColegiadoValido(string colegiado)
-        {
-            // Verifica que sean exactamente 9 números
-            return Regex.IsMatch(colegiado, @"^[0-9]{9}$");
-        }
-
-        private bool EsPasswordSegura(string password)
-        {
-            // Al menos 8 caracteres, 1 Mayúscula, 1 Minúscula, 1 Número
-            if (password.Length < 8) return false;
-            if (!password.Any(char.IsUpper)) return false;
-            if (!password.Any(char.IsLower)) return false;
-            if (!password.Any(char.IsDigit)) return false;
-
-            return true;
-        }
-
-        private bool MostrarError(string mensaje)
+        /// <summary>
+        /// Muestra un mensaje de error
+        /// </summary>
+        private static bool MostrarError(string mensaje)
         {
             MessageBox.Show(mensaje, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
 
-        private void btnCancelar_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        /// <summary>
+        /// Cierra la ventana sin guardar
+        /// </summary>
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
     }
 }

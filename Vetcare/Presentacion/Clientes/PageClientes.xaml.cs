@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 
 namespace Vetcare.Presentacion.Clientes
 {

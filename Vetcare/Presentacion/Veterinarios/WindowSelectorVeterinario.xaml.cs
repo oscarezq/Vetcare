@@ -5,37 +5,52 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 using Vetcare.Presentacion.Usuarios;
 
 namespace Vetcare.Presentacion.Veterinarios
 {
+    /// <summary>
+    /// Ventana selector de mascotas para elegir una mascota existente o crear una nueva.
+    /// </summary>
     public partial class WindowSelectorVeterinario : Window
     {
-        private List<Veterinario> listaVeterinarios;
-        public Veterinario VeterinarioSeleccionado { get; set; }
-        private VeterinarioService veteService = new VeterinarioService();
-        private UsuarioService usuarioService = new UsuarioService();
+        // Lista local de veterinarios filtrados
+        private List<Veterinario>? listaVeterinarios;
 
+        // Veterinario seleccionado que se devolverá al cerrar la ventana
+        public Veterinario? VeterinarioSeleccionado;
+
+        // Servicios de negocio
+        private readonly VeterinarioService veteService = new();
+        private readonly UsuarioService usuarioService = new();
+
+        /// <summary>
+        /// Constructor principal de la ventana selector
+        /// </summary>
         public WindowSelectorVeterinario()
         {
             InitializeComponent();
             CargarLista();
         }
 
+        /// <summary>
+        /// Carga la lista de veterinarios activos (usuario activo asociado)
+        /// </summary>
         private void CargarLista()
         {
             try
             {
-                // Obtenemos todos los veterinarios
+                // Obtener todos los veterinarios desde la BD
                 var todosLosVetes = veteService.ObtenerTodos();
 
-                // Filtramos: Solo el veterinario cuyo USUARIO asociado tenga Estado == 1
+                // Filtrar solo veterinarios con usuario activo
                 listaVeterinarios = todosLosVetes.Where(v => {
                     var user = usuarioService.ObtenerPorId(v.IdUsuario);
                     return user != null && user.Activo == true;
                 }).ToList();
 
+                // Asignar al DataGrid
                 dgVeterinarios.ItemsSource = listaVeterinarios;
             }
             catch (Exception ex)
@@ -44,13 +59,16 @@ namespace Vetcare.Presentacion.Veterinarios
             }
         }
 
-        private void txtBuscaVeterinario_TextChanged(object sender, TextChangedEventArgs e)
+        /// <summary>
+        /// Filtro en tiempo real por texto (nombre, apellidos, especialidad, colegiado)
+        /// </summary>
+        private void TxtBuscaVeterinario_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (listaVeterinarios == null) return;
 
-            string busqueda = txtBuscaVeterinario.Text.ToLower().Trim();
+            var busqueda = txtBuscaVeterinario.Text.ToLower().Trim();
 
-            // Filtrado multizona: Nombre, Apellidos, Especialidad y NumColegiado
+            // Aplicar filtro sobre la lista original
             var filtrados = listaVeterinarios.Where(v =>
                 (v.Nombre != null && v.Nombre.ToLower().Contains(busqueda)) ||
                 (v.Apellidos != null && v.Apellidos.ToLower().Contains(busqueda)) ||
@@ -61,6 +79,9 @@ namespace Vetcare.Presentacion.Veterinarios
             dgVeterinarios.ItemsSource = filtrados;
         }
 
+        /// <summary>
+        /// Finaliza la selección del veterinario actual
+        /// </summary>
         private void FinalizarSeleccion()
         {
             if (dgVeterinarios.SelectedItem is Veterinario vete)
@@ -75,17 +96,26 @@ namespace Vetcare.Presentacion.Veterinarios
             }
         }
 
-        private void dgVeterinarios_MouseDoubleClick(object sender, MouseButtonEventArgs e) => FinalizarSeleccion();
-        private void btnSeleccionar_Click(object sender, RoutedEventArgs e) => FinalizarSeleccion();
-        private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
+        // Doble click en la tabla
+        private void DgVeterinarios_MouseDoubleClick(object sender, MouseButtonEventArgs e) => FinalizarSeleccion();
 
-        private void btnNuevoVeterinario_Click(object sender, RoutedEventArgs e)
+        // Botón seleccionar
+        private void BtnSeleccionar_Click(object sender, RoutedEventArgs e) => FinalizarSeleccion();
+
+        // Botón cancelar
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
+
+        /// <summary>
+        /// Abre ventana de creación de usuario/veterinario y recarga lista
+        /// </summary>
+        private void BtnNuevoVeterinario_Click(object sender, RoutedEventArgs e)
         {
-            // Supongo que tienes una ventana llamada WindowVeterinario
-            WindowUsuario win = new WindowUsuario();
+            // Abrir ventana de usuario (posible creación de veterinario)
+            WindowUsuario? win = new();
+
             if (win.ShowDialog() == true)
             {
-                // Refrescar la lista después de crear uno nuevo
+                // Recargar lista tras crear nuevo veterinario
                 CargarLista();
             }
         }

@@ -4,6 +4,7 @@
         Title="Nueva Factura - Vetcare" Height="800" Width="1200" 
         WindowStartupLocation="CenterScreen" Background="#F4F6F7">
 
+    <!-- Contenedor principal -->
     <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -12,11 +13,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Cabecera con título -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
             <TextBlock Text="GENERAR NUEVA FACTURA" FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
             <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="50" Margin="2,5,0,0"/>
         </StackPanel>
 
+        <!-- Bloque de datos principales -->
         <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -25,9 +28,10 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- Selección de cliente -->
                 <StackPanel Grid.Column="0" Margin="0,0,15,0">
                     <TextBlock Text="CLIENTE / DUEÑO" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
-                    <Button x:Name="btnSeleccionarCliente" Click="btnSeleccionarCliente_Click" Height="32" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch">
+                    <Button x:Name="btnSeleccionarCliente" Click="BtnSeleccionarCliente_Click" Height="32" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch">
                         <Grid Margin="5,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -37,9 +41,11 @@
                             <TextBlock Grid.Column="1" Text="👤" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
                         </Grid>
                     </Button>
+                    <!-- Campo oculto para ID del cliente -->
                     <TextBox x:Name="txtIdCliente" Visibility="Collapsed"/>
                 </StackPanel>
 
+                <!-- Método de pago -->
                 <StackPanel Grid.Column="1" Margin="0,0,15,0">
                     <TextBlock Text="MÉTODO DE PAGO" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
                     <ComboBox x:Name="cbMetodoPago" Height="32" VerticalContentAlignment="Center">
@@ -49,6 +55,7 @@
                     </ComboBox>
                 </StackPanel>
 
+                <!-- Número de factura -->
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Nº FACTURA" FontSize="11" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtNumFactura" Height="32" IsReadOnly="True" Background="#F8F9F9" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -56,6 +63,7 @@
             </Grid>
         </Border>
 
+        <!-- Bloque de líneas de factura -->
         <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
@@ -63,6 +71,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Sección para añadir concepto -->
                 <Grid Grid.Row="0" Margin="0,0,0,15">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -70,9 +79,10 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Selector de servicio/producto -->
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
                         <TextBlock Text="CONCEPTO" FontSize="10" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,3"/>
-                        <Button x:Name="btnSeleccionarServicio" Click="btnSeleccionarServicio_Click" Height="32" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch">
+                        <Button x:Name="btnSeleccionarServicio" Click="BtnSeleccionarServicio_Click" Height="32" Background="White" BorderBrush="#D5DBDB" HorizontalContentAlignment="Stretch">
                             <Grid Margin="5,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -84,16 +94,18 @@
                         </Button>
                     </StackPanel>
 
+                    <!-- Control de cantidad -->
                     <StackPanel Grid.Column="1" Margin="0,0,10,0">
                         <TextBlock Text="CANT." FontSize="10" FontWeight="SemiBold" Foreground="#566573" Margin="0,0,0,3"/>
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="-" Click="btnCantidadMenos_Click" Width="30" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontWeight="Bold"/>
+                            <Button Content="-" Click="BtnCantidadMenos_Click" Width="30" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontWeight="Bold"/>
                             <TextBox x:Name="txtCantidad" Width="45" Height="32" Text="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="#D5DBDB" IsReadOnly="True" FontWeight="Bold"/>
-                            <Button Content="+" Click="btnCantidadMas_Click" Width="30" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontWeight="Bold"/>
+                            <Button Content="+" Click="BtnCantidadMas_Click" Width="30" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontWeight="Bold"/>
                         </StackPanel>
                     </StackPanel>
 
-                    <Button x:Name="btnAgregar" Grid.Column="2" Content="AÑADIR LÍNEA" Click="btnAgregar_Click" VerticalAlignment="Bottom" Background="#27AE60" Foreground="White" Width="130" Height="32" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+                    <!-- Botón añadir línea -->
+                    <Button x:Name="btnAgregar" Grid.Column="2" Content="AÑADIR LÍNEA" Click="BtnAgregar_Click" VerticalAlignment="Bottom" Background="#27AE60" Foreground="White" Width="130" Height="32" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="4"/>
@@ -102,11 +114,15 @@
                     </Button>
                 </Grid>
 
+                <!-- Tabla de detalles de factura -->
                 <DataGrid x:Name="dgDetalles" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False"
-          RowHeight="60" HeadersVisibility="Column" GridLinesVisibility="None" CanUserResizeColumns="False" CanUserReorderColumns="False" 
-          HorizontalGridLinesBrush="#EBEDEF" BorderThickness="0" Background="White" 
-          SelectionMode="Single" RowHeaderWidth="0" FontSize="15">
+                          RowHeight="60" HeadersVisibility="Column" GridLinesVisibility="None" CanUserResizeColumns="False" CanUserReorderColumns="False" 
+                          HorizontalGridLinesBrush="#EBEDEF" BorderThickness="0" Background="White" 
+                          SelectionMode="Single" RowHeaderWidth="0" FontSize="15">
+
+                    <!-- Estilos del DataGrid -->
                     <DataGrid.Resources>
+                        <!-- Cabeceras -->
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#FDFDFD"/>
                             <Setter Property="Foreground" Value="#85929E"/>
@@ -118,6 +134,7 @@
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         </Style>
 
+                        <!-- Filas -->
                         <Style TargetType="DataGridRow">
                             <Setter Property="Foreground" Value="#2C3E50"/>
                             <Style.Triggers>
@@ -127,21 +144,24 @@
                             </Style.Triggers>
                         </Style>
 
+                        <!-- Celdas -->
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="5"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type DataGridCell}">
                                         <Border Padding="{TemplateBinding Padding}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                Background="{TemplateBinding Background}" 
-                                SnapsToDevicePixels="True">
+                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                                Background="{TemplateBinding Background}" 
+                                                SnapsToDevicePixels="True">
                                             <ContentPresenter VerticalAlignment="Center" SnapsToDevicePixels="True"/>
                                         </Border>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
+
+                            <!-- Comportamiento al seleccionar -->
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="Transparent"/>
@@ -152,7 +172,9 @@
                         </Style>
                     </DataGrid.Resources>
 
+                    <!-- Columnas -->
                     <DataGrid.Columns>
+                        <!-- Tipo (Producto/Servicio) -->
                         <DataGridTemplateColumn Header="TIPO" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -175,6 +197,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
+                        <!-- Concepto -->
                         <DataGridTextColumn Header="CONCEPTO" Binding="{Binding NombreConcepto}" Width="*" IsReadOnly="True">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -185,20 +208,22 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+                        <!-- Cantidad -->
                         <DataGridTemplateColumn Header="CANTIDAD" Width="140">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="-" Click="btnDisminuir_Click" Width="32" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontSize="16"/>
+                                        <Button Content="-" Click="BtnDisminuir_Click" Width="32" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontSize="16"/>
                                         <Border BorderBrush="#D5DBDB" BorderThickness="0,1" Width="45" Height="32">
                                             <TextBlock Text="{Binding Cantidad}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16"/>
                                         </Border>
-                                        <Button Content="+" Click="btnAumentar_Click" Width="32" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontSize="16"/>
+                                        <Button Content="+" Click="BtnAumentar_Click" Width="32" Height="32" Background="#F2F3F4" BorderBrush="#D5DBDB" FontSize="16"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
+                        <!-- IVA -->
                         <DataGridTextColumn Header="IVA %" Binding="{Binding IvaPorcentaje}" Width="90">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -209,6 +234,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+                        <!-- Precio unitario -->
                         <DataGridTextColumn Header="PRECIO U." Binding="{Binding PrecioUnitario, StringFormat={}{0:N2}€}" Width="120">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -219,6 +245,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+                        <!-- Subtotal -->
                         <DataGridTextColumn Header="SUBTOTAL" Binding="{Binding TotalLinea, StringFormat={}{0:N2}€}" Width="130" FontWeight="Bold">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -231,10 +258,11 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+                        <!-- Botón eliminar -->
                         <DataGridTemplateColumn Width="60">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="🗑" Click="btnQuitar_Click" Background="Transparent" BorderThickness="0" 
+                                    <Button Content="🗑" Click="BtnQuitar_Click" Background="Transparent" BorderThickness="0" 
                             Foreground="#E74C3C" FontSize="20" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -244,6 +272,7 @@
             </Grid>
         </Border>
 
+        <!-- Bloque inferior: observaciones y totales -->
         <Grid Grid.Row="3" Margin="0,15,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*"/>
@@ -256,10 +285,11 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!-- Observaciones -->
                 <TextBlock Text="OBSERVACIONES"
-               FontSize="11"
-               FontWeight="SemiBold"
-               Foreground="#566573"/>
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="#566573"/>
 
                 <TextBox x:Name="txtObservaciones"
                          Grid.Row="1"
@@ -273,7 +303,9 @@
                          VerticalContentAlignment="Top"/>
             </Grid>
 
+            <!-- Totales y botones -->
             <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
+                <!-- Resumen factura -->
                 <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,10" BorderBrush="#D5DBDB" BorderThickness="1">
                     <StackPanel>
                         <Grid Margin="0,0,0,5">
@@ -294,6 +326,7 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Botones -->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -301,7 +334,8 @@
                         <ColumnDefinition Width="1.5*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" Content="CANCELAR" Click="btnCancelar_Click" Height="40" Background="#BDC3C7" Foreground="Black" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand">
+                    <!-- Botón de cabcelar factura -->
+                    <Button Grid.Column="0" Content="CANCELAR" Click="BtnCancelar_Click" Height="40" Background="#BDC3C7" Foreground="Black" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="4"/>
@@ -309,7 +343,8 @@
                         </Button.Resources>
                     </Button>
 
-                    <Button Grid.Column="2" x:Name="btnGuardar" Content="GUARDAR FACTURA" Click="btnGuardar_Click" Height="40" Background="#2E86C1" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand" IsDefault="True">
+                    <!-- Botón de guardar factura -->
+                    <Button Grid.Column="2" x:Name="btnGuardar" Content="GUARDAR FACTURA" Click="BtnGuardar_Click" Height="40" Background="#2E86C1" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand" IsDefault="True">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="4"/>

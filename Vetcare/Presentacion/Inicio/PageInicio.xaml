@@ -6,7 +6,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="1100">
 
+    <!-- Recursos de la página -->
     <Page.Resources>
+
         <!-- ESTILO DE BOTONES ORIGINAL -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
@@ -26,7 +28,7 @@
             </Setter>
         </Style>
 
-        <!-- CABECERAS ORIGINALES -->
+        <!-- CABECERAS ORIGINALES DEL DATAGRID -->
         <Style x:Key="HeaderStyleOriginal" TargetType="DataGridColumnHeader">
             <Setter Property="Background" Value="#F8F9F9"/>
             <Setter Property="Foreground" Value="#566573"/>
@@ -37,7 +39,7 @@
             <Setter Property="BorderBrush" Value="#E67E22"/>
         </Style>
 
-        <!-- FILAS ORIGINALES (Hover y Bordes) -->
+        <!-- ESTILO DE FILAS DEL DATAGRID -->
         <Style x:Key="DataGridRowStyleOriginal" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="#EBEDEF"/>
@@ -49,12 +51,13 @@
             </Style.Triggers>
         </Style>
 
-        <!-- CELDAS ORIGINALES (Fix Texto Blanco) -->
+        <!-- ESTILO DE CELDAS DEL DATAGRID -->
         <Style x:Key="CellStyleOriginal" TargetType="DataGridCell">
             <Setter Property="Padding" Value="15,0,10,0"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
+
                     <ControlTemplate TargetType="DataGridCell">
                         <Border Background="Transparent" Padding="{TemplateBinding Padding}">
                             <ContentPresenter VerticalAlignment="Center" />
@@ -68,8 +71,10 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
     </Page.Resources>
 
+    <!-- Contenedor principal de la página -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -77,84 +82,122 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 1. INDICADORES -->
+        <!-- 1. BLOQUE DE INDICADORES -->
         <UniformGrid x:Name="gridIndicadores" Grid.Row="0" Columns="4" Margin="0,0,0,15">
+
+            <!-- Indicador de clientes -->
             <Border Background="White" CornerRadius="10" Padding="15" Margin="0,0,5,0" BorderBrush="#D5DBDB" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="CLIENTES" FontSize="10" Foreground="#7F8C8D" FontWeight="Bold"/>
                     <TextBlock x:Name="txtTotalClientes" Text="0" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
                 </StackPanel>
             </Border>
+
+            <!-- Indicador de mascotas -->
             <Border Background="White" CornerRadius="10" Padding="15" Margin="5,0,5,0" BorderBrush="#D5DBDB" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="MASCOTAS" FontSize="10" Foreground="#7F8C8D" FontWeight="Bold"/>
                     <TextBlock x:Name="txtTotalMascotas" Text="0" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
                 </StackPanel>
             </Border>
+
+            <!-- Indicador de citas -->
             <Border Background="White" CornerRadius="10" Padding="15" Margin="5,0,5,0" BorderBrush="#D5DBDB" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="CITAS HOY" FontSize="10" Foreground="#7F8C8D" FontWeight="Bold"/>
                     <TextBlock x:Name="txtCitasHoy" Text="0" FontSize="24" FontWeight="Bold" Foreground="#2E86C1"/>
                 </StackPanel>
             </Border>
+
+            <!-- Indicador de ingresos -->
             <Border x:Name="brdIngresos" Background="White" CornerRadius="10" Padding="15" Margin="5,0,0,0" BorderBrush="#D5DBDB" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="INGRESOS MES" FontSize="10" Foreground="#7F8C8D" FontWeight="Bold"/>
                     <TextBlock x:Name="txtIngresosHoy" Text="0.00 €" FontSize="24" FontWeight="Bold" Foreground="#27AE60"/>
                 </StackPanel>
             </Border>
+
         </UniformGrid>
 
-        <!-- 2. ACCESOS RÁPIDOS -->
+        <!-- 2. BLOQUE DE ACCESOS RÁPIDOS -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
+
             <StackPanel>
+
+                <!-- Título de sección -->
                 <TextBlock Text="ACCESOS RÁPIDOS" FontSize="12" FontWeight="Bold" Foreground="#1E293B" Margin="5,0,0,10"/>
+
+                <!-- Grid de botones rápidos -->
                 <UniformGrid x:Name="gridBotones" Columns="4">
-                    <!-- Botones comunes -->
+
+                    <!-- Botón nueva cita -->
                     <Button x:Name="btnNuevaCita" Content="+ Nueva Cita" Style="{StaticResource ActionButtonStyle}" Background="#3498DB" Click="BtnNuevaCita_Click"/>
 
-                    <!-- Botones que cambian según ROL -->
+                    <!-- Botón nueva mascota -->
                     <Button x:Name="btnNuevaMascota" Content="+ Nueva Mascota" Style="{StaticResource ActionButtonStyle}" Background="#27AE60" Click="BtnNuevaMascota_Click"/>
+
+                    <!-- Botón nuevo cliente -->
                     <Button x:Name="btnNuevoCliente" Content="+ Nuevo Cliente" Style="{StaticResource ActionButtonStyle}" Background="#8E44AD" Click="BtnNuevoCliente_Click"/>
+
+                    <!-- Botón nueva factura -->
                     <Button x:Name="btnAccesoFactura" Content="+ Nueva Factura" Style="{StaticResource ActionButtonStyle}" Background="#F39C12" Click="BtnNuevaFactura_Click"/>
 
-                    <!-- Nuevos botones para Veterinario -->
+                    <!-- Botón nuevo producto (oculto por defecto) -->
                     <Button x:Name="btnNuevoProducto" Content="+ Nuevo Producto" Visibility="Collapsed" Style="{StaticResource ActionButtonStyle}" Background="#E67E22" Click="BtnNuevoProducto_Click"/>
+
+                    <!-- Botón nuevo servicio (oculto por defecto) -->
                     <Button x:Name="btnNuevoServicio" Content="+ Nuevo Servicio" Visibility="Collapsed" Style="{StaticResource ActionButtonStyle}" Background="#16A085" Click="BtnNuevoServicio_Click"/>
+
                 </UniformGrid>
+
             </StackPanel>
+
         </Border>
 
-        <!-- 3. TABLAS -->
+        <!-- 3. BLOQUE DE TABLAS -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition x:Name="colFacturas" Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- AGENDA DEL DÍA -->
             <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,10,0" BorderBrush="#D5DBDB" BorderThickness="1">
+
                 <Grid>
+
+                    <!-- Filas internas -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- Título agenda -->
                     <TextBlock x:Name="txtTituloAgenda" Text="Agenda del Día" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,15"/>
 
+                    <!-- Mensaje cuando no hay citas -->
                     <StackPanel x:Name="pnlSinCitas" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
                         <TextBlock Text="📅" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                         <TextBlock Text="No hay citas programadas para hoy" Foreground="#7F8C8D" FontSize="14" HorizontalAlignment="Center"/>
                     </StackPanel>
 
+                    <!-- Tabla de citas -->
                     <DataGrid x:Name="dgCitas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
-                      GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
-                      Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
-                      RowStyle="{StaticResource DataGridRowStyleOriginal}"
-                      ColumnHeaderStyle="{StaticResource HeaderStyleOriginal}"
-                      CellStyle="{StaticResource CellStyleOriginal}">
+                              GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
+                              Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
+                              RowStyle="{StaticResource DataGridRowStyleOriginal}"
+                              ColumnHeaderStyle="{StaticResource HeaderStyleOriginal}"
+                              CellStyle="{StaticResource CellStyleOriginal}">
+
                         <DataGrid.Columns>
+
+                            <!-- Hora de la cita -->
                             <DataGridTextColumn Header="HORA" Binding="{Binding FechaHora, StringFormat=\{0:HH:mm\}}" Width="70" FontWeight="Bold"/>
+
+                            <!-- Cliente -->
                             <DataGridTextColumn Header="CLIENTE" Binding="{Binding NombreDueno}" Width="*"/>
+
+                            <!-- Botón ver detalles -->
                             <DataGridTemplateColumn Header="DETALLES" Width="110">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -162,34 +205,52 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+
                         </DataGrid.Columns>
+
                     </DataGrid>
+
                 </Grid>
+
             </Border>
 
+            <!-- FACTURAS PENDIENTES -->
             <Border x:Name="brdFacturas" Grid.Column="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
+
                 <Grid>
+
+                    <!-- Filas internas -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- Título facturas -->
                     <TextBlock Text="Pendientes de Cobro" FontSize="20" FontWeight="Bold" Foreground="#E74C3C" Margin="0,0,0,15"/>
 
+                    <!-- Mensaje cuando no hay facturas -->
                     <StackPanel x:Name="pnlSinFacturas" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
                         <TextBlock Text="✅" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                         <TextBlock Text="¡Todo al día! No hay cobros pendientes" Foreground="#7F8C8D" FontSize="14" HorizontalAlignment="Center"/>
                     </StackPanel>
 
+                    <!-- Tabla de facturas pendientes -->
                     <DataGrid x:Name="dgFacturasPendientes" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
-                      GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
-                      Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
-                      RowStyle="{StaticResource DataGridRowStyleOriginal}"
-                      ColumnHeaderStyle="{StaticResource HeaderStyleOriginal}"
-                      CellStyle="{StaticResource CellStyleOriginal}">
+                              GridLinesVisibility="None" BorderThickness="0" HeadersVisibility="Column" 
+                              Background="White" FontSize="14" RowHeight="50" ColumnHeaderHeight="40"
+                              RowStyle="{StaticResource DataGridRowStyleOriginal}"
+                              ColumnHeaderStyle="{StaticResource HeaderStyleOriginal}"
+                              CellStyle="{StaticResource CellStyleOriginal}">
+
                         <DataGrid.Columns>
+
+                            <!-- Cliente -->
                             <DataGridTextColumn Header="CLIENTE" Binding="{Binding NombreApellidosCliente}" Width="*"/>
+
+                            <!-- Total -->
                             <DataGridTextColumn Header="TOTAL" Binding="{Binding Total, StringFormat={}{0:N2} €}" Width="90" FontWeight="Bold"/>
+
+                            <!-- Acción -->
                             <DataGridTemplateColumn Header="ACCIÓN" Width="110">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -197,10 +258,17 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+
                         </DataGrid.Columns>
+
                     </DataGrid>
+
                 </Grid>
+
             </Border>
+
         </Grid>
+
     </Grid>
+
 </Page>

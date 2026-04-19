@@ -3,24 +3,36 @@ using System.Windows;
 using System.Windows.Controls;
 using QuestPDF.Fluent;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
-using Vetcare.Service;
+using Vetcare.Negocio.Informes;
+using Vetcare.Negocio.Services;
 
 namespace Vetcare.Presentacion.HistorialesClinicos
 {
+    /// <summary>
+    /// Ventana encargada de crear, visualizar y editar consultas veterinarias
+    /// asociadas a una cita y su historial clínico.
+    /// </summary>
     public partial class WindowConsulta : Window
     {
-        private Cita citaActual;
-        private HistorialClinico historialEdicion;
-        private HistorialClinicoService historialService;
-        private CitaService citaService;
-        private bool esModoEdicion = false;
+        // Cita que se está consultando
+        private readonly Cita citaActual; 
+        // Historial (en caso de edición)
+        private readonly HistorialClinico? historialEdicion; 
 
+        // Servicio de historial clínico
+        private readonly HistorialClinicoService historialService = new(); 
+        // Servicio de citas
+        private readonly CitaService citaService = new(); 
+
+        // Indica si la ventana está en modo edición
+        private readonly bool esModoEdicion = false; 
+
+        /// <summary>
+        /// Abre la ventana para registrar una nueva consulta desde una cita
+        /// </summary>
         public WindowConsulta(Cita cita)
         {
             InitializeComponent();
-            citaService = new CitaService();
-            historialService = new HistorialClinicoService();
 
             citaActual = cita;
             esModoEdicion = false;
@@ -29,11 +41,12 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             CargarDatosCita();
         }
 
+        /// <summary>
+        /// Abre la ventana para ver o editar una consulta ya registrada
+        /// </summary>
         public WindowConsulta(HistorialClinico historial, Cita citaAsociada)
         {
             InitializeComponent();
-            citaService = new CitaService();
-            historialService = new HistorialClinicoService();
 
             historialEdicion = historial;
             citaActual = citaAsociada;
@@ -43,57 +56,59 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             CargarDatosEdicion();
         }
 
+        /// <summary>
+        /// Configura la interfaz según el modo (edición o creación)
+        /// </summary>
         private void ConfigurarInterfaz()
         {
             if (esModoEdicion)
             {
+                // Cambiar título
                 lblTitulo.Text = "CONSULTA REGISTRADA";
+
+                // Ocultar botón guardar inicialmente
                 btnGuardar.Visibility = Visibility.Collapsed;
 
-                // Solo mostramos el botón editar si cumple los requisitos
+                // Mostrar botón editar solo si el usuario tiene permisos
                 if (ValidarPermisosEdicion())
-                {
                     btnEditar.Visibility = Visibility.Visible;
-                }
                 else
-                {
                     btnEditar.Visibility = Visibility.Collapsed;
-                }
 
+                // Bloqueos de campos en modo lectura
                 chkNoPesado.IsEnabled = false;
                 BloquearCampos();
 
+                // Mostrar botón imprimir solo si la cita está completada
                 if (citaActual != null && citaActual.Estado == "Completada")
-                {
                     btnImprimir.Visibility = Visibility.Visible;
-                }
             }
         }
 
+        /// <summary>
+        /// Valida si el usuario logueado puede editar la consulta
+        /// </summary>
         private bool ValidarPermisosEdicion()
         {
-            // 1. Obtener el usuario de la sesión global de tu App
             var usuarioLogueado = Sesion.UsuarioActual;
 
-            if (usuarioLogueado == null) return false;
+            if (usuarioLogueado == null)
+                return false;
 
-            // 2. Si es Administrador, tiene permiso total
+            // Admin tiene acceso total
             if (usuarioLogueado.IdRol == 1)
-            {
                 return true;
-            }
 
-            // 3. Si es Veterinario, comprobar si es el autor de la consulta o el asignado a la cita
+            // Veterinario solo puede editar si es el asignado
             if (usuarioLogueado.IdRol == 2)
-            {
-                // Comparamos el ID del veterinario logueado con el de la cita
-                // Nota: Asegúrate de que los IDs sean del mismo tipo (int, etc.)
                 return usuarioLogueado.IdVeterinario == citaActual.IdVeterinario;
-            }
 
             return false;
         }
 
+        /// <summary>
+        /// Bloquea los campos del formulario (solo lectura)
+        /// </summary>
         private void BloquearCampos()
         {
             SetReadOnly(txtPeso);
@@ -102,6 +117,9 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             SetReadOnly(txtObservaciones);
         }
 
+        /// <summary>
+        /// Activa los campos para edición
+        /// </summary>
         private void ActivarCampos()
         {
             SetEditable(txtPeso);
@@ -110,16 +128,25 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             SetEditable(txtObservaciones);
         }
 
-        private void SetReadOnly(TextBox tb)
+        /// <summary>
+        /// Pone un TextBox en modo solo lectura
+        /// </summary>
+        private static void SetReadOnly(TextBox tb)
         {
             tb.IsReadOnly = true;
         }
 
-        private void SetEditable(TextBox tb)
+        /// <summary>
+        /// Permite editar un TextBox
+        /// </summary>
+        private static void SetEditable(TextBox tb)
         {
             tb.IsReadOnly = false;
         }
 
+        /// <summary>
+        /// Carga información básica de la cita
+        /// </summary>
         private void CargarDatosCita()
         {
             txtMascotaDisplay.Text = citaActual.NombreMascota;
@@ -127,17 +154,23 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             txtFechaDisplay.Text = citaActual.FechaHora.ToString("dd/MM/yyyy");
         }
 
+        /// <summary>
+        /// Carga datos del historial cuando se edita una consulta
+        /// </summary>
         private void CargarDatosEdicion()
         {
             CargarDatosCita();
 
-            txtPeso.Text = historialEdicion.Peso?.ToString();
+            txtPeso.Text = historialEdicion!.Peso?.ToString();
             txtDiagnostico.Text = historialEdicion.Diagnostico;
             txtTratamiento.Text = historialEdicion.Tratamiento;
             txtObservaciones.Text = historialEdicion.Observaciones;
         }
 
-        private void btnEditar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Activa modo edición en la interfaz
+        /// </summary>
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
             btnGuardar.Visibility = Visibility.Visible;
             btnEditar.Visibility = Visibility.Collapsed;
@@ -147,8 +180,12 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             ActivarCampos();
         }
 
-        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Guarda o actualiza el historial clínico
+        /// </summary>
+        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
+            // Validaciones básicas
             if (string.IsNullOrWhiteSpace(txtDiagnostico.Text))
             {
                 MessageBox.Show("El diagnóstico es obligatorio");
@@ -167,21 +204,27 @@ namespace Vetcare.Presentacion.HistorialesClinicos
                 return;
             }
 
-            HistorialClinico historial = esModoEdicion ? historialEdicion : new HistorialClinico();
+            // Crear o reutilizar historial
+            HistorialClinico? historial = esModoEdicion ? historialEdicion : new HistorialClinico();
 
-            historial.IdMascota = citaActual.IdMascota;
+            // Asignación de datos
+            historial!.IdMascota = citaActual.IdMascota;
             historial.IdVeterinario = citaActual.IdVeterinario;
             historial.IdCita = citaActual.IdCita;
             historial.Diagnostico = txtDiagnostico.Text;
             historial.Tratamiento = txtTratamiento.Text;
             historial.Observaciones = txtObservaciones.Text;
 
-            historial.Peso = string.IsNullOrWhiteSpace(txtPeso.Text) ? null : Convert.ToDecimal(txtPeso.Text);
+            historial.Peso = string.IsNullOrWhiteSpace(txtPeso.Text)
+                ? null
+                : Convert.ToDecimal(txtPeso.Text);
 
+            // Insertar o actualizar
             if (!esModoEdicion)
             {
                 historial.FechaHora = DateTime.Now;
                 historialService.Insertar(historial);
+
                 citaService.ActualizarEstado(citaActual.IdCita, "Completada");
             }
             else
@@ -190,37 +233,53 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             }
 
             MessageBox.Show("Guardado correctamente");
+
             this.DialogResult = true;
             this.Close();
         }
 
-        private void chkNoPesado_Checked(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Desactiva el campo de peso
+        /// </summary>
+        private void ChkNoPesado_Checked(object sender, RoutedEventArgs e)
         {
             txtPeso.Text = "";
             txtPeso.IsEnabled = false;
         }
 
-        private void chkNoPesado_Unchecked(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Reactiva el campo de peso
+        /// </summary>
+        private void ChkNoPesado_Unchecked(object sender, RoutedEventArgs e)
         {
             txtPeso.IsEnabled = true;
         }
 
-        private void btnCancelar_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Cierra la ventana sin guardar
+        /// </summary>
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        /// <summary>
+        /// Permite solo números y un decimal en el campo de peso
+        /// </summary>
         private void NumericTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-            // Permite números y una sola coma o punto decimal
             var textBox = sender as TextBox;
             var fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
 
-            // Expresión regular: solo números y un separador decimal opcional
-            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("^[0-9]*[,.]?[0-9]*$");
+            System.Text.RegularExpressions.Regex regex =
+                new System.Text.RegularExpressions.Regex("^[0-9]*[,.]?[0-9]*$");
+
             e.Handled = !regex.IsMatch(fullText);
         }
 
+        /// <summary>
+        /// Genera e imprime el informe en PDF de la consulta
+        /// </summary>
         private void btnImprimir_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -231,15 +290,12 @@ namespace Vetcare.Presentacion.HistorialesClinicos
                     return;
                 }
 
-                // Obtener mascota
                 MascotaService mascotaService = new MascotaService();
                 Mascota mascota = mascotaService.ObtenerPorId(citaActual.IdMascota);
 
-                // Obtener cliente
                 ClienteService clienteService = new ClienteService();
                 Cliente cliente = clienteService.ObtenerPorId(citaActual.IdUsuarioDueno);
 
-                // Guardar PDF
                 var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                 {
                     Filter = "PDF (*.pdf)|*.pdf",

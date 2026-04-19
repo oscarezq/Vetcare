@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 using Vetcare.Presentacion.Usuarios;
 
 namespace Vetcare.Presentacion.Veterinarios

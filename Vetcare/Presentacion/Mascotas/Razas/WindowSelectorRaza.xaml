@@ -6,6 +6,7 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- Recursos reutilizables de la ventana -->
     <Window.Resources>
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
@@ -32,6 +33,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Foreground" Value="#2C3E50"/>
@@ -39,23 +41,29 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Estilo de filas del DataGrid -->
         <Style x:Key="ModernRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#F1F5F9"/>
                 </Trigger>
+
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="#E0E7FF"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
                     <Setter Property="BorderBrush" Value="#6366F1"/>
                     <Setter Property="BorderThickness" Value="4,0,0,0"/>
                 </Trigger>
+
             </Style.Triggers>
         </Style>
+
     </Window.Resources>
 
+    <!-- Contenedor principal -->
     <Grid Margin="25">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -63,10 +71,17 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- CABECERA -->
         <DockPanel Grid.Row="0" Margin="0,0,0,25" LastChildFill="False">
+
+            <!-- Título -->
             <TextBlock Text="Razas" FontSize="26" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
-            <Button DockPanel.Dock="Right" Content="+ NUEVA" Click="btnNuevaRaza_Click" 
+
+            <!-- Botón nueva raza -->
+            <Button DockPanel.Dock="Right" Content="+ NUEVA" Click="BtnNuevaRaza_Click" 
                     Background="#1ABC9C" Foreground="White" Width="100" Height="38" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
+
+                <!-- Estilo visual del botón -->
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -74,29 +89,42 @@
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
+
             </Button>
+
         </DockPanel>
 
+        <!-- BÚSQUEDA -->
         <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+
             <StackPanel>
+
                 <TextBlock Text="BUSCAR RAZA" Style="{StaticResource LabelStyle}"/>
+
                 <TextBox x:Name="txtBuscaRaza" Height="40" FontSize="15" VerticalContentAlignment="Center" Padding="8,0" 
-                         Background="#F1F5F9" BorderThickness="1" BorderBrush="#CBD5E1" TextChanged="txtBuscaRaza_TextChanged">
+                         Background="#F1F5F9" BorderThickness="1" BorderBrush="#CBD5E1" TextChanged="TxtBuscaRaza_TextChanged">
+
                     <TextBox.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="6"/>
                         </Style>
                     </TextBox.Resources>
+
                 </TextBox>
+
             </StackPanel>
+
         </Border>
 
+        <!-- LISTA DE RAZAS -->
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="5">
+
             <DataGrid x:Name="dgRazas" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
                       GridLinesVisibility="None" HeadersVisibility="Column" SelectionMode="Single"
                       Background="Transparent" BorderThickness="0" RowHeight="48" FontSize="15"
                       CellStyle="{StaticResource ModernCellStyle}" RowStyle="{StaticResource ModernRowStyle}"
-                      MouseDoubleClick="dgRazas_MouseDoubleClick" HorizontalScrollBarVisibility="Disabled" ColumnWidth="*">
+                      MouseDoubleClick="DgRazas_MouseDoubleClick" HorizontalScrollBarVisibility="Disabled" ColumnWidth="*">
+
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="Transparent"/>
@@ -107,23 +135,40 @@
                         <Setter Property="BorderBrush" Value="#F1F5F9"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
+
+                <!-- Columnas -->
                 <DataGrid.Columns>
+
+                    <!-- Nombre de la raza -->
                     <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="*"/>
+
+                    <!-- Especie asociada -->
                     <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="*">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#94A3B8"/>
                                 <Setter Property="FontSize" Value="13"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
+
                     </DataGridTextColumn>
+
                 </DataGrid.Columns>
+
             </DataGrid>
+
         </Border>
 
+        <!-- BOTONES INFERIORES -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button Content="Cancelar" Click="btnCancelar_Click" Width="100" Height="40" Background="Transparent" Foreground="#64748B" BorderThickness="0"/>
-            <Button Content="Seleccionar" Click="btnSeleccionar_Click" Width="130" Height="40" Background="#2ECC71" Foreground="White" FontWeight="Bold" BorderThickness="0">
+
+            <!-- Cancelar -->
+            <Button Content="Cancelar" Click="BtnCancelar_Click" Width="100" Height="40" Background="Transparent" Foreground="#64748B" BorderThickness="0"/>
+
+            <!-- Seleccionar -->
+            <Button Content="Seleccionar" Click="BtnSeleccionar_Click" Width="130" Height="40" Background="#2ECC71" Foreground="White" FontWeight="Bold" BorderThickness="0">
+
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -131,7 +176,10 @@
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
+
             </Button>
+
         </StackPanel>
+
     </Grid>
 </Window>

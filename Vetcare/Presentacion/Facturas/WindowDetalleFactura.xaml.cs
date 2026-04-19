@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
 using System.Diagnostics;
 using System.IO;
 using QuestPDF.Fluent;
-using QuestPDF.Previewer;
-using QuestPDF.Companion;
+using Vetcare.Negocio.Services;
+using Vetcare.Negocio.Informes;
 
 namespace Vetcare.Presentacion.Facturas
 {
@@ -73,7 +71,7 @@ namespace Vetcare.Presentacion.Facturas
                 DataContext = null;
                 DataContext = factura;
 
-                CargarDatos(factura);
+                this.DialogResult = true;
             }
             else
             {

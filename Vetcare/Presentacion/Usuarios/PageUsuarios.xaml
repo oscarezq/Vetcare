@@ -8,16 +8,20 @@
       d:DesignHeight="650" d:DesignWidth="1100"
       Title="PageUsuarios">
 
+    <!-- Contenedor principal -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Panel de filtros -->
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
+                <!-- Título filtros -->
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
+                <!-- Filtros por campos -->
                 <UniformGrid Columns="4" Margin="0,0,0,15">
                     <UniformGrid.Resources>
                         <Style TargetType="TextBox">
@@ -31,14 +35,19 @@
                         </Style>
                     </UniformGrid.Resources>
 
+                    <!-- Filtro nombre/apellidos -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro username -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Username" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaUsername" TextChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro rol -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Rol" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbBuscaRol" SelectionChanged="FiltroUsuario_Changed">
@@ -48,6 +57,8 @@
                             <ComboBoxItem Content="Recepcionista"/>
                         </ComboBox>
                     </StackPanel>
+
+                    <!-- Filtro estado -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbBuscaEstado" SelectionChanged="FiltroUsuario_Changed">
@@ -56,44 +67,61 @@
                             <ComboBoxItem Content="Inactivo"/>
                         </ComboBox>
                     </StackPanel>
+
+                    <!-- Filtro fecha desde -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
                         <DatePicker x:Name="dpBuscaFechaDesde" VerticalContentAlignment="Center" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro fecha hasta -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
                         <DatePicker x:Name="dpBuscaFechaHasta" VerticalContentAlignment="Center" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
                 </UniformGrid>
 
+                <!-- Separador -->
                 <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
 
+                <!-- Ordenación -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
+
+                    <!-- Combo ordenar -->
                     <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" SelectionChanged="FiltroUsuario_Changed" VerticalContentAlignment="Center">
                         <ComboBoxItem Content="Username" IsSelected="True"/>
                         <ComboBoxItem Content="Nombre"/>
                         <ComboBoxItem Content="Rol"/>
                         <ComboBoxItem Content="Fecha Alta"/>
                     </ComboBox>
+
+                    <!-- Orden asc/desc -->
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
                         <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroUsuario_Changed"/>
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroUsuario_Changed"/>
                     </StackPanel>
+
+                    <!-- Botón limpiar -->
                     <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="BtnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
+        <!-- Tabla de usuarios -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
+                <!-- Filas -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Cabecera + botón -->
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Listado de usuarios" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+
+                    <!-- Botón nuevo usuario -->
                     <Button DockPanel.Dock="Right" x:Name="btnNuevoUsuario" Content="+ Nuevo Usuario" Click="BtnNuevoUsuario_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0">
                         <Button.Resources>
@@ -104,17 +132,20 @@
                     </Button>
                 </DockPanel>
 
+                <!-- DataGrid principal -->
                 <DataGrid x:Name="dgUsuarios" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
                           MouseDoubleClick="DataGridRow_MouseDoubleClick" GridLinesVisibility="None" BorderThickness="0" CanUserResizeColumns="False"
                           HeadersVisibility="Column" Background="White" FontSize="14" RowHeight="45" ColumnHeaderHeight="40" 
                           SelectionMode="Extended" SelectionUnit="FullRow" CanUserSortColumns="False" CanUserReorderColumns="False">
 
+                    <!-- Recursos visuales -->
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
 
+                        <!-- Estilo celdas -->
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0"/>
@@ -130,6 +161,7 @@
                             </Setter>
                         </Style>
 
+                        <!-- Estilo cabecera -->
                         <Style x:Key="HeaderStyleComun" TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
@@ -142,6 +174,7 @@
                         <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}"/>
                     </DataGrid.Resources>
 
+                    <!-- Estilo filas -->
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="Transparent"/>
@@ -159,7 +192,9 @@
                         </Style>
                     </DataGrid.RowStyle>
 
+                    <!-- Columnas -->
                     <DataGrid.Columns>
+                        <!-- Estado visual -->
                         <DataGridTemplateColumn Header="ESTADO" Width="100">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
@@ -172,6 +207,7 @@
                                         <TextBlock x:Name="txtEstado" FontSize="11" FontWeight="Bold" TextAlignment="Center"/>
                                     </Border>
 
+                                    <!-- Muestra activo/inactivo con colores -->
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Activo}" Value="True">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
@@ -189,7 +225,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-
+                        <!-- Username clickable -->
                         <DataGridTemplateColumn Header="USERNAME" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -202,11 +238,13 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
+                        <!-- Datos -->
                         <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="1.5*"/>
                         <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="1.8*"/>
                         <DataGridTextColumn Header="ROL" Binding="{Binding NombreRol}" Width="*"/>
                         <DataGridTextColumn Header="FECHA ALTA" Binding="{Binding FechaAlta, StringFormat=\{0:dd/MM/yyyy\}}" Width="*"/>
 
+                        <!-- Acciones -->
                         <DataGridTemplateColumn Header="ACCIONES" Width="150">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
@@ -215,6 +253,7 @@
                             </DataGridTemplateColumn.HeaderStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+                                    <!-- Botón detalles -->
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
@@ -236,6 +275,7 @@
                                             </Button.Style>
                                         </Button>
 
+                                        <!-- Botón eliminar -->
                                         <Button x:Name="btnEliminar" Content="❌" ToolTip="Dar de baja" Click="BtnEliminar_Click" Margin="2,0" 
                                                 Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
                                             <Button.Style>
@@ -253,6 +293,7 @@
                                             </Button.Style>
                                         </Button>
 
+                                        <!-- Botón ver detalles -->
                                         <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="BtnReactivar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>

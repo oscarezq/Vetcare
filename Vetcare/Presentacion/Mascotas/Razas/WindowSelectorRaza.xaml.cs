@@ -4,25 +4,45 @@ using System.Windows;
 using System.Windows.Controls;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 
 namespace Vetcare.Presentacion.Mascotas.Razas
 {
+    /// <summary>
+    /// Ventana para seleccionar una raza existente filtrada por especie.
+    /// Permite búsqueda, selección y creación de nuevas razas.
+    /// </summary>
     public partial class WindowSelectorRaza : Window
     {
-        private List<Raza> listaRazas;
-        private int _idEspecieFiltrar;
+        // Lista completa de razas cargadas
+        private List<Raza>? listaRazas;
 
-        public Raza RazaSeleccionada { get; set; }
+        // Id de la especie para filtrar razas
+        private readonly int _idEspecieFiltrar;
 
+        // Raza seleccionada por el usuario
+        public Raza? RazaSeleccionada;
+
+        /// <summary>
+        /// Constructor de la ventana
+        /// </summary>
         public WindowSelectorRaza(int idEspecie = 0)
         {
             InitializeComponent();
+
+            // Guardar especie para filtrado
             _idEspecieFiltrar = idEspecie;
+
+            // Cargar datos iniciales
             CargarLista();
         }
 
+        /// <summary>
+        /// Carga las razas según la especie seleccionada
+        /// </summary>
         private void CargarLista()
         {
+            // Si hay especie seleccionada, filtrar por ella
             if (_idEspecieFiltrar > 0)
             {
                 listaRazas = new RazaService().ObtenerPorEspecie(_idEspecieFiltrar);
@@ -35,22 +55,30 @@ namespace Vetcare.Presentacion.Mascotas.Razas
             dgRazas.ItemsSource = listaRazas;
         }
 
-        private void txtBuscaRaza_TextChanged(object sender, TextChangedEventArgs e)
+        /// <summary>
+        /// Filtra razas según texto de búsqueda
+        /// </summary>
+        private void TxtBuscaRaza_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (listaRazas == null) return;
 
+            // Texto de búsqueda en minúsculas
             string busqueda = txtBuscaRaza.Text.ToLower().Trim();
 
-            // Aplicamos el filtro sobre la lista que ya vino filtrada por especie desde CargarLista()
+            // Filtrar lista actual
             var listaFiltrada = listaRazas
-                .Where(r => r.NombreRaza.ToLower().Contains(busqueda))
+                .Where(r => r.NombreRaza!.ToLower().Contains(busqueda))
                 .ToList();
 
             dgRazas.ItemsSource = listaFiltrada;
         }
 
+        /// <summary>
+        /// Finaliza selección de raza
+        /// </summary>
         private void FinalizarSeleccion()
         {
+            // Validar selección
             if (dgRazas.SelectedItem is Raza seleccion)
             {
                 RazaSeleccionada = seleccion;
@@ -62,30 +90,38 @@ namespace Vetcare.Presentacion.Mascotas.Razas
             }
         }
 
-        private void dgRazas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            FinalizarSeleccion();
-        }
+        /// <summary>
+        /// Selección con doble clic
+        /// </summary>
+        private void DgRazas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) => FinalizarSeleccion();
 
-        private void btnSeleccionar_Click(object sender, RoutedEventArgs e)
-        {
-            FinalizarSeleccion();
-        }
+        /// <summary>
+        /// Botón seleccionar
+        /// </summary>
+        private void BtnSeleccionar_Click(object sender, RoutedEventArgs e) => FinalizarSeleccion();
 
-        private void btnCancelar_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        /// <summary>
+        /// Botón cancelar
+        /// </summary>
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
 
-        private void btnNuevaRaza_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre ventana para crear nueva raza y recarga lista
+        /// </summary>
+        private void BtnNuevaRaza_Click(object sender, RoutedEventArgs e)
         {
-            WindowRaza ventana = new WindowRaza(_idEspecieFiltrar);
-            ventana.Owner = this;
+            // Abrir ventana de nueva raza
+            WindowRaza ventana = new(_idEspecieFiltrar)
+            {
+                Owner = this
+            };
 
+            // Si se guarda correctamente, refrescar datos
             if (ventana.ShowDialog() == true)
             {
                 CargarLista();
-                MessageBox.Show("Raza guardada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Raza guardada correctamente.", "Éxito",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

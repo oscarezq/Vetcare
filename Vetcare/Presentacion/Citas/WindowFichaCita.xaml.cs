@@ -4,12 +4,12 @@ using Microsoft.Win32;
 using QuestPDF.Companion;
 using QuestPDF.Fluent;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Informes;
+using Vetcare.Negocio.Services;
 using Vetcare.Presentacion.Clientes;
 using Vetcare.Presentacion.HistorialesClinicos;
 using Vetcare.Presentacion.Mascotas;
 using Vetcare.Presentacion.Usuarios;
-using Vetcare.Service;
 
 namespace Vetcare.Presentacion.Citas
 {

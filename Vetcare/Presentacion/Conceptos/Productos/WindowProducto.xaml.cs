@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 using Vetcare.Presentacion.Conceptos;
 
 namespace Vetcare.Presentacion.Servicios

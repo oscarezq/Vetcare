@@ -6,6 +6,7 @@
         WindowStartupLocation="CenterOwner"
         Background="#ECF0F1">
 
+    <!-- Recursos de estilos reutilizables en la ventana -->
     <Window.Resources>
         <Style x:Key="MenuButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="50"/>
@@ -16,22 +17,28 @@
             <Setter Property="Background" Value="#34495E"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="Cursor" Value="Hand"/>
+
+            <!-- Plantilla personalizada del botón -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
+
                         <Border Background="{TemplateBinding Background}" CornerRadius="6">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#1ABC9C"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
+        <!-- Estilo para botón de edición -->
         <Style x:Key="EditButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="160"/>
             <Setter Property="Height" Value="40"/>
@@ -40,44 +47,76 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="Cursor" Value="Hand"/>
+
+            <!-- Plantilla personalizada -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
+
                         <Border Background="{TemplateBinding Background}" CornerRadius="6">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#2980B9"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
+    <!-- Layout principal -->
     <Grid>
+
+        <!-- Definición de columnas: menú lateral + contenido -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Panel lateral izquierdo (menú de navegación) -->
         <Border Background="#2C3E50" Grid.Column="0">
+
             <StackPanel Margin="0,40,0,0">
-                <TextBlock TextAlignment="Center" Margin="20,0,20,40" Foreground="White" FontSize="18" FontWeight="Bold" TextWrapping="Wrap">
+
+                <!-- Título de la ficha con nombre dinámico de la mascota -->
+                <TextBlock TextAlignment="Center"
+                           Margin="20,0,20,40"
+                           Foreground="White"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap">
+
                     <Run Text="Ficha de:"/>
                     <LineBreak/>
                     <Run Text="{Binding Nombre, FallbackValue='Mascota'}"/>
                 </TextBlock>
 
-                <Button Content="Datos Generales" Style="{StaticResource MenuButtonStyle}" Click="btnDatos_Click"/>
-                <Button Content="Historial Clínico" Style="{StaticResource MenuButtonStyle}" Click="btnHistorial_Click"/>
+                <!-- Botón para ver datos generales -->
+                <Button Content="Datos Generales"
+                        Style="{StaticResource MenuButtonStyle}"
+                        Click="BtnDatos_Click"/>
+
+                <!-- Botón para ver historial clínico -->
+                <Button Content="Historial Clínico"
+                        Style="{StaticResource MenuButtonStyle}"
+                        Click="BtnHistorial_Click"/>
+
             </StackPanel>
         </Border>
 
+        <!-- Área principal donde se carga el contenido dinámico -->
         <Grid Grid.Column="1" Background="White">
+
+            <!-- Contenedor donde se insertan las vistas (UserControls) -->
             <ContentControl x:Name="ContenedorPrincipal" Margin="10"/>
+
         </Grid>
+
     </Grid>
 </Window>

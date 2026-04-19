@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 
 namespace Vetcare.Presentacion.Clientes
 {

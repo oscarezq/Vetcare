@@ -14,11 +14,15 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- BLOQUE DE FILTROS -->
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
+                <!-- Título de filtros -->
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
+                <!-- Grid de filtros avanzados -->
                 <UniformGrid Columns="4" Margin="0,0,0,15">
+                    <!-- Estilo común para TextBox -->
                     <UniformGrid.Resources>
                         <Style TargetType="TextBox">
                             <Setter Property="Height" Value="28"/>
@@ -27,22 +31,31 @@
                         </Style>
                     </UniformGrid.Resources>
 
+                    <!-- Filtro por nombre -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nombre" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro por chip -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Número Chip" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaNumeroChip" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro por especie -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Especie" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaEspecie" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro por raza -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Raza" FontSize="10" Foreground="#7F8C8D"/>
                         <TextBox x:Name="txtBuscaRaza" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro por sexo -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Sexo" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbBuscaSexo" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
@@ -51,14 +64,20 @@
                             <ComboBoxItem Content="Hembra"/>
                         </ComboBox>
                     </StackPanel>
+
+                    <!-- Filtro fecha desde -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nacimiento - Desde" FontSize="10" Foreground="#7F8C8D"/>
                         <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro fecha hasta -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Nacimiento - Hasta" FontSize="10" Foreground="#7F8C8D"/>
                         <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
+
+                    <!-- Filtro estado -->
                     <StackPanel Margin="5,5,5,0">
                         <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
                         <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
@@ -69,10 +88,15 @@
                     </StackPanel>
                 </UniformGrid>
 
+                <!-- Separador visual -->
                 <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
 
+                <!-- Ordenación -->
                 <StackPanel Orientation="Horizontal">
+                    <!-- Label ordenación -->
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
+                    
+                    <!-- Combo ordenación -->
                     <ComboBox x:Name="cbOrdenarPor" Width="150" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                         <ComboBoxItem Content="Nombre" IsSelected="True"/>
                         <ComboBoxItem Content="Especie"/>
@@ -82,15 +106,20 @@
                         <ComboBoxItem Content="Fecha de Nacimiento"/>
                         <ComboBoxItem Content="Dueño"/>
                     </ComboBox>
+
+                    <!-- Orden asc/desc -->
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
                         <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroAvanzado_Changed"/>
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroAvanzado_Changed"/>
                     </StackPanel>
+
+                    <!-- Botón limpiar filtros -->
                     <Button Content="Limpiar Filtros" Margin="30,0,0,0" Padding="15,0" Click="BtnLimpiar_Click" Height="28" Cursor="Hand" Background="#F4F6F7" BorderBrush="#D5DBDB"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
+        <!-- LISTADO DE MASCOTAS -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
@@ -98,19 +127,25 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Cabecera + botón nueva mascota -->
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
+                    <!-- Título -->
                     <TextBlock Text="Listado de mascotas" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
 
+                    <!-- Botón nueva mascota con visibilidad según rol -->
                     <Button DockPanel.Dock="Right" x:Name="btnNuevaMascota" Content="+ Nueva Mascota" Click="BtnNuevaMascota_Click"
                             Background="#27AE60" Foreground="White" FontWeight="Bold" Padding="20,0" Height="38" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
                         <Button.Style>
                             <Style TargetType="Button">
+                                <!-- Por defecto visible -->
                                 <Setter Property="Visibility" Value="Visible"/>
                                 <Style.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="5"/>
                                     </Style>
                                 </Style.Resources>
+
+                                <!-- Ocultar si es veterinario (IdRol = 2) -->
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -121,17 +156,21 @@
                     </Button>
                 </DockPanel>
 
+                <!-- DataGrid de mascotas -->
                 <DataGrid x:Name="dgMascotas" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
                           MouseDoubleClick="DgMascotas_MouseDoubleClick" GridLinesVisibility="None" BorderThickness="0" CanUserResizeColumns="False"
                           HeadersVisibility="Column" CanUserSortColumns="False" CanUserReorderColumns="False" Background="White" 
                           FontSize="14" RowHeight="45" ColumnHeaderHeight="40" SelectionMode="Extended" SelectionUnit="FullRow" HorizontalScrollBarVisibility="Auto">
 
+                    <!-- Estilos internos del DataGrid -->
                     <DataGrid.Resources>
+                        <!-- Colores selección transparentes -->
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
 
+                        <!-- Estilo de celdas -->
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0"/>
@@ -147,6 +186,7 @@
                             </Setter>
                         </Style>
 
+                        <!-- Estilo cabeceras -->
                         <Style x:Key="HeaderStyleComun" TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
@@ -159,6 +199,7 @@
                         <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}"/>
                     </DataGrid.Resources>
 
+                    <!-- Estilo filas -->
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="Transparent"/>
@@ -176,7 +217,9 @@
                         </Style>
                     </DataGrid.RowStyle>
 
+                    <!-- COLUMNAS -->
                     <DataGrid.Columns>
+                        <!-- ESTADO -->
                         <DataGridTemplateColumn Header="ESTADO" Width="100">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
@@ -185,9 +228,12 @@
                             </DataGridTemplateColumn.HeaderStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+                                    <!-- Indicador visual de estado -->
                                     <Border x:Name="brdEstado" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center">
                                         <TextBlock x:Name="txtEstado" Text="{Binding ActivoTexto}" FontSize="11" FontWeight="Bold" TextAlignment="Center"/>
                                     </Border>
+
+                                    <!-- Cambios visuales según estado -->
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Activo}" Value="True">
                                             <Setter TargetName="brdEstado" Property="Background" Value="#EAFAF1"/>
@@ -204,9 +250,11 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
+                        <!-- NOMBRE -->
                         <DataGridTemplateColumn Header="NOMBRE" Width="1.1*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+                                    <!-- Enlace a ficha de mascota -->
                                     <TextBlock VerticalAlignment="Center">
                                         <Hyperlink Click="BtnVerFichaMascota_Click" Foreground="#2E86C1" TextDecorations="{x:Null}">
                                             <Run Text="{Binding Nombre}" FontWeight="SemiBold"/>
@@ -216,6 +264,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
+                        <!-- RESTO DE CAMPOS -->
                         <DataGridTextColumn Header="NÚMERO CHIP" Binding="{Binding NumeroChip}" Width="1.2*" />
                         <DataGridTextColumn Header="DUEÑO" Binding="{Binding NombreApellidosDueno}" Width="1.2*" />
                         <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="*" />
@@ -223,6 +272,7 @@
                         <DataGridTextColumn Header="SEXO" Binding="{Binding Sexo}" Width="80" />
                         <DataGridTextColumn Header="NACIMIENTO" Binding="{Binding FechaNacimiento, StringFormat=\{0:dd/MM/yyyy\}}" Width="110" />
 
+                        <!-- ACCIONES -->
                         <DataGridTemplateColumn Header="ACCIONES" Width="150">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource HeaderStyleComun}">
@@ -232,18 +282,23 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <!-- Ver detalle -->
                                         <Button x:Name="btnDetalles" Content="👁" ToolTip="Ver Detalle" Click="BtnVerDetalle_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand"/>
 
+                                        <!-- Editar (solo si activo y no veterinario) -->
                                         <Button x:Name="btnEditar" Content="✎" ToolTip="Editar" Click="BtnEditar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#2E86C1" Width="35" Height="30" BorderBrush="#AED6F1" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                     <Style.Triggers>
+                                                        <!-- Ocultar si inactivo -->
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
+
+                                                        <!-- Ocultar si es veterinario -->
                                                         <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
@@ -252,15 +307,19 @@
                                             </Button.Style>
                                         </Button>
 
+                                        <!-- Eliminar (baja lógica) -->
                                         <Button x:Name="btnEliminar" Content="❌" ToolTip="Dar de baja" Click="BtnEliminar_Click" Margin="2,0" 
                                                 Background="#FDEDEC" Foreground="#CB4335" Width="35" Height="30" BorderBrush="#FADBD8" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                     <Style.Triggers>
+                                                        <!-- Ocultar si inactivo -->
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
+
+                                                        <!-- Ocultar si veterinario -->
                                                         <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
@@ -269,15 +328,19 @@
                                             </Button.Style>
                                         </Button>
 
+                                        <!-- Reactivar -->
                                         <Button x:Name="btnReactivar" Content="🔁" ToolTip="Reactivar" Click="BtnReactivar_Click" Margin="2,0" 
                                                 Background="#EBF5FB" Foreground="#27AE60" Width="35" Height="30" BorderBrush="#A9DFBF" Cursor="Hand">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
+                                                        <!-- Mostrar solo si está inactivo -->
                                                         <DataTrigger Binding="{Binding Activo}" Value="False">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
+
+                                                        <!-- Ocultar si veterinario -->
                                                         <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>

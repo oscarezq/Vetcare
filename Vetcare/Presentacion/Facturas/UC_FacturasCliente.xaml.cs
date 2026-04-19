@@ -4,9 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using MySqlX.XDevAPI;
-using Vetcare.Datos;
+using Vetcare.Datos.DAOs;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 using Vetcare.Presentacion.Facturas;
 
 namespace Vetcare.Presentacion.Clientes

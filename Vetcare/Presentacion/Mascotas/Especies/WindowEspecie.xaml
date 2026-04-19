@@ -7,13 +7,19 @@
         Background="#F4F6F7"
         Icon="/Resources/icono.png">
 
+    <!-- Contenedor principal de la ventana -->
     <Grid Margin="25">
+
         <StackPanel>
+            <!-- Título principal de la ventana -->
             <TextBlock Text="REGISTRAR NUEVA ESPECIE" FontSize="16" FontWeight="Bold" Foreground="#1B2631"/>
+
             <Rectangle Height="2" Fill="#2ECC71" HorizontalAlignment="Left" Width="40" Margin="2,5,0,25"/>
 
+            <!-- Etiqueta del campo nombre -->
             <TextBlock Text="NOMBRE DE LA ESPECIE" FontSize="10" FontWeight="Bold" Foreground="#7F8C8D" Margin="0,0,0,5"/>
 
+            <!-- Campo de texto para introducir el nombre de la especie -->
             <TextBox x:Name="txtNombre" 
                      Height="30" 
                      VerticalContentAlignment="Center" 
@@ -21,24 +27,31 @@
                      Foreground="Black" 
                      FontWeight="SemiBold"/>
 
+            <!-- Botonera inferior -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+
+                <!-- Botón cancelar -->
                 <Button Content="Cancelar" 
-                        Click="btnCancelar_Click" 
+                        Click="BtnCancelar_Click" 
                         Width="90" 
                         Height="30" 
                         Background="#BDC3C7" 
                         BorderThickness="0" 
                         Margin="0,0,10,0"/>
 
+                <!-- Botón guardar especie -->
                 <Button Content="Guardar Especie" 
-                        Click="btnGuardar_Click" 
+                        Click="BtnGuardar_Click" 
                         Width="120" 
                         Height="30" 
                         Background="#2ECC71" 
                         Foreground="White" 
                         FontWeight="Bold" 
                         BorderThickness="0"/>
+
             </StackPanel>
+
         </StackPanel>
+
     </Grid>
 </Window>

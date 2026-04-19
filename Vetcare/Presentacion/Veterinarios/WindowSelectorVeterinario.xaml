@@ -7,6 +7,7 @@
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
     <Window.Resources>
+        <!-- Estilo de etiquetas -->
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -14,6 +15,7 @@
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
 
+        <!-- Estilo de tarjeta -->
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
             <Setter Property="CornerRadius" Value="12"/>
@@ -22,6 +24,7 @@
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
 
+        <!-- Estilo de fila del DataGrid -->
         <Style x:Key="ModernRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -38,6 +41,7 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Estilo de celda -->
         <Style x:Key="ModernCellStyle" TargetType="DataGridCell">
             <Setter Property="Foreground" Value="#2C3E50"/>
             <Setter Property="Template">
@@ -56,6 +60,7 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Estilo general del DataGrid -->
         <Style x:Key="ModernDataGrid" TargetType="DataGrid">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -66,6 +71,7 @@
             <Setter Property="Foreground" Value="#2C3E50"/>
             <Setter Property="CellStyle" Value="{StaticResource ModernCellStyle}"/>
         </Style>
+
     </Window.Resources>
 
     <Grid Margin="30">
@@ -76,14 +82,16 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Cabecera + botón nuevo veterinario -->
         <DockPanel Grid.Row="0" Margin="0,0,0,30" LastChildFill="False">
             <StackPanel DockPanel.Dock="Left">
                 <TextBlock Text="Buscador de Veterinarios" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
             </StackPanel>
 
+            <!-- Botón para crear nuevo veterinario -->
             <Button DockPanel.Dock="Right" 
                     Content="+ NUEVO VETERINARIO" 
-                    Click="btnNuevoVeterinario_Click" 
+                    Click="BtnNuevoVeterinario_Click" 
                     Background="#1ABC9C" Foreground="White" 
                     Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
                 <Button.Template>
@@ -96,6 +104,7 @@
             </Button>
         </DockPanel>
 
+        <!-- Filtro de búsqueda -->
         <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,20">
             <StackPanel>
                 <TextBlock Text="FILTRAR POR NOMBRE, ESPECIALIDAD O COLEGIADO" Style="{StaticResource LabelStyle}"/>
@@ -107,7 +116,7 @@
                          Background="#F1F5F9"
                          BorderThickness="1"
                          BorderBrush="#CBD5E1"
-                         TextChanged="txtBuscaVeterinario_TextChanged">
+                         TextChanged="TxtBuscaVeterinario_TextChanged">
                     <TextBox.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="6"/>
@@ -117,6 +126,7 @@
             </StackPanel>
         </Border>
 
+        <!-- Tabla de veterinarios -->
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="10">
             <DataGrid x:Name="dgVeterinarios" 
                       Style="{StaticResource ModernDataGrid}"
@@ -125,13 +135,14 @@
                       IsReadOnly="True" 
                       CanUserAddRows="False" 
                       SelectionMode="Single"
-                      MouseDoubleClick="dgVeterinarios_MouseDoubleClick"
+                      MouseDoubleClick="DgVeterinarios_MouseDoubleClick"
                       HorizontalScrollBarVisibility="Disabled"      
                       ColumnWidth="*"
                       CanUserResizeColumns="False"
                       CanUserReorderColumns="False"
                       CanUserSortColumns="False">
 
+                <!-- Estilo cabecera columnas -->
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="Transparent"/>
@@ -144,6 +155,7 @@
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
 
+                <!-- Columnas del listado -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="*"/>
                     <DataGridTextColumn Header="APELLIDOS" Binding="{Binding Apellidos}" Width="*"/>
@@ -153,9 +165,10 @@
             </DataGrid>
         </Border>
 
+        <!-- Botones inferiores -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
             <Button Content="Cancelar" 
-                    Click="btnCancelar_Click" 
+                    Click="BtnCancelar_Click" 
                     Width="120" Height="45" 
                     Background="Transparent" 
                     Foreground="#64748B" 
@@ -165,7 +178,7 @@
                     Cursor="Hand"/>
 
             <Button Content="Seleccionar Veterinario" 
-                    Click="btnSeleccionar_Click" 
+                    Click="BtnSeleccionar_Click" 
                     Width="200" Height="45" 
                     Background="#E67E22" Foreground="White" 
                     FontWeight="Bold" Cursor="Hand" BorderThickness="0">

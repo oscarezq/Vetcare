@@ -4,44 +4,63 @@ using System.Windows;
 using System.Windows.Controls;
 using Vetcare.Entidades;
 using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 
 namespace Vetcare.Presentacion
 {
+    /// <summary>
+    /// Ventana selector de mascotas para elegir una mascota existente o crear una nueva.
+    /// </summary>
     public partial class WindowSelectorMascota : Window
     {
-        private List<Mascota> listaMascotas;
-        public Mascota MascotaSeleccionada { get; set; }
+        // Lista local de mascotas cargadas desde la base de datos
+        private List<Mascota>? listaMascotas;
 
+        // Mascota seleccionada que se devolverá al cerrar la ventana
+        public Mascota? MascotaSeleccionada;
+
+        /// <summary>
+        /// Constructor de la ventana selector de mascotas
+        /// </summary>
         public WindowSelectorMascota()
         {
             InitializeComponent();
-            CargarLista();
 
-            if (Sesion.UsuarioActual.IdRol == 2)
-            {
-                btnNuevaMascota.Visibility = Visibility.Collapsed;
-            }
+            // Cargar todas las mascotas activas
+            CargarLista();
         }
 
+        /// <summary>
+        /// Carga la lista de mascotas activas desde el servicio
+        /// </summary>
         private void CargarLista()
         {
             listaMascotas = new MascotaService().ObtenerTodas()
                                     .Where(m => m.Activo == true)
                                     .ToList();
+
             dgMascotas.ItemsSource = listaMascotas;
         }
 
-        private void txtBuscaMascota_TextChanged(object sender, TextChangedEventArgs e)
+        /// <summary>
+        /// Filtra las mascotas según el texto de búsqueda
+        /// </summary>
+        private void TxtBuscaMascota_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (listaMascotas == null) return;
+
             string busq = txtBuscaMascota.Text.ToLower().Trim();
+
             dgMascotas.ItemsSource = listaMascotas.Where(m =>
-                m.Nombre.ToLower().Contains(busq) ||
-                m.NombreEspecie.ToLower().Contains(busq) ||
+                m.Nombre!.ToLower().Contains(busq) ||
+                m.NombreEspecie!.ToLower().Contains(busq) ||
                 (m.NombreDueno != null && m.NombreDueno.ToLower().Contains(busq))
             ).ToList();
         }
 
+        /// <summary>
+        /// Finaliza la selección de la mascota actual del DataGrid
+        /// </summary>
         private void Finalizar()
         {
             if (dgMascotas.SelectedItem is Mascota m)
@@ -52,21 +71,25 @@ namespace Vetcare.Presentacion
             else MessageBox.Show("Seleccione una mascota.");
         }
 
-        private void btnNuevo_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Abre la ventana para crear una nueva mascota
+        /// </summary>
+        private void BtnNuevo_Click(object sender, RoutedEventArgs e)
         {
-            // Abrir la ventana de registro de mascota (sin pasarle objeto para que sea modo "Nuevo")
-            WindowMascota ventanaMascota = new WindowMascota();
-            ventanaMascota.Owner = this;
+            // Abrir la ventana de registro de mascota (modo nuevo)
+            WindowMascota ventanaMascota = new()
+            {
+                Owner = Window.GetWindow(this)
+            };
 
             if (ventanaMascota.ShowDialog() == true)
             {
-                // Refrescamos la lista para que aparezca la que acabas de crear
+                // Refrescar lista después de crear mascota
                 CargarLista();
 
-                // Opcional: Si quieres que se seleccione automáticamente la nueva
+                // Seleccionar automáticamente la última creada
                 if (listaMascotas != null && listaMascotas.Count > 0)
                 {
-                    // Buscamos la mascota con el ID más alto (la última creada)
                     var nueva = listaMascotas.OrderByDescending(m => m.IdMascota).FirstOrDefault();
                     dgMascotas.SelectedItem = nueva;
                     dgMascotas.ScrollIntoView(nueva);
@@ -74,8 +97,13 @@ namespace Vetcare.Presentacion
             }
         }
 
-        private void btnSeleccionar_Click(object sender, RoutedEventArgs e) => Finalizar();
-        private void dgMascotas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) => Finalizar();
-        private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
+        // Seleccionar mascota con botón
+        private void BtnSeleccionar_Click(object sender, RoutedEventArgs e) => Finalizar();
+
+        // Seleccionar mascota con doble clic en el DataGrid
+        private void DgMascotas_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) => Finalizar();
+
+        // Cerrar ventana sin seleccionar
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
     }
 }

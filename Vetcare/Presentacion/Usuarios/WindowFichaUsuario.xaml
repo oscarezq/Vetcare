@@ -6,7 +6,9 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- Recursos de estilos reutilizables -->
     <Window.Resources>
+
         <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -36,23 +38,27 @@
             <Setter Property="BorderBrush" Value="#E2E8F0"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
+
     </Window.Resources>
 
+    <!-- Contenedor principal -->
     <Grid Margin="40,40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Cabecera con título y botón editar -->
         <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,35">
             <StackPanel DockPanel.Dock="Left">
                 <TextBlock Text="Ficha de Usuario" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
             </StackPanel>
 
+            <!-- Botón para editar usuario -->
             <Button DockPanel.Dock="Right" 
                     x:Name="btnEditarUsuario"
                     Content="Editar Información"
-                    Click="btnEditarUsuario_Click"
+                    Click="BtnEditarUsuario_Click"
                     Background="#3498DB" Foreground="White" 
                     Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
                 <Button.Template>
@@ -65,9 +71,11 @@
             </Button>
         </DockPanel>
 
+        <!-- Scroll para contenido -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
+                <!-- Sección: Datos personales -->
                 <Border Style="{StaticResource CardStyle}">
                     <StackPanel>
                         <TextBlock Text="DATOS PERSONALES" Style="{StaticResource SectionTitleStyle}"/>
@@ -91,6 +99,8 @@
 
                             <StackPanel>
                                 <TextBlock Text="ESTADO" Style="{StaticResource LabelStyle}"/>
+
+                                <!-- Estado visual del usuario -->
                                 <Border Background="#DCFCE7" HorizontalAlignment="Left" CornerRadius="6" Padding="8,2" Margin="0,0,0,20">
                                     <TextBlock Text="ACTIVO" Foreground="#166534" FontSize="11" FontWeight="Bold"/>
                                 </Border>
@@ -102,6 +112,7 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Sección: Acceso y seguridad -->
                 <Border Style="{StaticResource CardStyle}">
                     <StackPanel>
                         <TextBlock Text="ACCESO Y SEGURIDAD" Style="{StaticResource SectionTitleStyle}"/>
@@ -120,6 +131,7 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Sección: Información profesional (solo veterinarios normalmente) -->
                 <Border x:Name="seccionProfesional" Style="{StaticResource CardStyle}" Visibility="Visible">
                     <StackPanel>
                         <TextBlock Text="INFORMACIÓN PROFESIONAL" Style="{StaticResource SectionTitleStyle}"/>

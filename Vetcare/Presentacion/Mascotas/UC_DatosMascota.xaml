@@ -5,7 +5,9 @@
              Background="White" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
              SnapsToDevicePixels="True">
 
+    <!-- ESTILOS REUTILIZABLES -->
     <UserControl.Resources>
+        
         <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -44,12 +46,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- CABECERA -->
         <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,35">
+
+            <!-- TÍTULO Y ESTADO -->
             <StackPanel DockPanel.Dock="Left">
+
+                <!-- TÍTULO PRINCIPAL -->
                 <TextBlock Text="Ficha del Paciente" FontSize="28" FontWeight="Bold" Foreground="#2C3E50"/>
 
+                <!-- INDICADOR DE ESTADO -->
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+
+                    <!-- BORDE DE ESTADO -->
                     <Border CornerRadius="4" Padding="8,2">
+
+                        <!-- CAMBIO DE COLOR SEGÚN ACTIVO -->
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Style.Triggers>
@@ -63,6 +75,7 @@
                             </Style>
                         </Border.Style>
 
+                        <!-- TEXTO ESTADO -->
                         <TextBlock FontSize="10" FontWeight="Bold">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -79,19 +92,25 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
+
                     </Border>
                 </StackPanel>
             </StackPanel>
 
+            <!-- BOTÓN EDITAR -->
             <Button DockPanel.Dock="Right" 
             x:Name="btnEditarInformacion"
             Content="Editar Información"
-            Click="btnEditarMascota_Click"
+            Click="BtnEditarMascota_Click"
             Background="#3498DB" Foreground="White" 
             Width="180" Height="45" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+
+                <!-- VISIBILIDAD SEGÚN ROL Y ESTADO -->
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Visibility" Value="Visible"/>
+                        
+                        <!-- Ocultar si el usuario es veterinario (Rol 2) o si está inactivo -->
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Source={x:Static util:Sesion.UsuarioActual}, Path=IdRol}" Value="2">
                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -102,6 +121,7 @@
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
+
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -112,14 +132,21 @@
             </Button>
         </DockPanel>
 
+        <!-- CONTENIDO PRINCIPAL -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
+                <!-- CARD DATOS MASCOTA -->
                 <Border Style="{StaticResource CardStyle}">
                     <StackPanel>
+
+                        <!-- TÍTULO SECCIÓN -->
                         <TextBlock Text="DATOS DE LA MASCOTA" Style="{StaticResource SectionTitleStyle}"/>
 
+                        <!-- INFORMACIÓN EN 3 COLUMNAS -->
                         <UniformGrid Columns="3">
+
+                            <!-- COLUMNA 1 -->
                             <StackPanel Margin="0,0,10,0">
                                 <TextBlock Text="NOMBRE DEL PACIENTE" Style="{StaticResource LabelStyle}"/>
                                 <TextBlock Text="{Binding Nombre}" Style="{StaticResource ValueStyle}"/>
@@ -128,6 +155,7 @@
                                 <TextBlock Text="{Binding NumeroChip}" Style="{StaticResource ValueStyle}"/>
                             </StackPanel>
 
+                            <!-- COLUMNA 2 -->
                             <StackPanel Margin="0,0,10,0">
                                 <TextBlock Text="ESPECIE" Style="{StaticResource LabelStyle}"/>
                                 <TextBlock Text="{Binding NombreEspecie}" Style="{StaticResource ValueStyle}"/>
@@ -136,6 +164,7 @@
                                 <TextBlock Text="{Binding NombreRaza}" Style="{StaticResource ValueStyle}"/>
                             </StackPanel>
 
+                            <!-- COLUMNA 3 -->
                             <StackPanel>
                                 <TextBlock Text="SEXO" Style="{StaticResource LabelStyle}"/>
                                 <TextBlock Text="{Binding Sexo}" Style="{StaticResource ValueStyle}"/>
@@ -150,11 +179,16 @@
                     </StackPanel>
                 </Border>
 
+                <!-- CARD INFORMACIÓN ADICIONAL -->
                 <Border Style="{StaticResource CardStyle}">
                     <StackPanel>
+
+                        <!-- TÍTULO -->
                         <TextBlock Text="INFORMACIÓN ADICIONAL" Style="{StaticResource SectionTitleStyle}"/>
 
                         <UniformGrid Columns="2">
+
+                            <!-- DUEÑO -->
                             <StackPanel Margin="0,0,40,0">
                                 <TextBlock Text="PROPIETARIO / DUEÑO" Style="{StaticResource LabelStyle}"/>
                                 <TextBlock Style="{StaticResource ValueStyle}">
@@ -164,10 +198,12 @@
                                 </TextBlock>
                             </StackPanel>
 
+                            <!-- FECHA NACIMIENTO -->
                             <StackPanel>
                                 <TextBlock Text="FECHA DE NACIMIENTO" Style="{StaticResource LabelStyle}"/>
                                 <TextBlock Text="{Binding FechaNacimiento, StringFormat=dd/MM/yyyy}" Style="{StaticResource ValueStyle}"/>
                             </StackPanel>
+
                         </UniformGrid>
                     </StackPanel>
                 </Border>

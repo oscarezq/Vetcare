@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Vetcare.Entidades;
-using Vetcare.Negocio;
+using Vetcare.Negocio.Services;
 using Vetcare.Presentacion.Citas;
 using Vetcare.Presentacion.Clientes;
 using Vetcare.Presentacion.Facturas;

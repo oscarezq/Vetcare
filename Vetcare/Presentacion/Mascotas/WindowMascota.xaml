@@ -6,12 +6,14 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- Recursos reutilizables (estilos visuales) -->
     <Window.Resources>
+
         <Style x:Key="FieldLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Foreground" Value="#94A3B8"/>
-            <Setter Property="Margin" Value="0,0,0,6"/> 
+            <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
 
         <Style x:Key="ModernInput" TargetType="Control">
@@ -30,147 +32,201 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="Cursor" Value="Hand"/>
+
+            <!-- Plantilla visual del botón -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
+
+                        <!-- Contenedor con bordes redondeados -->
                         <Border Background="{TemplateBinding Background}" 
                                 BorderBrush="{TemplateBinding BorderBrush}" 
                                 BorderThickness="{TemplateBinding BorderThickness}" 
                                 CornerRadius="8">
+
+                            <!-- Contenido del botón -->
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
+    <!-- Contenedor principal con padding -->
     <Border Padding="30">
+
         <Grid>
+
+            <!-- Definición de filas: formulario + botones -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <!-- FORMULARIO -->
             <StackPanel Grid.Row="0">
+
+                <!-- Título de la ventana -->
                 <StackPanel Margin="0,0,0,30">
                     <TextBlock x:Name="lblTitulo" Text="NUEVA MASCOTA" FontSize="26" FontWeight="Bold" Foreground="#2C3E50"/>
                     <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
                 </StackPanel>
 
+                <!-- Fila 1: Nombre + Dueño -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
+
+                    <!-- Nombre mascota -->
                     <StackPanel Margin="5">
                         <TextBlock Text="NOMBRE" Style="{StaticResource FieldLabel}"/>
-                        <TextBox x:Name="txtNombre" Style="{StaticResource ModernInput}">
-                            <TextBox.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </TextBox.Resources>
-                        </TextBox>
+                        <TextBox x:Name="txtNombre" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
 
+                    <!-- Selector de dueño -->
                     <StackPanel Margin="5">
                         <TextBlock Text="DUEÑO" Style="{StaticResource FieldLabel}"/>
+
+                        <!-- Botón para abrir selector de cliente -->
                         <Button x:Name="btnSeleccionarDueño" Click="btnBuscarDueño_Click" Style="{StaticResource InputButton}">
                             <Grid Margin="12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="txtNombreDueño" Text="Seleccionar cliente..." VerticalAlignment="Center" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
+
+                                <!-- Nombre del cliente seleccionado -->
+                                <TextBlock x:Name="txtNombreDueño" Text="Seleccionar cliente..." VerticalAlignment="Center" Foreground="#64748B"/>
+
+                                <!-- Icono -->
                                 <TextBlock Grid.Column="1" Text="👤" VerticalAlignment="Center" Foreground="#E67E22" Margin="5,0"/>
                             </Grid>
                         </Button>
+
+                        <!-- ID oculto del cliente -->
                         <TextBox x:Name="txtIdDueño" Visibility="Collapsed"/>
                     </StackPanel>
+
                 </UniformGrid>
 
+                <!-- Fila 2: Chip + Especie -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
+
+                    <!-- Número de chip -->
                     <StackPanel Margin="5">
                         <DockPanel>
+
+                            <!-- Etiqueta -->
                             <TextBlock Text="NÚMERO DE CHIP" Style="{StaticResource FieldLabel}"/>
-                            <CheckBox x:Name="chkNoChip" Content="No tiene" FontSize="11" Foreground="#64748B"
-                                      HorizontalAlignment="Right" VerticalAlignment="Center"
-                                      Checked="chkNoChip_Checked" Unchecked="chkNoChip_Unchecked"/>
+
+                            <!-- Checkbox para indicar que no tiene chip -->
+                            <CheckBox x:Name="chkNoChip" Content="No tiene"
+                                      FontSize="11" Foreground="#64748B"
+                                      HorizontalAlignment="Right"
+                                      Checked="chkNoChip_Checked"
+                                      Unchecked="chkNoChip_Unchecked"/>
                         </DockPanel>
-                        <TextBox x:Name="txtChip" Style="{StaticResource ModernInput}" MaxLength="15">
-                            <TextBox.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </TextBox.Resources>
-                        </TextBox>
+
+                        <TextBox x:Name="txtChip" Style="{StaticResource ModernInput}" MaxLength="15"/>
                     </StackPanel>
 
+                    <!-- Especie -->
                     <StackPanel Margin="5">
                         <TextBlock Text="ESPECIE" Style="{StaticResource FieldLabel}"/>
+
+                        <!-- Selector de especie -->
                         <Button x:Name="btnSeleccionarEspecie" Click="btnBuscarEspecie_Click" Style="{StaticResource InputButton}">
                             <Grid Margin="12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
+
                                 <TextBlock x:Name="txtNombreEspecie" Text="Seleccionar especie..." VerticalAlignment="Center" Foreground="#64748B"/>
                                 <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#E67E22"/>
                             </Grid>
                         </Button>
+
+                        <!-- ID oculto especie -->
                         <TextBox x:Name="txtIdEspecie" Visibility="Collapsed"/>
                     </StackPanel>
+
                 </UniformGrid>
 
+                <!-- Fila 3: Raza + Sexo -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
+
+                    <!-- Raza -->
                     <StackPanel Margin="5">
                         <TextBlock Text="RAZA" Style="{StaticResource FieldLabel}"/>
-                        <Button x:Name="btnSeleccionarRaza" Click="btnBuscarRaza_Click" Style="{StaticResource InputButton}" IsEnabled="False">
+
+                        <!-- Botón deshabilitado hasta seleccionar especie -->
+                        <Button x:Name="btnSeleccionarRaza" Click="btnBuscarRaza_Click"
+                                Style="{StaticResource InputButton}" IsEnabled="False">
+
                             <Grid Margin="12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
+
                                 <TextBlock x:Name="txtNombreRaza" Text="Seleccionar raza..." VerticalAlignment="Center" Foreground="#64748B"/>
                                 <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#94A3B8"/>
                             </Grid>
                         </Button>
+
+                        <!-- ID oculto raza -->
                         <TextBox x:Name="txtIdRaza" Visibility="Collapsed"/>
                     </StackPanel>
 
+                    <!-- Sexo -->
                     <StackPanel Margin="5">
                         <TextBlock Text="SEXO" Style="{StaticResource FieldLabel}"/>
+
+                        <!-- Selector de sexo -->
                         <ComboBox x:Name="cbSexo" Height="40" VerticalContentAlignment="Center">
                             <ComboBoxItem Content="Macho"/>
                             <ComboBoxItem Content="Hembra"/>
                         </ComboBox>
                     </StackPanel>
+
                 </UniformGrid>
 
+                <!-- Fila 4: Peso + Fecha nacimiento -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
+
+                    <!-- Peso -->
                     <StackPanel Margin="5">
                         <TextBlock Text="PESO (KG)" Style="{StaticResource FieldLabel}"/>
-                        <TextBox x:Name="txtPeso" Style="{StaticResource ModernInput}">
-                            <TextBox.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </TextBox.Resources>
-                        </TextBox>
+                        <TextBox x:Name="txtPeso" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
 
+                    <!-- Fecha de nacimiento -->
                     <StackPanel Margin="5">
                         <TextBlock Text="FECHA DE NACIMIENTO" Style="{StaticResource FieldLabel}"/>
                         <DatePicker x:Name="dpNacimiento" Height="40" VerticalContentAlignment="Center" Style="{StaticResource ModernInput}"/>
                     </StackPanel>
+
                 </UniformGrid>
+
             </StackPanel>
 
+            <!-- BOTONES -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button x:Name="btnCancelar" Content="Cancelar" Width="110" Height="45"
-                        Background="Transparent" Foreground="#64748B" FontWeight="SemiBold"
-                        BorderThickness="0" Margin="0,0,10,0" Click="btnCancelar_Click" Cursor="Hand"/>
 
+                <!-- Cancelar -->
+                <Button x:Name="btnCancelar" Content="Cancelar" Width="110" Height="45"
+                        Background="Transparent" Foreground="#64748B"
+                        FontWeight="SemiBold" BorderThickness="0"
+                        Margin="0,0,10,0" Click="btnCancelar_Click" Cursor="Hand"/>
+
+                <!-- Guardar -->
                 <Button x:Name="btnGuardar" Content="Guardar Mascota" Width="180" Height="45"
-                        Background="#E67E22" Foreground="White" FontWeight="Bold" IsDefault="True"
-                        Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0">
+                        Background="#E67E22" Foreground="White"
+                        FontWeight="Bold" IsDefault="True"
+                        Click="BtnGuardar_Click" Cursor="Hand" BorderThickness="0">
+
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -178,8 +234,12 @@
                             </Border>
                         </ControlTemplate>
                     </Button.Template>
+
                 </Button>
+
             </StackPanel>
+
         </Grid>
+
     </Border>
 </Window>

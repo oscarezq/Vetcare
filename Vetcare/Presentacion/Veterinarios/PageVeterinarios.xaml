@@ -13,10 +13,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Panel de filtros de búsqueda -->
         <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#D5DBDB" BorderThickness="1">
             <StackPanel>
                 <TextBlock Text="BUSCAR POR CAMPO" FontSize="11" FontWeight="Bold" Foreground="#E67E22" Margin="5,0,0,10"/>
 
+                <!-- Filtros avanzados -->
                 <UniformGrid Columns="4" Margin="0,0,0,15">
                     <UniformGrid.Resources>
                         <Style TargetType="TextBox">
@@ -49,6 +51,7 @@
 
                 <Separator Background="#EBEDEF" Margin="5,5,5,15"/>
 
+                <!-- Opciones de ordenación -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ORDENAR POR:" FontSize="11" FontWeight="Bold" Foreground="#2E86C1" VerticalAlignment="Center" Margin="5,0,15,0"/>
 
@@ -59,6 +62,7 @@
                         <ComboBoxItem Content="Nº Colegiado"/>
                     </ComboBox>
 
+                    <!-- Orden ascendente / descendente -->
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
                         <RadioButton x:Name="rbAsc" Content="Ascendente" IsChecked="True" Margin="0,0,15,0" Checked="FiltroAvanzado_Changed"/>
                         <RadioButton x:Name="rbDesc" Content="Descendente" Checked="FiltroAvanzado_Changed"/>
@@ -76,6 +80,7 @@
             </StackPanel>
         </Border>
 
+        <!-- Tabla de veterinarios -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" BorderBrush="#D5DBDB" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
@@ -83,11 +88,13 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Cabecera + botón nuevo veterinario -->
                 <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
                     <TextBlock Text="Listado de veterinarios"
                                FontSize="20" FontWeight="Bold" Foreground="#2C3E50"
                                VerticalAlignment="Center"/>
 
+                    <!-- Botón crear veterinario -->
                     <Button DockPanel.Dock="Right"
                             x:Name="btnNuevoVeterinario"
                             Content="+ Nuevo Veterinario"
@@ -107,6 +114,7 @@
                     </Button>
                 </DockPanel>
 
+                <!-- DataGrid de veterinarios -->
                 <DataGrid x:Name="dgVeterinarios"
                           Grid.Row="1"
                           AutoGenerateColumns="False"
@@ -124,9 +132,11 @@
                           MouseDoubleClick="DgVeterinarios_MouseDoubleClick">
 
                     <DataGrid.Resources>
+                        <!-- estilos de selección -->
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
 
+                        <!-- estilo de celdas -->
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="15,0"/>
                             <Setter Property="BorderThickness" Value="0"/>
@@ -141,6 +151,7 @@
                             </Setter>
                         </Style>
 
+                        <!-- estilo cabecera -->
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8F9F9"/>
                             <Setter Property="Foreground" Value="#566573"/>
@@ -152,6 +163,7 @@
                         </Style>
                     </DataGrid.Resources>
 
+                    <!-- estilo de fila -->
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="Transparent"/>
@@ -169,6 +181,7 @@
                         </Style>
                     </DataGrid.RowStyle>
 
+                    <!-- columnas -->
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="USUARIO" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -187,6 +200,7 @@
                         <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}" Width="1.5*"/>
                         <DataGridTextColumn Header="Nº COLEGIADO" Binding="{Binding NumeroColegiado}" Width="1.2*"/>
 
+                        <!-- acciones -->
                         <DataGridTemplateColumn Header="ACCIONES" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

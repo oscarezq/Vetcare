@@ -6,6 +6,7 @@
         TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" 
         SnapsToDevicePixels="True" FontFamily="Segoe UI">
 
+    <!-- Recursos: estilos reutilizables -->
     <Window.Resources>
         <Style x:Key="FieldLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11"/>
@@ -29,6 +30,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}" 
                                 BorderThickness="{TemplateBinding BorderThickness}" 
                                 CornerRadius="8">
+                            
                             <ScrollViewer x:Name="PART_ContentHost" 
                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                           VerticalAlignment="Center"/>
@@ -46,19 +48,25 @@
         </Style>
     </Window.Resources>
 
+    <!-- Contenedor principal -->
     <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Scroll para evitar problemas en pantallas pequeñas -->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,0,15,0">
             <StackPanel>
+
+                <!-- Título -->
                 <StackPanel Margin="0,0,0,25">
                     <TextBlock x:Name="lblTitulo" Text="NUEVO USUARIO" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+                    <!-- Línea decorativa -->
                     <Rectangle Height="3" Fill="#E67E22" HorizontalAlignment="Left" Width="40" Margin="2,5,0,0"/>
                 </StackPanel>
 
+                <!-- USERNAME + ROL -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
                         <TextBlock Text="USERNAME" Style="{StaticResource FieldLabel}"/>
@@ -71,10 +79,11 @@
                                   Style="{StaticResource ModernCombo}"
                                   DisplayMemberPath="NombreRol" 
                                   SelectedValuePath="IdRol"
-                                  SelectionChanged="cbRol_SelectionChanged"/>
+                                  SelectionChanged="CbRol_SelectionChanged"/>
                     </StackPanel>
                 </UniformGrid>
 
+                <!-- NOMBRE + APELLIDOS -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
                         <TextBlock Text="NOMBRE" Style="{StaticResource FieldLabel}"/>
@@ -86,6 +95,7 @@
                     </StackPanel>
                 </UniformGrid>
 
+                <!-- EMAIL + TELÉFONO -->
                 <UniformGrid Columns="2" Margin="0,0,0,15">
                     <StackPanel Margin="5">
                         <TextBlock Text="EMAIL" Style="{StaticResource FieldLabel}"/>
@@ -97,6 +107,7 @@
                     </StackPanel>
                 </UniformGrid>
 
+                <!-- BLOQUE SOLO PARA VETERINARIOS -->
                 <Border x:Name="borderVeterinario" 
                         Visibility="Collapsed" 
                         Background="#FFF7ED" 
@@ -106,7 +117,10 @@
                         BorderBrush="#FED7AA" 
                         BorderThickness="1">
                     <StackPanel>
+                        <!-- Título de sección -->
                         <TextBlock Text="DATOS PROFESIONALES (VETERINARIO)" FontSize="10" FontWeight="Bold" Foreground="#EA580C" Margin="0,0,0,12"/>
+
+                        <!-- Campos específicos -->
                         <UniformGrid Columns="2">
                             <StackPanel Margin="5">
                                 <TextBlock Text="ESPECIALIDAD" Style="{StaticResource FieldLabel}" Foreground="#C2410C"/>
@@ -120,9 +134,12 @@
                     </StackPanel>
                 </Border>
 
+                <!-- CONTRASEÑA -->
                 <StackPanel x:Name="panelPassword" Margin="5,0,5,15">
                     <TextBlock x:Name="lblPassword" Text="CONTRASEÑA INICIAL" Style="{StaticResource FieldLabel}"/>
                     <PasswordBox x:Name="txtPassword" Style="{StaticResource ModernInput}"/>
+
+                    <!-- Aviso informativo -->
                     <Border Background="#F0F9FF" CornerRadius="8" Margin="0,12,0,0" Padding="12" BorderBrush="#BAE6FD" BorderThickness="1">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="ℹ️" Margin="0,0,10,0" VerticalAlignment="Center"/>
@@ -134,14 +151,18 @@
             </StackPanel>
         </ScrollViewer>
 
+        <!-- BOTONES -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+
+            <!-- Botón cancelar -->
             <Button x:Name="btnCancelar" Content="Cancelar" Width="100" Height="42" 
-                    Click="btnCancelar_Click" Cursor="Hand" Background="Transparent" 
+                    Click="BtnCancelar_Click" Cursor="Hand" Background="Transparent" 
                     Foreground="#64748B" FontWeight="SemiBold" BorderThickness="0"/>
 
+            <!-- Botón guardar -->
             <Button x:Name="btnGuardar" Content="Guardar Usuario" Width="160" Height="42" 
                     Background="#E67E22" Foreground="White" FontWeight="Bold" IsDefault="True"
-                    Click="btnGuardar_Click" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
+                    Click="BtnGuardar_Click" Cursor="Hand" BorderThickness="0" Margin="10,0,0,0">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
