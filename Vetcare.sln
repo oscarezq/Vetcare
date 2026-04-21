@@ -5,6 +5,8 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vetcare", "Vetcare\Vetcare.csproj", "{CBBEC2A6-0DE3-4D5C-8884-975C73B72F0F}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Instalador", "Instalador\Instalador.vdproj", "{5AD9BF7D-91F7-4704-8F3B-715B749DDBF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{CBBEC2A6-0DE3-4D5C-8884-975C73B72F0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBBEC2A6-0DE3-4D5C-8884-975C73B72F0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBBEC2A6-0DE3-4D5C-8884-975C73B72F0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AD9BF7D-91F7-4704-8F3B-715B749DDBF2}.Debug|Any CPU.ActiveCfg = Debug
+		{5AD9BF7D-91F7-4704-8F3B-715B749DDBF2}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
