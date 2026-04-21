@@ -19,6 +19,9 @@ namespace Vetcare.Presentacion.Conceptos.Productos
         // ID del producto que se quiere mostrar
         private readonly int _idProducto;
 
+        // Indica si se actualizó el stock al abrir la ventana de ajustar stock
+        public bool SeActualizoStock { get; private set; } = false;
+
         /// <summary>
         /// Constructor: recibe el ID del producto a mostrar
         /// </summary>
@@ -44,6 +47,8 @@ namespace Vetcare.Presentacion.Conceptos.Productos
 
                 if (productoActual != null)
                 {
+                    this.DataContext = productoActual;
+
                     // Rellenar campos básicos
                     txtNombre.Text = productoActual.Nombre;
 
@@ -88,6 +93,8 @@ namespace Vetcare.Presentacion.Conceptos.Productos
             // Si el usuario confirma cambios
             if (ventanaStock.ShowDialog() == true)
             {
+                SeActualizoStock = true;
+
                 // Recargar datos después del cambio de stock
                 CargarDetalles(_idProducto);
 
@@ -97,15 +104,16 @@ namespace Vetcare.Presentacion.Conceptos.Productos
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
-
-                // Cierra la ventana indicando éxito
-                this.DialogResult = true;
             }
         }
 
         /// <summary>
         /// Cierra la ventana de detalle
         /// </summary>
-        private void BtnCerrar_Click(object sender, RoutedEventArgs e) => this.Close();
+        private void BtnCerrar_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = SeActualizoStock;
+            this.Close();
+        }
     }
 }

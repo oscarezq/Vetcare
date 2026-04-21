@@ -151,7 +151,7 @@
 
             <!-- BOTÓN DESCARGAR PDF -->
             <Button x:Name="btnImprimir"
-                    Content="DESCARGAR PDF"
+                    Content="Imprimir Registro"
                     Width="180"
                     Height="40"
                     Background="#8E44AD"
@@ -172,7 +172,7 @@
             </Button>
 
             <!-- BOTÓN EDITAR -->
-            <Button x:Name="btnEditar" Content="EDITAR" Width="140" Height="40" Background="#3498DB" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="BtnEditar_Click" Visibility="Collapsed" Cursor="Hand">
+            <Button x:Name="btnEditar" Content="Editar" Width="140" Height="40" Background="#3498DB" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="BtnEditar_Click" Visibility="Collapsed" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10">
@@ -183,7 +183,7 @@
             </Button>
 
             <!-- BOTÓN GUARDAR -->
-            <Button x:Name="btnGuardar" Content="GUARDAR" Width="160" Height="40" Background="#27AE60" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="BtnGuardar_Click" Cursor="Hand">
+            <Button x:Name="btnGuardar" Content="Guardar" Width="160" Height="40" Background="#27AE60" Foreground="White" FontWeight="Bold" Margin="0,0,15,0" Click="BtnGuardar_Click" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10">
@@ -194,7 +194,7 @@
             </Button>
 
             <!-- BOTÓN CERRAR -->
-            <Button Content="CERRAR" Width="140" Height="40" Background="#95A5A6" Foreground="White" FontWeight="Bold" Click="BtnCancelar_Click" Cursor="Hand">
+            <Button Content="Cerrar" Width="140" Height="40" Background="#95A5A6" Foreground="White" FontWeight="Bold" Click="BtnCancelar_Click" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10">

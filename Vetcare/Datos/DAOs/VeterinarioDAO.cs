@@ -67,6 +67,7 @@ namespace Vetcare.Datos.DAOs
                                   v.id_usuario, 
                                   v.especialidad, 
                                   v.numero_colegiado,
+                                  u.username,
                                   u.nombre, 
                                   u.apellidos
                            FROM veterinarios v

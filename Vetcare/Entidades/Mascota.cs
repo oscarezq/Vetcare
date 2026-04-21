@@ -80,7 +80,7 @@ namespace Vetcare.Entidades
         /// <summary>
         /// Nombre + Apellidos + Número de identificación del dueño.
         /// </summary>
-        public string? Dueno => $"{this.NombreDueno} {this.ApellidosDueno} ({this.NumeroIdentificacionDueno})";
+        public string? Dueno => $"{this.NombreDueno} {this.ApellidosDueno}";
 
         /// <summary>
         /// Indica si la mascota está activa en el sistema.

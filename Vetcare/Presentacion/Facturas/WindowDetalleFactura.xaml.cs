@@ -7,6 +7,7 @@ using System.IO;
 using QuestPDF.Fluent;
 using Vetcare.Negocio.Services;
 using Vetcare.Negocio.Informes;
+using Microsoft.Win32;
 
 namespace Vetcare.Presentacion.Facturas
 {
@@ -87,25 +88,49 @@ namespace Vetcare.Presentacion.Facturas
         {
             try
             {
-                // Obtiene cliente de la factura
+                // Obtener cliente de la factura
                 var cliente = clienteService.ObtenerPorId(factura.IdCliente);
 
-                // Genera documento PDF
-                var documento = new FacturaDocumento(this.factura, cliente);
+                if (cliente == null)
+                {
+                    MessageBox.Show("No se pudo obtener el cliente.", "Aviso",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-                // Ruta temporal del PDF
-                string rutaPdf = Path.Combine(Path.GetTempPath(), $"Factura_{factura.NumeroFactura}.pdf");
+                // Diálogo para elegir dónde guardar el PDF
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    FileName = $"Factura_{factura.NumeroFactura}_{DateTime.Now:yyyyMMdd}.pdf",
+                    Title = "Guardar Factura"
+                };
 
-                // Genera el PDF
-                documento.GeneratePdf(rutaPdf);
+                // Si el usuario confirma ubicación
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Generar documento PDF
+                    var documento = new FacturaDocumento(factura, cliente);
+                    documento.GeneratePdf(saveFileDialog.FileName);
 
-                // Abre automáticamente el PDF
-                Process.Start(new ProcessStartInfo(rutaPdf) { UseShellExecute = true });
+                    MessageBox.Show("Factura generada correctamente.",
+                        "Éxito",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    // Abrir automáticamente el PDF
+                    Process.Start(new ProcessStartInfo(saveFileDialog.FileName)
+                    {
+                        UseShellExecute = true
+                    });
+                }
             }
             catch (Exception ex)
             {
-                // Error al generar PDF
-                MessageBox.Show("Error al generar PDF: " + ex.Message);
+                MessageBox.Show("Error al generar PDF: " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
     }

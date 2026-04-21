@@ -38,7 +38,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="20">
                             <StackPanel Orientation="Horizontal" Margin="20,0">
-                                <TextBlock Text="Descargar PDF" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <TextBlock Text="Imprimir historial" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Border>
                     </ControlTemplate>

@@ -22,7 +22,17 @@
                     Content="+ Nueva Factura"
                     Click="BtnNuevaFactura_Click" 
                     Background="#27AE60" Foreground="White"
-                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand"/>
+                    Width="160" Height="45" FontWeight="Bold" Cursor="Hand">
+
+                <!-- TEMPLATE DEL BOTÓN -->
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </DockPanel>
 
         <!-- RESUMEN -->

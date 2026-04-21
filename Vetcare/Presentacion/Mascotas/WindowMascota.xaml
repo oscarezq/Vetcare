@@ -172,7 +172,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock x:Name="txtNombreRaza" Text="Seleccionar raza..." VerticalAlignment="Center" Foreground="#64748B"/>
-                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#94A3B8"/>
+                                <TextBlock Grid.Column="1" Text="🔍" VerticalAlignment="Center" Foreground="#E67E22"/>
                             </Grid>
                         </Button>
 

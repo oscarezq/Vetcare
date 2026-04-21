@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media;
 using Microsoft.Win32;
 using QuestPDF.Companion;
 using QuestPDF.Fluent;
@@ -90,12 +91,8 @@ namespace Vetcare.Presentacion.Citas
                         Owner = Window.GetWindow(this)
                     };
 
-                    if (ventana.ShowDialog() == true)
-                    {
+                    if(ventana.ShowDialog() == true)
                         CargarCita(citaActual.IdCita);
-                        this.DialogResult = true;
-                        this.Close();
-                    }
                 }
                 // Caso: Visualización/Edición de registro clínico existente (Cita finalizada)
                 else if (citaActual.Estado == "Completada" || citaActual.Estado == "Atendida")
@@ -113,11 +110,7 @@ namespace Vetcare.Presentacion.Citas
                         };
 
                         if (ventana.ShowDialog() == true)
-                        {
                             CargarCita(citaActual.IdCita);
-                            this.DialogResult = true;
-                            this.Close();
-                        }
                     }
                     else
                     {
@@ -224,14 +217,48 @@ namespace Vetcare.Presentacion.Citas
         {
             if (citaActual == null) return;
 
-            // Validación de permisos según el rol y asignación del usuario en sesión
-            bool tienePermiso = ValidarPermisosAccion();
+            var usuario = Sesion.UsuarioActual;
 
-            // Restricción de edición para usuarios sin privilegios específicos en citas pendientes
-            if (!tienePermiso && citaActual.Estado == "Pendiente")
+            bool esAdmin = usuario.IdRol == 1;
+            bool esSuCita = usuario.IdUsuario == citaActual.IdUsuarioVeterinario;
+            bool tienePermiso = esAdmin || esSuCita;
+
+            // Ocultar todo
+            btnDescargarDocumento.Visibility = Visibility.Collapsed;
+            btnCancelarCita.Visibility = Visibility.Collapsed;
+            btnRegistrarConsulta.Visibility = Visibility.Collapsed;
+
+            if (!tienePermiso) return;
+
+            // IMPRIMIR
+            if (citaActual.Estado == "Pendiente")
             {
-                btnRegistrarConsulta.IsEnabled = false;
-                btnCancelarCita.IsEnabled = false;
+                btnDescargarDocumento.Content = "Imprimir Recordatorio";
+                btnDescargarDocumento.Visibility = Visibility.Visible;
+            }
+            else if (citaActual.Estado == "Completada")
+            {
+                btnDescargarDocumento.Content = "Imprimir Justificante";
+                btnDescargarDocumento.Visibility = Visibility.Visible;
+            }
+
+            // CANCELAR
+            if (citaActual.Estado == "Pendiente")
+            {
+                btnCancelarCita.Content = "Cancelar Cita";
+                btnCancelarCita.Visibility = Visibility.Visible;
+            }
+
+            // CONSULTA
+            if (citaActual.Estado == "Pendiente")
+            {
+                btnRegistrarConsulta.Content = "Registrar Consulta";
+                btnRegistrarConsulta.Visibility = Visibility.Visible;
+            }
+            else if (citaActual.Estado == "Completada")
+            {
+                btnRegistrarConsulta.Content = "Ver Consulta";
+                btnRegistrarConsulta.Visibility = Visibility.Visible;
             }
         }
 

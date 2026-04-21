@@ -33,31 +33,31 @@
 
                     <!-- Filtro por nombre -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Nombre" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Nombre" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro por chip -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Número Chip" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Número Chip" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaNumeroChip" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro por especie -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Especie" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Especie" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaEspecie" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro por raza -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Raza" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Raza" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaRaza" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro por sexo -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Sexo" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Sexo" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <ComboBox x:Name="cbBuscaSexo" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                             <ComboBoxItem Content="Todos" IsSelected="True"/>
                             <ComboBoxItem Content="Macho"/>
@@ -67,19 +67,19 @@
 
                     <!-- Filtro fecha desde -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Nacimiento - Desde" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Nacimiento - Desde" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro fecha hasta -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Nacimiento - Hasta" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Nacimiento - Hasta" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro estado -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                             <ComboBoxItem Content="Todos"/>
                             <ComboBoxItem Content="Activo" IsSelected="True"/>
@@ -266,7 +266,7 @@
 
                         <!-- RESTO DE CAMPOS -->
                         <DataGridTextColumn Header="NÚMERO CHIP" Binding="{Binding NumeroChip}" Width="1.2*" />
-                        <DataGridTextColumn Header="DUEÑO" Binding="{Binding NombreApellidosDueno}" Width="1.2*" />
+                        <DataGridTextColumn Header="DUEÑO" Binding="{Binding Dueno}" Width="1.2*" />
                         <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="*" />
                         <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="*" />
                         <DataGridTextColumn Header="SEXO" Binding="{Binding Sexo}" Width="80" />

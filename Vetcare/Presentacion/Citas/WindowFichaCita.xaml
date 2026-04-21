@@ -52,9 +52,8 @@
                 <Border x:Name="borderEstado" 
                         Grid.Column="1" 
                         VerticalAlignment="Center"
-                        Padding="12,3" 
-                        CornerRadius="12" 
-                        Background="#3498DB">
+                        Padding="12,5" 
+                        CornerRadius="12">
 
                     <Border.Style>
                         <Style TargetType="Border">
@@ -66,10 +65,7 @@
                                 <DataTrigger Binding="{Binding Estado}" Value="Completada">
                                     <Setter Property="Background" Value="#2ECC71"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Estado}" Value="Atendida">
-                                    <Setter Property="Background" Value="#2ECC71"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
+                                <DataTrigger Binding="{Binding Estado}" Value="Anulada">
                                     <Setter Property="Background" Value="#E74C3C"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -209,27 +205,7 @@
                     FontWeight="SemiBold"
                     Margin="0,0,12,0"
                     Click="BtnDescargarDocumento_Click"
-                    Cursor="Hand">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Content" Value="Descargar"/>
-                        <Setter Property="Visibility" Value="Visible"/>
-
-                        <!-- Control botón de descargar documento -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
-                                <Setter Property="Content" Value="Descargar recordatorio"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Estado}" Value="Completada">
-                                <Setter Property="Content" Value="Descargar justificante"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+                    Cursor="Hand"/>
 
             <!-- CANCELAR CITA -->
             <Button x:Name="btnCancelarCita"
@@ -242,54 +218,20 @@
                     FontWeight="SemiBold"
                     Margin="0,0,12,0"
                     Click="BtnCancelarCita_Click"
-                    Cursor="Hand">
-                
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-
-                        <!-- Control botón de cancelar cita: solo si está pendiente -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Estado}" Value="Pendiente">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+                    Cursor="Hand"/>
 
             <!-- REGISTRAR CONSULTA -->
             <Button x:Name="btnRegistrarConsulta"
                     Width="180"
                     Height="42"
+                    Background="#27AE60"
                     Foreground="White"
                     BorderBrush="Transparent"
                     FontWeight="SemiBold"
                     Margin="0,0,12,0"
                     Click="BtnRegistrarConsulta_Click"
-                    Cursor="Hand">
+                    Cursor="Hand"/>
 
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Content" Value="Registrar Consulta"/>
-                        <Setter Property="Background" Value="#27AE60"/>
-                        <Setter Property="Visibility" Value="Visible"/>
-
-                        <!-- Control botón de registrar consulta -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Estado}" Value="Completada">
-                                <Setter Property="Content" Value="Ver Consulta"/>
-                                <Setter Property="Background" Value="#3498DB"/>
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Estado}" Value="Cancelada">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-            
             <!-- CERRAR VENTANA -->
             <Button Content="Cerrar"
                     Width="120"

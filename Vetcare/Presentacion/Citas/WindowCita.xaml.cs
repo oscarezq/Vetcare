@@ -121,7 +121,7 @@ namespace Vetcare.Presentacion.Citas
 
             if (selector.ShowDialog() == true)
             {
-                idMascotaSeleccionada = selector.MascotaSeleccionada.IdMascota;
+                idMascotaSeleccionada = selector.MascotaSeleccionada!.IdMascota;
                 ActualizarVisualSelector(txtNombreMascota, selector.MascotaSeleccionada.Nombre!);
             }
         }
@@ -139,7 +139,7 @@ namespace Vetcare.Presentacion.Citas
             if (selector.ShowDialog() == true)
             {
                 // Guardamos el ID del veterinario seleccionado
-                idVeterinarioSeleccionado = selector.VeterinarioSeleccionado.IdVeterinario;
+                idVeterinarioSeleccionado = selector.VeterinarioSeleccionado!.IdVeterinario;
 
                 ActualizarVisualSelector(txtNombreVeterinario,
                     $"{selector.VeterinarioSeleccionado.Nombre} {selector.VeterinarioSeleccionado.Apellidos}");

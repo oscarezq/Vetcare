@@ -225,12 +225,21 @@
                             Content="Guardar Cliente"
                             Width="180"
                             Height="45"
-                            Margin="15,0,0,0"
+                            Margin="10,0,0,0"
                             Background="#E67E22"
                             Foreground="White"
                             FontWeight="Bold"
                             Click="BtnGuardar_Click"
-                            BorderThickness="0"/>
+                            BorderThickness="0">
+
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
                 </StackPanel>
             </Border>

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
+using QuestPDF.Fluent;
 using Vetcare.Datos.DAOs;
 using Vetcare.Entidades;
+using Vetcare.Negocio.Informes;
 using Vetcare.Negocio.Services;
 
 namespace Vetcare.Presentacion.Facturas
@@ -21,7 +25,13 @@ namespace Vetcare.Presentacion.Facturas
         private List<Factura> listaCompleta = new();
 
         // Servicio de negocio para la gestión de facturas.
-        private readonly FacturaService cs = new();
+        private readonly FacturaService fs = new();
+
+        // Servicio de negocio para la gestión de detalles de facturas.
+        private readonly DetalleFacturaService dfs = new();
+
+        // Servicio de negocio para la gestión de clientes.
+        private readonly ClienteService cs = new();
 
         /// <summary>
         /// Constructor de la página de facturas.
@@ -40,7 +50,7 @@ namespace Vetcare.Presentacion.Facturas
         {
             try
             {
-                listaCompleta = cs.ObtenerTodas();
+                listaCompleta = fs.ObtenerTodas();
                 ActualizarTabla();
             }
             catch (Exception ex)
@@ -192,10 +202,55 @@ namespace Vetcare.Presentacion.Facturas
         {
             if (sender is Button btn && btn.DataContext is Factura f)
             {
-                MessageBox.Show($"Generando PDF para la factura {f.NumeroFactura}...",
-                    "Imprimir",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                try
+                {
+                    // Obtener detalles de la factura
+                    f.Detalles = dfs.ObtenerDetallesPorFactura(f.IdFactura); 
+
+                    // Obtener cliente de la factura
+                    var cliente = cs.ObtenerPorId(f.IdCliente);
+
+                    if (cliente == null)
+                    {
+                        MessageBox.Show("No se pudo obtener el cliente.", "Aviso",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // Diálogo para elegir dónde guardar el PDF
+                    SaveFileDialog saveFileDialog = new()
+                    {
+                        Filter = "PDF Files (*.pdf)|*.pdf",
+                        FileName = $"Factura_{f.NumeroFactura}_{DateTime.Now:yyyyMMdd}.pdf",
+                        Title = "Guardar Factura"
+                    };
+
+                    // Si el usuario confirma ubicación
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        // Generar documento PDF
+                        var documento = new FacturaDocumento(f, cliente);
+                        documento.GeneratePdf(saveFileDialog.FileName);
+
+                        MessageBox.Show("Factura generada correctamente.",
+                            "Éxito",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+
+                        // Abrir automáticamente el PDF
+                        Process.Start(new ProcessStartInfo(saveFileDialog.FileName)
+                        {
+                            UseShellExecute = true
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al generar PDF: " + ex.Message,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
             }
         }
 
@@ -223,7 +278,7 @@ namespace Vetcare.Presentacion.Facturas
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    if (cs.AnularFactura(f.IdFactura))
+                    if (fs.AnularFactura(f.IdFactura))
                         CargarDatos();
                 }
             }

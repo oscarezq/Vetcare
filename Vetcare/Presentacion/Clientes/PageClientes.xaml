@@ -29,31 +29,31 @@
                     </UniformGrid.Resources>
 
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaCliente" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Documento (DNI/NIE)" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Documento (DNI/NIE)" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaNumDocumento" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Teléfono" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Teléfono" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaTelefono" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Email" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Email" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaEmail" TextChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <DatePicker x:Name="dtpBuscaFechaDesde" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <DatePicker x:Name="dtpBuscaFechaHasta" Height="28" VerticalContentAlignment="Center" SelectedDateChanged="FiltroAvanzado_Changed"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <ComboBox x:Name="cbBuscaEstado" Height="28" VerticalContentAlignment="Center" SelectionChanged="FiltroAvanzado_Changed">
                             <ComboBoxItem Content="Todos"/>
                             <ComboBoxItem Content="Activo" IsSelected="True"/>

@@ -235,7 +235,6 @@ namespace Vetcare.Presentacion.HistorialesClinicos
             MessageBox.Show("Guardado correctamente");
 
             this.DialogResult = true;
-            this.Close();
         }
 
         /// <summary>

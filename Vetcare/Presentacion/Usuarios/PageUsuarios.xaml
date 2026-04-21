@@ -37,19 +37,19 @@
 
                     <!-- Filtro nombre/apellidos -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Nombre / Apellidos" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaNombre" TextChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro username -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Username" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Username" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <TextBox x:Name="txtBuscaUsername" TextChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro rol -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Rol" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Rol" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <ComboBox x:Name="cbBuscaRol" SelectionChanged="FiltroUsuario_Changed">
                             <ComboBoxItem Content="Todos" IsSelected="True"/>
                             <ComboBoxItem Content="Administrador"/>
@@ -60,7 +60,7 @@
 
                     <!-- Filtro estado -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Estado" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <ComboBox x:Name="cbBuscaEstado" SelectionChanged="FiltroUsuario_Changed">
                             <ComboBoxItem Content="Todos"/>
                             <ComboBoxItem Content="Activo" IsSelected="True"/>
@@ -70,13 +70,13 @@
 
                     <!-- Filtro fecha desde -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Alta - Desde" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <DatePicker x:Name="dpBuscaFechaDesde" VerticalContentAlignment="Center" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
 
                     <!-- Filtro fecha hasta -->
                     <StackPanel Margin="5,5,5,0">
-                        <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D"/>
+                        <TextBlock Text="Alta - Hasta" FontSize="10" Foreground="#7F8C8D" Margin="0,0,0,3"/>
                         <DatePicker x:Name="dpBuscaFechaHasta" VerticalContentAlignment="Center" Height="28" SelectedDateChanged="FiltroUsuario_Changed"/>
                     </StackPanel>
                 </UniformGrid>
