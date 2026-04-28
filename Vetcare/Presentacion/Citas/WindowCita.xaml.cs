@@ -167,7 +167,7 @@ namespace Vetcare.Presentacion.Citas
             try
             {
                 cita.IdMascota = idMascotaSeleccionada;
-                cita.IdVeterinario = idVeterinarioSeleccionado;
+                cita.IdUsuarioVeterinario = idVeterinarioSeleccionado;
                 cita.Estado = "Pendiente";
                 cita.Motivo = txtMotivo.Text.Trim();
                 cita.Observaciones = txtObservaciones.Text.Trim();
