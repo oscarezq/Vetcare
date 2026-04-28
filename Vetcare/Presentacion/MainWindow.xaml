@@ -107,7 +107,7 @@
                 <Button Grid.Row="0"
                         Background="Transparent"
                         BorderThickness="0"
-                        Click="btnInicio_Click"
+                        Click="BtnInicio_Click"
                         Cursor="Hand"
                         Focusable="False">
 
@@ -132,35 +132,35 @@
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                     <StackPanel x:Name="pnlMenu">
-                        <Button x:Name="btnInicio" Style="{StaticResource MenuButtonStyle}" Tag="Selected" Click="btnInicio_Click">
+                        <Button x:Name="btnInicio" Style="{StaticResource MenuButtonStyle}" Tag="Selected" Click="BtnInicio_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/home.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="INICIO"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnMascotas" Style="{StaticResource MenuButtonStyle}" Click="btnMascotas_Click">
+                        <Button x:Name="btnMascotas" Style="{StaticResource MenuButtonStyle}" Click="BtnMascotas_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/pata.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="MASCOTAS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnClientes" Style="{StaticResource MenuButtonStyle}" Click="btnClientes_Click">
+                        <Button x:Name="btnClientes" Style="{StaticResource MenuButtonStyle}" Click="BtnClientes_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/clientes.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="CLIENTES"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnCitas" Style="{StaticResource MenuButtonStyle}" Click="btnCitas_Click">
+                        <Button x:Name="btnCitas" Style="{StaticResource MenuButtonStyle}" Click="BtnCitas_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/calendario.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="CITAS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnUsuarios" Click="btnUsuarios_Click">
+                        <Button x:Name="btnUsuarios" Click="BtnUsuarios_Click">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource MenuButtonStyle}">
                                     <Style.Triggers>
@@ -180,21 +180,21 @@
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnServicios" Style="{StaticResource MenuButtonStyle}" Click="btnServicios_Click">
+                        <Button x:Name="btnServicios" Style="{StaticResource MenuButtonStyle}" Click="BtnServicios_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/servicios.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="SERVICIOS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnProductos" Style="{StaticResource MenuButtonStyle}" Click="btnProductos_Click">
+                        <Button x:Name="btnProductos" Style="{StaticResource MenuButtonStyle}" Click="BtnProductos_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/productos.png" Width="18" Margin="0,0,10,0"/>
                                 <TextBlock Text="PRODUCTOS"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="btnFacturas" Click="btnFacturas_Click">
+                        <Button x:Name="btnFacturas" Click="BtnFacturas_Click">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource MenuButtonStyle}">
                                     <Style.Triggers>
@@ -223,13 +223,13 @@
             <Border Grid.Row="0" Background="White" BorderBrush="#D5DBDB" BorderThickness="0,0,0,1">
                 <Grid Margin="20,0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="btnPerfil" Style="{StaticResource HeaderUserButtonStyle}" Click="btnPerfil_Click">
+                        <Button x:Name="btnPerfil" Style="{StaticResource HeaderUserButtonStyle}" Click="BtnPerfil_Click">
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource ModernContextMenu}">
-                                    <MenuItem Header="Mi perfil" Click="btnVerInfo_Click"/>
-                                    <MenuItem Header="Cambiar Contraseña" Click="btnCambiarPass_Click"/>
+                                    <MenuItem Header="Mi perfil" Click="BtnVerInfo_Click"/>
+                                    <MenuItem Header="Cambiar Contraseña" Click="BtnCambiarPass_Click"/>
                                     <Separator/>
-                                    <MenuItem Header="Cerrar Sesión" Click="btnSalir_Click" Foreground="#E67E22" FontWeight="Bold"/>
+                                    <MenuItem Header="Cerrar Sesión" Click="BtnSalir_Click" Foreground="#E67E22" FontWeight="Bold"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                             <StackPanel Orientation="Horizontal">

@@ -7,23 +7,21 @@ using Vetcare.Presentacion.Citas;
 using Vetcare.Presentacion.Clientes;
 using Vetcare.Presentacion.Facturas;
 using Vetcare.Presentacion.Inicio;
-using Vetcare.Presentacion.Mascotas;
 using Vetcare.Presentacion.Servicios;
 using Vetcare.Presentacion.Usuarios;
-using Vetcare.Presentacion.Veterinarios;
 
 namespace Vetcare.Presentacion
 {
     public partial class MainWindow : Window
     {
-        private Usuario usuarioActual;
+        private readonly Usuario usuarioActual;
 
         public MainWindow()
         {
             InitializeComponent();
-            UsuarioService usuarioService = new UsuarioService();
+            UsuarioService usuarioService = new();
             // Simulación de login para desarrollo
-            usuarioService.ValidarLogin("admin", "admin", out usuarioActual);
+            usuarioService.ValidarLogin("admin", "admin", out usuarioActual!);
             Sesion.UsuarioActual = usuarioActual;
 
             FramePrincipal.Content = new PageInicio();
@@ -43,7 +41,7 @@ namespace Vetcare.Presentacion
         {
             if (usuarioActual != null)
             {
-                lblNombreUsuario.Text = Sesion.UsuarioActual.Username;
+                lblNombreUsuario.Text = Sesion.UsuarioActual?.Username;
             }
         }
 
@@ -71,55 +69,49 @@ namespace Vetcare.Presentacion
 
         // --- EVENTOS DE NAVEGACIÓN ---
 
-        private void btnInicio_Click(object sender, RoutedEventArgs e)
+        private void BtnInicio_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(btnInicio);
             FramePrincipal.Content = new PageInicio();
         }
 
-        private void btnMascotas_Click(object sender, RoutedEventArgs e)
+        private void BtnMascotas_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(sender);
             FramePrincipal.Content = new PageMascotas();
         }
 
-        private void btnClientes_Click(object sender, RoutedEventArgs e)
+        private void BtnClientes_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(sender);
             FramePrincipal.Content = new PageClientes();
         }
 
-        private void btnCitas_Click(object sender, RoutedEventArgs e)
+        private void BtnCitas_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(sender);
             FramePrincipal.Content = new PageCitas();
         }
 
-        private void btnUsuarios_Click(object sender, RoutedEventArgs e)
+        private void BtnUsuarios_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(sender);
             FramePrincipal.Content = new PageUsuarios();
         }
 
-        private void btnVeterinarios_Click(object sender, RoutedEventArgs e)
-        {
-            SeleccionarBoton(sender);
-            FramePrincipal.Content = new PageVeterinarios();
-        }
-
-        private void btnServicios_Click(object sender, RoutedEventArgs e)
+        private void BtnServicios_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(sender);
             FramePrincipal.Content = new PageServicios();
         }
 
-        private void btnProductos_Click(object sender, RoutedEventArgs e)
+        private void BtnProductos_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(sender);
             FramePrincipal.Content = new PageProductos();
         }
 
-        private void btnFacturas_Click(object sender, RoutedEventArgs e)
+        private void BtnFacturas_Click(object sender, RoutedEventArgs e)
         {
             SeleccionarBoton(sender);
             FramePrincipal.Content = new PageFacturas();
@@ -127,14 +119,14 @@ namespace Vetcare.Presentacion
 
         // --- GESTIÓN DE PERFIL Y SALIDA ---
 
-        private void btnSalir_Click(object sender, RoutedEventArgs e)
+        private void BtnSalir_Click(object sender, RoutedEventArgs e)
         {
-            Login login = new Login();
+            Login login = new();
             login.Show();
             this.Close();
         }
 
-        private void btnPerfil_Click(object sender, RoutedEventArgs e)
+        private void BtnPerfil_Click(object sender, RoutedEventArgs e)
         {
             if (btnPerfil.ContextMenu != null)
             {
@@ -144,19 +136,21 @@ namespace Vetcare.Presentacion
             }
         }
 
-        private void btnVerInfo_Click(object sender, RoutedEventArgs e)
+        private void BtnVerInfo_Click(object sender, RoutedEventArgs e)
         {
             if (usuarioActual != null)
             {
-                WindowVerPerfil perfil = new WindowVerPerfil(usuarioActual);
-                perfil.Owner = this;
+                WindowVerPerfil perfil = new(usuarioActual)
+                {
+                    Owner = this
+                };
                 perfil.ShowDialog();
             }
         }
 
-        private void btnCambiarPass_Click(object sender, RoutedEventArgs e)
+        private void BtnCambiarPass_Click(object sender, RoutedEventArgs e)
         {
-            WindowCambiarPassword win = new WindowCambiarPassword(usuarioActual, false);
+            WindowCambiarPassword win = new(usuarioActual, false);
             win.ShowDialog();
         }
     }
