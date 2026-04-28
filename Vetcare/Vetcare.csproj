@@ -64,9 +64,6 @@
     <Compile Update="Presentacion\Conceptos\Productos\PageProductos.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Presentacion\Conceptos\Productos\WindowSelectorProducto.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Presentacion\Conceptos\Productos\WindowProducto.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -30,22 +30,21 @@ namespace Vetcare.Presentacion.Citas
             InitializeComponent();
 
             // Control de visibilidad según rol del usuario
-            if (Sesion.UsuarioActual!.IdRol == 1)
-                if (Sesion.UsuarioActual.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3)
-                {
-                    // Oculta selector de vista si es admin o recepcionista
-                    brdSelectorVista.Visibility = Visibility.Collapsed;
+            if (Sesion.UsuarioActual!.IdRol == 1 || Sesion.UsuarioActual.IdRol == 3)
+            {
+                // Oculta selector de vista si es admin o recepcionista
+                brdSelectorVista.Visibility = Visibility.Collapsed;
 
-                    // Admin siempre ve todas las citas
-                    rbTodasCitas.IsChecked = true;
-                    rbTodasCitas.IsChecked = true;
-                }
-                else
-                {
-                    // Veterinario empieza viendo solo sus citas
-                    rbMisCitas.IsChecked = true;
-                    rbMisCitas.IsChecked = true;
-                }
+                // Admin siempre ve todas las citas
+                rbTodasCitas.IsChecked = true;
+                rbTodasCitas.IsChecked = true;
+            }
+            else
+            {
+                // Veterinario empieza viendo solo sus citas
+                rbMisCitas.IsChecked = true;
+                rbMisCitas.IsChecked = true;
+            }
 
             // Carga inicial de datos
             CargarDatos();
