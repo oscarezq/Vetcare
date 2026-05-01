@@ -190,7 +190,7 @@
                     <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="*"/>
                     <DataGridTextColumn Header="ESPECIE" Binding="{Binding NombreEspecie}" Width="*"/>
                     <DataGridTextColumn Header="RAZA" Binding="{Binding NombreRaza}" Width="*"/>
-                    <DataGridTextColumn Header="DUEÑO" Binding="{Binding NombreApellidosDueno}" Width="*"/>
+                    <DataGridTextColumn Header="DUEÑO" Binding="{Binding Dueno}" Width="*"/>
                 </DataGrid.Columns>
 
             </DataGrid>
